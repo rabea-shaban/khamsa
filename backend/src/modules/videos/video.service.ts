@@ -1,5 +1,6 @@
 import { QueryFilter } from 'mongoose';
 import { Video } from './video.model';
+import '../users/user.model';
 import { IVideoDocument } from './video.types';
 import {
   CreateVideoDto,

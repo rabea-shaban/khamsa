@@ -13,6 +13,13 @@ import { notFoundHandler } from './middlewares/not-found.middleware';
 import { errorHandler } from './middlewares/error.middleware';
 import { ApiResponse } from './utils/api-response';
 
+// Eagerly register all Mongoose models for serverless populate relations
+import './modules/users/user.model';
+import './modules/articles/article.model';
+import './modules/videos/video.model';
+import './modules/media/media.model';
+import './modules/settings/settings.model';
+
 export const createApp = (): Application => {
   const app: Application = express();
 

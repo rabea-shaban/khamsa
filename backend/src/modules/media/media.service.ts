@@ -8,6 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { r2Client, R2_CONFIG } from '../../config/r2.config';
 import { Media } from './media.model';
+import '../users/user.model';
 import { IMediaDocument } from './media.types';
 import { ListMediaQueryDto, PresignedUrlDto } from './media.validation';
 import { PaginatedResult } from '../../types/common.types';
