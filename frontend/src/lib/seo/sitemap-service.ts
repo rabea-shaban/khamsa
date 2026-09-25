@@ -73,7 +73,7 @@ export async function getArticleSitemapEntries(siteUrl: string): Promise<Sitemap
         : 'http://localhost:5000/api/v1');
 
     const res = await fetch(`${apiUrl}/public/articles?limit=1000&sort=latest`, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
       headers: { Accept: 'application/json' },
     });
 
