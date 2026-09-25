@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import { env, getAllowedOrigins } from './config/env.config';
+import { connectDatabase } from './config/database.config';
 import { apiRoutes } from './routes';
 import { apiLimiter } from './middlewares/rate-limiter.middleware';
 import { notFoundHandler } from './middlewares/not-found.middleware';
@@ -63,6 +64,38 @@ export const createApp = (): Application => {
       }),
     );
   }
+
+  // DB Connection Middleware for Serverless / Cloud
+  app.use(async (_req: Request, _res: Response, next) => {
+    try {
+      await connectDatabase();
+      next();
+    } catch (err) {
+      console.error('Database connection middleware error:', err);
+      next(err);
+    }
+  });
+
+  // Root endpoint
+  app.get('/', (_req: Request, res: Response) => {
+    return ApiResponse.success(
+      res,
+      {
+        name: 'Khamsa CMS API',
+        brand: 'خمسة برمجة بالبلدي',
+        version: '1.0.0',
+        status: 'online',
+        endpoints: {
+          health: '/health',
+          apiHealth: '/api/v1/health',
+          articles: '/api/v1/public/articles',
+          videos: '/api/v1/public/videos',
+          settings: '/api/v1/public/settings',
+        },
+      },
+      'Welcome to Khamsa CMS API',
+    );
+  });
 
   // Health Check Endpoint
   app.get('/health', (_req: Request, res: Response) => {
