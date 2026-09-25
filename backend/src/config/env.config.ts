@@ -25,13 +25,13 @@ const envSchema = z.object({
     .default('khamsa_jwt_refresh_super_secret_key_production_grade_32chars!'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
-  R2_ACCOUNT_ID: z.string().default('c1cda447ff69ae9cfaf14cbdb704620f'),
-  R2_ACCESS_KEY_ID: z.string().default('0855219430c6a51d4d39c05e1a2f6fb3'),
+  R2_ACCOUNT_ID: z.string().default('d9db13b29e66e00f79343eab60abf918'),
+  R2_ACCESS_KEY_ID: z.string().default('169a0affacfd95ac13dc8ace7b49a377'),
   R2_SECRET_ACCESS_KEY: z
     .string()
-    .default('901f4c6e9e51c8889ec3227ebfe74f9d85cfcb4a9bb540cbe3b38c2084c7faea'),
-  R2_BUCKET_NAME: z.string().default('khamsa'),
-  R2_PUBLIC_URL: z.string().default('https://pub-2d88a10e7b7e4bc8939c366ff407fcf8.r2.dev'),
+    .default('cf44ba4df763d4fce9cbe824b2dd32796e5027f41fb0a5ce69d337b8284d5888'),
+  R2_BUCKET_NAME: z.string().default('khamsa-cms'),
+  R2_PUBLIC_URL: z.string().default('https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev'),
   ADMIN_NAME: z.string().default('Khamsa Admin'),
   ADMIN_EMAIL: z.string().email().default('admin@khamsa.dev'),
   ADMIN_PASSWORD: z.string().min(8).default('AdminPassword123!'),
