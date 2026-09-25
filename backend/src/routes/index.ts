@@ -16,7 +16,30 @@ import {
 } from '../modules/settings/settings.routes';
 import { backupRoutes } from '../modules/backup/backup.routes';
 
+import mongoose from 'mongoose';
+import { ApiResponse } from '../utils/api-response';
+
 const router = Router();
+
+// Health Check: /api/v1/health
+router.get('/health', (_req, res) => {
+  const dbStatus =
+    mongoose.connection.readyState === 1
+      ? 'connected'
+      : mongoose.connection.readyState === 2
+        ? 'connecting'
+        : 'disconnected';
+
+  return ApiResponse.success(
+    res,
+    {
+      status: 'online',
+      database: dbStatus,
+      timestamp: new Date().toISOString(),
+    },
+    'API v1 is healthy',
+  );
+});
 
 // ============================================
 // Auth Routes: /api/v1/auth

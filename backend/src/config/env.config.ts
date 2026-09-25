@@ -26,8 +26,12 @@ const envSchema = z.object({
 const parseEnv = () => {
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    console.error('❌ Invalid environment variables:', result.error.format());
-    process.exit(1);
+    const errorDetails = JSON.stringify(result.error.format(), null, 2);
+    console.error('❌ Invalid environment variables:\n', errorDetails);
+    if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw new Error(`Environment variables configuration error: ${errorDetails}`);
   }
   return result.data;
 };
