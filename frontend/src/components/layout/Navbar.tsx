@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { Button } from '@/components/ui/Button';
 
 export function Navbar() {
   return (
@@ -20,11 +19,6 @@ export function Navbar() {
             الفيديوهات
           </Link>
           <ThemeToggle />
-          <Link href="/login">
-            <Button size="sm">
-              تسجيل الدخول
-            </Button>
-          </Link>
         </nav>
       </div>
     </header>

@@ -3,9 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, LayoutDashboard, Home, BookOpen, Video, Info } from 'lucide-react';
+import { Menu, X, Home, BookOpen, Video, Info } from 'lucide-react';
 import { Logo } from '../shared/Logo';
-import { Button } from '../ui/Button';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { cn } from '@/lib/utils/cn';
 
@@ -53,12 +52,6 @@ export function Header() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
-          <Link href="/dashboard">
-            <Button size="sm" variant="outline" className="gap-1.5 h-9 text-xs">
-              <LayoutDashboard className="h-3.5 w-3.5 text-primary" />
-              <span>لوحة الإدارة</span>
-            </Button>
-          </Link>
         </div>
 
         {/* Mobile Actions: ThemeToggle + Hamburger */}
@@ -104,14 +97,6 @@ export function Header() {
               );
             })}
           </nav>
-          <div className="pt-3 border-t border-border flex flex-col gap-2">
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full gap-2 text-xs" size="sm">
-                <LayoutDashboard className="h-4 w-4" />
-                <span>دخول لوحة الإدارة</span>
-              </Button>
-            </Link>
-          </div>
         </div>
       )}
     </header>
