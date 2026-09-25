@@ -14,7 +14,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://khamsa.dev';
 
 async function fetchPublicSettings(): Promise<Settings | null> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.NODE_ENV === 'production'
+        ? 'https://khamsa-webapi.vercel.app/api/v1'
+        : 'http://localhost:5000/api/v1');
     const res = await fetch(`${apiUrl}/public/settings`, {
       next: { revalidate: 60 },
     });
