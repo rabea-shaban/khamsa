@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { articlesApi } from '@/lib/api/articles.api';
-import { ContentStatus } from '@/types/api';
+import { ContentStatus, Article } from '@/types/api';
 import { getSiteUrl } from './site-url';
 
 export type SitemapEntry = MetadataRoute.Sitemap[number];
@@ -67,12 +67,24 @@ export function getStaticSitemapEntries(siteUrl: string): SitemapEntry[] {
  */
 export async function getArticleSitemapEntries(siteUrl: string): Promise<SitemapEntry[]> {
   try {
-    const response = await articlesApi.getArticles({
-      limit: 1000,
-      sort: 'latest',
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.NODE_ENV === 'production' || process.env.VERCEL
+        ? 'https://khamsa-webapi.vercel.app/api/v1'
+        : 'http://localhost:5000/api/v1');
+
+    const res = await fetch(`${apiUrl}/public/articles?limit=1000&sort=latest`, {
+      next: { revalidate: 3600 },
+      headers: { Accept: 'application/json' },
     });
 
-    const articles = response?.data?.items || [];
+    if (!res.ok) {
+      console.warn(`[sitemap] Articles API returned HTTP ${res.status}`);
+      return [];
+    }
+
+    const json = (await res.json()) as { data?: { items?: Article[] } };
+    const articles: Article[] = json?.data?.items || [];
 
     return articles
       .filter(article => {
