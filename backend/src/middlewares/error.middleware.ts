@@ -54,9 +54,8 @@ export const errorHandler: ErrorRequestHandler = (
     message = err.message;
   } else {
     // Unexpected internal error
-    if (env.NODE_ENV !== 'production') {
-      console.error('💥 Unexpected Server Error:', err);
-    }
+    console.error('💥 Unexpected Server Error:', err);
+    message = err.message || 'Internal server error';
   }
 
   const responsePayload = {
