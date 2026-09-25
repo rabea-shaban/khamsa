@@ -77,8 +77,22 @@ async function runRestore() {
     // Delete existing documents in this collection
     await collection.deleteMany({});
 
-    // Convert string ObjectIds back if needed (or MongoDB driver will accept standard JSON documents)
-    await collection.insertMany(docs as Record<string, unknown>[]);
+    // Convert string ObjectIds back to proper BSON ObjectIds
+    const convertedDocs = (docs as Record<string, unknown>[]).map(doc => {
+      const item = { ...doc };
+      if (typeof item._id === 'string' && /^[0-9a-fA-F]{24}$/.test(item._id)) {
+        item._id = new mongoose.Types.ObjectId(item._id);
+      }
+      const relationFields = ['author', 'uploadedBy', 'userId'];
+      for (const field of relationFields) {
+        if (typeof item[field] === 'string' && /^[0-9a-fA-F]{24}$/.test(item[field] as string)) {
+          item[field] = new mongoose.Types.ObjectId(item[field] as string);
+        }
+      }
+      return item;
+    });
+
+    await collection.insertMany(convertedDocs);
     console.log(`  ✅ Restored ${colName} successfully.`);
   }
 
