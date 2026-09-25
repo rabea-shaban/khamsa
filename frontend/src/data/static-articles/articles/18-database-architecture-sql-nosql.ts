@@ -13,7 +13,7 @@ export const article18: StaticArticle = {
   publishedAt: '2026-06-05T10:00:00.000Z',
   updatedAt: '2026-09-21T00:30:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80',
+  coverImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80',
   coverAlt: 'معمارية قواعد البيانات SQL مقابل NoSQL',
   isFeatured: false,
   tableOfContents: [

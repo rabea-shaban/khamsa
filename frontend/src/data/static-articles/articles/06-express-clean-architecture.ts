@@ -13,7 +13,7 @@ export const article06: StaticArticle = {
   publishedAt: '2026-02-25T09:00:00.000Z',
   updatedAt: '2026-09-20T18:00:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+  coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80',
   coverAlt: 'بناء RESTful APIs احترافية بنمط Clean Architecture',
   isFeatured: true,
   tableOfContents: [

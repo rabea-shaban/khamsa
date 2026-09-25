@@ -330,7 +330,7 @@ export default async function ArticleDetailsPage({ params }: ArticlePageProps) {
 
       {/* Main Structured Content Area */}
       <main className="py-4">
-        <TiptapRenderer content={currentContent} />
+        <TiptapRenderer content={currentContent} tocItems={staticArt?.tableOfContents} />
       </main>
 
       {/* Safe Ad Placement: Before FAQ and Related Articles */}

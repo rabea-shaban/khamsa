@@ -13,7 +13,7 @@ export const article12: StaticArticle = {
   publishedAt: '2026-04-12T11:00:00.000Z',
   updatedAt: '2026-09-20T21:30:00.000Z',
   readTimeMinutes: 27,
-  coverImage: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+  coverImage: 'https://images.unsplash.com/photo-1581291518655-9523c932dede?auto=format&fit=crop&w=1200&q=80',
   coverAlt: 'هندسة الواجهات الأمامية وتصميم المكونات وإدارة الحالة',
   isFeatured: false,
   tableOfContents: [
