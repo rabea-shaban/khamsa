@@ -6,7 +6,8 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "adsense:audit": "npx tsx scripts/adsense-audit.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

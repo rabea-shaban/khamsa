@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Cairo } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/providers';
 import { Settings } from '@/types/api';
 import { getSiteUrl } from '@/lib/seo/site-url';
+import { CookieConsent } from '@/components/shared/CookieConsent';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -12,6 +14,11 @@ const cairo = Cairo({
 });
 
 const siteUrl = getSiteUrl();
+const googleVerification =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+  'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y';
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
+const adSenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
 async function fetchPublicSettings(): Promise<Settings | null> {
   try {
@@ -59,6 +66,8 @@ export async function generateMetadata(): Promise<Metadata> {
         'Node.js',
         'هندسة البرمجيات',
         'تطوير الويب',
+        'Clean Code',
+        'System Design',
       ];
   const ownerName = settings?.founder?.founderName || 'ربيع شعبان';
 
@@ -119,10 +128,10 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     verification: {
-      google: 'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y',
+      google: googleVerification,
     },
     other: {
-      'google-site-verification': 'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y',
+      'google-site-verification': googleVerification,
     },
   };
 }
@@ -152,7 +161,14 @@ export default async function RootLayout({
       '@type': 'Person',
       name: founderName,
       jobTitle: founderRole,
+      url: `${siteUrl}/about`,
     },
+    sameAs: [
+      'https://github.com/rabea-shaban',
+      'https://linkedin.com/in/rabea-shaban',
+      'https://youtube.com/@5prog_bldy',
+      'https://facebook.com/5prog.bldy',
+    ],
   };
 
   const websiteJsonLd = {
@@ -161,12 +177,17 @@ export default async function RootLayout({
     name: siteName,
     url: siteUrl,
     inLanguage: 'ar',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${siteUrl}/articles?search={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
   };
 
   return (
     <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
       <head>
-        <meta name="google-site-verification" content="nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y" />
+        <meta name="google-site-verification" content={googleVerification} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
@@ -175,11 +196,45 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
+        {/* Conditional AdSense Integration: Loaded ONLY if real client is configured */}
+        {adSenseClient && (
+          <Script
+            id="adsbygoogle-init"
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClient}`}
+          />
+        )}
+        {/* Conditional Google Analytics 4: Loaded ONLY if real ID is configured */}
+        {gaId && (
+          <>
+            <Script
+              strategy="afterInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            />
+            <Script
+              id="google-analytics"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaId}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
       </head>
       <body className="bg-background text-foreground font-sans antialiased min-h-screen" suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <CookieConsent />
+        </Providers>
       </body>
     </html>
   );
 }
-

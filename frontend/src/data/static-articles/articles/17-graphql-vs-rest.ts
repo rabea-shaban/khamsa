@@ -1,0 +1,55 @@
+import { StaticArticle, DEFAULT_AUTHOR } from '../types';
+
+export const article17: StaticArticle = {
+  id: 'static-art-17',
+  slug: 'graphql-vs-rest-apis-architectural-comparison-practical-guide',
+  title: 'دليل GraphQL مقابل REST APIs: المقارنة المعمارية، وتطبيقات الإنتاج، وحل مشكلة N+1',
+  excerpt: 'مقارنة هندسية عميقة بين أشهر نمطين لبناء واجهات الـ APIs: حل مشاكل Over-fetching و Under-fetching، تصميم Schema و Resolvers في GraphQL، حل أزمة استعلامات N+1 باستخدام DataLoader، وفروقات الـ Caching والأمان.',
+  description: 'مقارنة شاملة بين GraphQL و REST APIs: متى تختار كل منهما؟ حل مشكلة N+1 مع DataLoader، Schema Definition Language، استراتيجيات Caching، وتأمين استعلامات GraphQL.',
+  category: 'Backend',
+  tags: ['GraphQL', 'REST API', 'Backend', 'Architecture', 'TypeScript', 'Node.js'],
+  keywords: ['GraphQL بالعربي', 'مقارنة GraphQL و REST', 'حل مشكلة N+1 في GraphQL', 'شرح DataLoader', 'بناء GraphQL API', 'معمارية الـ APIs'],
+  author: DEFAULT_AUTHOR,
+  publishedAt: '2026-05-25T10:00:00.000Z',
+  updatedAt: '2026-09-21T00:00:00.000Z',
+  readTimeMinutes: 27,
+  coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
+  coverAlt: 'مقارنة معمارية بين GraphQL و REST APIs',
+  isFeatured: false,
+  tableOfContents: [
+    { id: 'rest-limitations', title: 'تحديات REST التقليدية: Over-fetching و Under-fetching', level: 2 },
+    { id: 'graphql-paradigm', title: 'فلسفة GraphQL: العميل يحدد بدقة ما يحتاجه', level: 2 },
+    { id: 'sdl-and-resolvers', title: 'مخطط البيانات (SDL) وبناء دوال الحل (Resolvers)', level: 2 },
+    { id: 'n-plus-one-problem', title: 'حل كارثة استعلامات N+1 باستخدام DataLoader', level: 2 },
+    { id: 'caching-comparison', title: 'التخزين المؤقت (Caching): نقطة قوة REST أمام تحديات GraphQL', level: 2 },
+    { id: 'security-depth-limiting', title: 'أمان GraphQL: منع استعلامات الحلقات العميقة (Query Depth Limiting)', level: 2 },
+    { id: 'decision-matrix', title: 'مصفوفة القرار: متى تختار REST ومتى تختار GraphQL؟', level: 2 },
+    { id: 'summary', title: 'الخلاصة وأفضل الممارسات', level: 2 },
+  ],
+  faq: [
+    {
+      question: 'ما هي مشكلة N+1 في GraphQL وكيف يحلها DataLoader؟',
+      answer: 'تحدث عندما يتم جلب قائمة تحتوي على N عنصر ثم يقوم كل عنصر بتشغيل استعلام منفصل لجلب بياناته المرتبطة (مما يولد N+1 استعلام لقاعدة البيانات). يحل DataLoader المشكلة بتجميع (Batching) كل المعرفات المطلوبة في دورة الـ Event Loop وتشغيل استعلام واحد فقط يحتوي على $in: [ids].'
+    },
+    {
+      question: 'لماذا يعتبر الـ HTTP Caching أسهل في REST مقارنة بـ GraphQL؟',
+      answer: 'لأن REST تعتمد على مسارات URL فريدة وطلبات GET يمكن للـ CDNs والمتصفحات تخزينها مؤقتاً بالاعتماد على ترويسات HTTP، بينما تعمل طلبات GraphQL كـ POST إلى نقطة نهاية موحدة (/graphql).'
+    },
+    {
+      question: 'متى نفضل الدمج الهجين بين النمطين (Hybrid Approach)؟',
+      answer: 'عندما نحتاج لـ GraphQL في واجهات الهواتف وتطبيقات الويب المعقدة لتقليل استهلاك البيانات، مع استخدام REST لنقل الملفات الضخمة وتكاملات الـ Webhooks مع الخدمات الخارجية (Stripe, PayPal).'
+    }
+  ],
+  relatedSlugs: [
+    'building-production-restful-apis-express-clean-architecture',
+    'comprehensive-mongodb-guide-indexing-aggregation-performance',
+    'system-design-guide-monolith-to-distributed-scale'
+  ],
+  seo: {
+    title: 'دليل GraphQL مقابل REST APIs: المقارنة المعمارية والإنتاج',
+    description: 'مقارنة معمارية احترافية بين GraphQL و REST: حل مشكلة N+1 مع DataLoader، إدارة الـ Caching، والأمان مع أمثلة كود عملية.',
+    keywords: ['GraphQL', 'REST API', 'DataLoader', 'N+1 Problem', 'Schema Definition', 'API Architecture'],
+    canonicalUrl: 'https://khamsa-web.vercel.app/articles/graphql-vs-rest-apis-architectural-comparison-practical-guide',
+  },
+  content: "\"## مقارنة المشاكل والحلول في معمارية الـ APIs\\n\\n* **Over-fetching في REST:** عندما تطلب `/users/1` لاستخراج الاسم فقط، يرجع لك الخادم 40 حقلاً بما فيها التواريخ والعناوين مما يهدر الباندويث ويزيد من استهلاك بيانات الهاتف.\\n* **Under-fetching في REST:** عندما تحتاج لعرض اسم المستخدم وآخر مقالاته وتعليقاته، تضطر لإرسال 3 طلبات HTTP متتالية مع زيادة في زمن الاستجابة الكلي (Latency).\\n* **حل GraphQL:** طلب واحد يحدد فيه العميل الحقول المطلوبة بدقة متناهية:\\n\\n```graphql\\nquery GetUserProfile {\\n  user(id: \"usr_1\") {\\n    name\\n    email\\n    articles(limit: 3) {\\n      id\\n      title\\n      slug\\n    }\\n  }\\n}\\n```\\n\\n---\\n\\n## مخطط البيانات (SDL) وبناء دوال الحل (Resolvers)\\n\\n```typescript\\nimport { createSchema, createYoga } from 'graphql-yoga';\\n\\nconst typeDefinitions = /* GraphQL */ `\\n  type Article {\\n    id: ID!\\n    title: String!\\n    slug: String!\\n    category: String!\\n  }\\n\\n  type Query {\\n    articles(category: String): [Article!]!\\n    article(slug: String!): Article\\n  }\\n`;\\n\\nconst resolvers = {\\n  Query: {\\n    articles: async (_: unknown, args: { category?: string }, ctx: Context) => {\\n      return ctx.db.articles.findMany({ where: args.category ? { category: args.category } : {} });\\n    },\\n    article: async (_: unknown, args: { slug: string }, ctx: Context) => {\\n      return ctx.db.articles.findUnique({ where: { slug: args.slug } });\\n    },\\n  },\\n};\\n```\\n\\n---\\n\\n## حل كارثة استعلامات N+1 باستخدام DataLoader\\n\\n```typescript\\nimport DataLoader from 'dataloader';\\nimport { db } from '@/lib/db';\\n\\n// تجميع كل المعرفات في استعلام واحد فقط بنمط Batching\\nexport const authorLoader = new DataLoader<string, Author>(async authorIds => {\\n  const authors = await db.authors.findMany({\\n    where: { id: { in: [...authorIds] } },\\n  });\\n\\n  const authorMap = new Map(authors.map(a => [a.id, a]));\\n  return authorIds.map(id => authorMap.get(id) || null);\\n});\\n```\\n\\n---\\n\\n## مصفوفة القرار: متى تختار REST ومتى تختار GraphQL؟\\n\\n| المعيار | REST APIs | GraphQL |\\n| :--- | :--- | :--- |\\n| **الـ Caching** | بسيط جداً ومدمج عبر HTTP و CDNs | يتطلب حلولاً معقدة من طرف العميل (Apollo Client) |\\n| **حجم البيانات** | قد يحتوي على بيانات زائدة | دقيق 100% حسب طلب العميل |\\n| **أمان الـ Endpoints** | بسيط وتوجيه مسارات محدد | يتطلب تحديد عمق الاستعلام (Query Depth Limiting) |\\n| **التطبيقات المناسبة** | تطبيقات التجارة، الـ Webhooks، الميكروسيرفس | تطبيقات الجوال، لوحات التحكم المعقدة، والواجهات المتطورة |\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nاختر الأداة المناسبة لطبيعة النظام وليس بناءً على التريندات؛ REST ممتاز للبساطة والتكاملات، و GraphQL رائع للواجهات الغنية بالبيانات والتطبيقات متعددة المنصات.\",\n",
+};

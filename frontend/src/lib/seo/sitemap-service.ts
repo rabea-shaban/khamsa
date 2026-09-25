@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { ContentStatus, Article } from '@/types/api';
 import { getSiteUrl } from './site-url';
+import { STATIC_ARTICLES } from '@/data/static-articles';
 
 export type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -20,8 +21,8 @@ export function isValidSitemapUrl(url: string): boolean {
 }
 
 /**
- * 1. Static Public Routes
- * Only valid, public routes are included. Private, dashboard, admin, and login routes are strictly excluded.
+ * 1. Static Public Pages
+ * Includes all essential educational, trust, and legal pages.
  */
 export function getStaticSitemapEntries(siteUrl: string): SitemapEntry[] {
   const staticDefinitions: Array<{
@@ -29,26 +30,15 @@ export function getStaticSitemapEntries(siteUrl: string): SitemapEntry[] {
     changeFrequency: SitemapEntry['changeFrequency'];
     priority: number;
   }> = [
-    {
-      path: '',
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      path: '/articles',
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      path: '/videos',
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      path: '/about',
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+    { path: '', changeFrequency: 'daily', priority: 1.0 },
+    { path: '/articles', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/videos', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/about', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/contact', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/privacy-policy', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/cookie-policy', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/terms', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/disclaimer', changeFrequency: 'monthly', priority: 0.6 },
   ];
 
   return staticDefinitions.map(def => ({
@@ -60,11 +50,23 @@ export function getStaticSitemapEntries(siteUrl: string): SitemapEntry[] {
 }
 
 /**
- * 2. Dynamic Articles
- * Fetches published articles from the database via the existing public API.
- * Draft and deleted articles are strictly excluded.
+ * 2. Static Educational Articles
+ * Maps all 20 static SSG articles.
  */
-export async function getArticleSitemapEntries(siteUrl: string): Promise<SitemapEntry[]> {
+export function getStaticArticleSitemapEntries(siteUrl: string): SitemapEntry[] {
+  return STATIC_ARTICLES.map(article => ({
+    url: `${siteUrl}/articles/${encodeURIComponent(article.slug)}`,
+    lastModified: new Date(article.updatedAt || article.publishedAt),
+    changeFrequency: 'weekly' as const,
+    priority: article.isFeatured ? 0.9 : 0.8,
+  }));
+}
+
+/**
+ * 3. Dynamic Database Articles
+ * Fetches published articles from the database via API.
+ */
+export async function getDynamicArticleSitemapEntries(siteUrl: string): Promise<SitemapEntry[]> {
   try {
     const apiUrl =
       process.env.NEXT_PUBLIC_API_URL ||
@@ -78,7 +80,7 @@ export async function getArticleSitemapEntries(siteUrl: string): Promise<Sitemap
     });
 
     if (!res.ok) {
-      console.warn(`[sitemap] Articles API returned HTTP ${res.status}`);
+      console.warn(`[sitemap] Dynamic articles API returned HTTP ${res.status}`);
       return [];
     }
 
@@ -87,7 +89,6 @@ export async function getArticleSitemapEntries(siteUrl: string): Promise<Sitemap
 
     return articles
       .filter(article => {
-        // Strict guard: Must be published and have a valid slug
         return (
           article.status === ContentStatus.PUBLISHED &&
           typeof article.slug === 'string' &&
@@ -106,60 +107,31 @@ export async function getArticleSitemapEntries(siteUrl: string): Promise<Sitemap
         };
       });
   } catch (error) {
-    console.warn('[sitemap] Failed to fetch dynamic articles for sitemap:', error instanceof Error ? error.message : error);
+    console.warn('[sitemap] Failed to fetch dynamic articles:', error instanceof Error ? error.message : error);
     return [];
   }
 }
 
 /**
- * 3. Dynamic Videos Extension Point
- * If individual video permalinks are introduced, they seamlessly plug in here.
- */
-export async function getVideoSitemapEntries(_siteUrl: string): Promise<SitemapEntry[]> {
-  // Currently all public videos are rendered inside the filterable /videos archive
-  return [];
-}
-
-/**
- * 4. Dynamic CMS Pages Extension Point
- * Extension point for future custom CMS pages.
- */
-export async function getPageSitemapEntries(_siteUrl: string): Promise<SitemapEntry[]> {
-  return [];
-}
-
-/**
  * Master Sitemap Builder
- * Combines static and dynamic sources with fault tolerance, URL validation, and deduplication.
+ * Combines all static, educational, and dynamic resources.
  */
 export async function buildDynamicSitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 
-  // Execute all sources in parallel with fault isolation
-  const [staticEntries, articleResults, videoResults, pageResults] = await Promise.all([
-    getStaticSitemapEntries(siteUrl),
-    getArticleSitemapEntries(siteUrl).catch(err => {
-      console.error('[sitemap] Error in getArticleSitemapEntries:', err);
-      return [] as SitemapEntry[];
-    }),
-    getVideoSitemapEntries(siteUrl).catch(err => {
-      console.error('[sitemap] Error in getVideoSitemapEntries:', err);
-      return [] as SitemapEntry[];
-    }),
-    getPageSitemapEntries(siteUrl).catch(err => {
-      console.error('[sitemap] Error in getPageSitemapEntries:', err);
-      return [] as SitemapEntry[];
-    }),
+  const [staticPages, staticArticles, dynamicArticles] = await Promise.all([
+    Promise.resolve(getStaticSitemapEntries(siteUrl)),
+    Promise.resolve(getStaticArticleSitemapEntries(siteUrl)),
+    getDynamicArticleSitemapEntries(siteUrl).catch(() => [] as SitemapEntry[]),
   ]);
 
   const allEntries: SitemapEntry[] = [
-    ...staticEntries,
-    ...articleResults,
-    ...videoResults,
-    ...pageResults,
+    ...staticPages,
+    ...staticArticles,
+    ...dynamicArticles,
   ];
 
-  // URL Validation and Deduplication (retains first valid occurrence)
+  // URL Validation and Deduplication
   const uniqueMap = new Map<string, SitemapEntry>();
 
   for (const entry of allEntries) {
