@@ -50,5 +50,116 @@ export const article16: StaticArticle = {
     keywords: ['Software Testing', 'Unit Testing', 'Integration Testing', 'Playwright', 'Vitest', 'Jest', 'React Testing'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/complete-software-testing-guide-unit-integration-e2e',
   },
-  content: "\"## لماذا نختبر؟ اقتصاديات البرمجيات وتكلفة الأخطاء\\n\\nفي دورة حياة هندسة البرمجيات، تتضاعف تكلفة إصلاح الخطأ البرمجي (Bug) بـ 10 أضعاف في كل مرحلة ينتقل فيها الكود:\\n* اكتشاف الخطأ أثناء كتابة الكود = 5 دقائق وتكلفة صفرية.\\n* اكتشاف الخطأ في اختبار الـ CI = ساعة واحدة.\\n* اكتشاف الخطأ في الإنتاج بعد إطلاقه للمستخدمين = خسائر مالية، تعطل في الخدمة، وتراجع في سمعة الشركة.\\n\\nالاختبارات الآلية ليست رفاهية تضيع الوقت، بل هي **شبكة الأمان** التي تسمح لك بتطوير ميزات جديدة ونشرها يومياً بثقة تامة.\\n\\n---\\n\\n## هرم الاختبارات (Testing Pyramid)\\n\\n```text\\n         /\\\\\\n        /  \\\\     E2E Tests (Playwright) ──> قليل، بطيء، مكلف، يختبر تدفق المستخدم بالكامل\\n       /────\\\\\\n      /      \\\\   Integration Tests (Supertest) ──> يختبر تكامل الـ APIs مع قواعد البيانات\\n     /────────\\\\\\n    /          \\\\ Unit Tests (Vitest) ──> كثير، سريع جداً، رخيص، يختبر الدوال الصافية\\n   /────────────\\\\\\n```\\n\\n---\\n\\n## 1. اختبارات الوحدة (Unit Testing) بـ Vitest\\n\\n```typescript\\n// src/utils/reading-time.test.ts\\nimport { describe, it, expect } from 'vitest';\\nimport { calculateReadingTime } from './reading-time';\\n\\ndescribe('calculateReadingTime()', () => {\\n  it('يجب أن يرجع دقيقة واحدة للمحتوى القصير أقل من 200 كلمة', () => {\\n    const text = 'هذا مقال تقني قصير يشرح مفهوم البرمجة باللغة العربية.';\\n    expect(calculateReadingTime(text)).toBe(1);\\n  });\\n\\n  it('يجب أن يحسب الوقت بدقة للمقالات الطويلة', () => {\\n    const longText = Array(600).fill('كلمة').join(' ');\\n    expect(calculateReadingTime(longText)).toBe(3);\\n  });\\n\\n  it('يجب أن يتعامل مع النصوص الفارغة دون أخطاء', () => {\\n    expect(calculateReadingTime('')).toBe(1);\\n  });\\n});\\n```\\n\\n---\\n\\n## 2. اختبارات التكامل (Integration Testing) للـ APIs بـ Supertest\\n\\n```typescript\\n// tests/articles.integration.test.ts\\nimport request from 'supertest';\\nimport { app } from '../src/app';\\n\\ndescribe('Integration: Articles API Pipeline', () => {\\n  it('GET /api/v1/public/articles - يجب أن يرجع المقالات المنشورة بحالة 200', async () => {\\n    const res = await request(app)\\n      .get('/api/v1/public/articles?limit=5')\\n      .expect(200);\\n\\n    expect(res.body.success).toBe(true);\\n    expect(Array.isArray(res.body.data.items)).toBe(true);\\n    expect(res.body.data.items.length).toBeLessThanOrEqual(5);\\n  });\\n\\n  it('POST /api/v1/admin/articles - يجب أن يرفض الطلب غير المصرح بحالة 401', async () => {\\n    const res = await request(app)\\n      .post('/api/v1/admin/articles')\\n      .send({ title: 'مقال بدون مصادقة' })\\n      .expect(401);\\n\\n    expect(res.body.success).toBe(false);\\n  });\\n});\\n```\\n\\n---\\n\\n## 3. اختبارات النهاية إلى النهاية (E2E) باستخدام Playwright\\n\\n```typescript\\n// tests/e2e/article-reading.spec.ts\\nimport { test, expect } from '@playwright/test';\\n\\ntest('يجب أن يستطيع الزائر تصفح المقال والوصول لقسم الأسئلة الشائعة', async ({ page }) => {\\n  await page.goto('/articles');\\n\\n  // البحث عن أول مقال والضغط عليه\\n  const firstArticle = page.locator('article h3 a').first();\\n  const titleText = await firstArticle.innerText();\\n  await firstArticle.click();\\n\\n  // التحقق من عنوان الصفحة والـ H1\\n  await expect(page).toHaveURL(/\\\\/articles\\\\/.+/);\\n  await expect(page.locator('h1')).toContainText(titleText);\\n\\n  // التحقق من وجود صندوق الكاتب\\n  await expect(page.locator('text=ربيع شعبان')).toBeVisible();\\n});\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* اكتب اختبارات للمسارات الحرجة ومنطق الأعمال أولاً.\\n* لا تختبر تفاصيل التنفيذ الداخلي (Implementation Details) بل اختبر السلوك والمخرجات.\\n* أدرج تشغيل الاختبارات في خطوط الـ CI/CD قبل كل عملية نشر لمنع وصول أي كود معطوب للإنتاج.\",\n",
+  content: `## لماذا نختبر؟ اقتصاديات البرمجيات وتكلفة الأخطاء
+
+في دورة حياة هندسة البرمجيات، تتضاعف تكلفة إصلاح الخطأ البرمجي (Bug) بـ 10 أضعاف في كل مرحلة ينتقل فيها الكود:
+* اكتشاف الخطأ أثناء كتابة الكود = 5 دقائق وتكلفة صفرية.
+* اكتشاف الخطأ في اختبار الـ CI = ساعة واحدة.
+* اكتشاف الخطأ في الإنتاج بعد إطلاقه للمستخدمين = خسائر مالية، تعطل في الخدمة، وتراجع في سمعة الشركة.
+
+الاختبارات الآلية ليست رفاهية تضيع الوقت، بل هي **شبكة الأمان** التي تسمح لك بتطوير ميزات جديدة ونشرها يومياً بثقة تامة.
+
+---
+
+## هرم الاختبارات (Testing Pyramid)
+
+\`\`\`text
+         /\\
+        /  \\     E2E Tests (Playwright) ──> قليل، بطيء، مكلف، يختبر تدفق المستخدم بالكامل
+       /────\\
+      /      \\   Integration Tests (Supertest) ──> يختبر تكامل الـ APIs مع قواعد البيانات
+     /────────\\
+    /          \\ Unit Tests (Vitest) ──> كثير، سريع جداً، رخيص، يختبر الدوال الصافية
+   /────────────\\
+\`\`\`
+
+---
+
+## 1. اختبارات الوحدة (Unit Testing) بـ Vitest
+
+\`\`\`typescript
+// src/utils/reading-time.test.ts
+import { describe, it, expect } from 'vitest';
+import { calculateReadingTime } from './reading-time';
+
+describe('calculateReadingTime()', () => {
+  it('يجب أن يرجع دقيقة واحدة للمحتوى القصير أقل من 200 كلمة', () => {
+    const text = 'هذا مقال تقني قصير يشرح مفهوم البرمجة باللغة العربية.';
+    expect(calculateReadingTime(text)).toBe(1);
+  });
+
+  it('يجب أن يحسب الوقت بدقة للمقالات الطويلة', () => {
+    const longText = Array(600).fill('كلمة').join(' ');
+    expect(calculateReadingTime(longText)).toBe(3);
+  });
+
+  it('يجب أن يتعامل مع النصوص الفارغة دون أخطاء', () => {
+    expect(calculateReadingTime('')).toBe(1);
+  });
+});
+\`\`\`
+
+---
+
+## 2. اختبارات التكامل (Integration Testing) للـ APIs بـ Supertest
+
+\`\`\`typescript
+// tests/articles.integration.test.ts
+import request from 'supertest';
+import { app } from '../src/app';
+
+describe('Integration: Articles API Pipeline', () => {
+  it('GET /api/v1/public/articles - يجب أن يرجع المقالات المنشورة بحالة 200', async () => {
+    const res = await request(app)
+      .get('/api/v1/public/articles?limit=5')
+      .expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data.items)).toBe(true);
+    expect(res.body.data.items.length).toBeLessThanOrEqual(5);
+  });
+
+  it('POST /api/v1/admin/articles - يجب أن يرفض الطلب غير المصرح بحالة 401', async () => {
+    const res = await request(app)
+      .post('/api/v1/admin/articles')
+      .send({ title: 'مقال بدون مصادقة' })
+      .expect(401);
+
+    expect(res.body.success).toBe(false);
+  });
+});
+\`\`\`
+
+---
+
+## 3. اختبارات النهاية إلى النهاية (E2E) باستخدام Playwright
+
+\`\`\`typescript
+// tests/e2e/article-reading.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('يجب أن يستطيع الزائر تصفح المقال والوصول لقسم الأسئلة الشائعة', async ({ page }) => {
+  await page.goto('/articles');
+
+  // البحث عن أول مقال والضغط عليه
+  const firstArticle = page.locator('article h3 a').first();
+  const titleText = await firstArticle.innerText();
+  await firstArticle.click();
+
+  // التحقق من عنوان الصفحة والـ H1
+  await expect(page).toHaveURL(/\\/articles\\/.+/);
+  await expect(page.locator('h1')).toContainText(titleText);
+
+  // التحقق من وجود صندوق الكاتب
+  await expect(page.locator('text=ربيع شعبان')).toBeVisible();
+});
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* اكتب اختبارات للمسارات الحرجة ومنطق الأعمال أولاً.
+* لا تختبر تفاصيل التنفيذ الداخلي (Implementation Details) بل اختبر السلوك والمخرجات.
+* أدرج تشغيل الاختبارات في خطوط الـ CI/CD قبل كل عملية نشر لمنع وصول أي كود معطوب للإنتاج.",`,
 };

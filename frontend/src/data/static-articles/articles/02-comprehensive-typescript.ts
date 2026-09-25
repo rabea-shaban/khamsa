@@ -58,5 +58,242 @@ export const article02: StaticArticle = {
     keywords: ['TypeScript', 'Generics', 'Type Safety', 'Advanced Types', 'TypeScript بالعربي', 'هندسة البرمجيات'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/comprehensive-typescript-guide-types-generics-patterns',
   },
-  content: "\"\\n## لماذا نحتاج TypeScript ولماذا ليست مجرد قيود كتابية؟\\n\\nفي المراحل الأولى لأي مشروع برمجي، قد تبدو لغة **JavaScript** البسيطة سريعة ومغرية؛ فأنت تكتب المتغيرات مباشرة وتختبر التطبيق في ثوانٍ. ولكن مع توسع المشروع، وزيادة أسطر الكود عن 10,000 سطر، ودخول أكثر من مطور في الفريق، تبدأ الفوضى المعمارية بالظهور:\\n* أخطاء الـ `Cannot read properties of undefined` التي تظهر فجأة في بيئة الإنتاج أمام المستخدمين.\\n* الخوف الشديد من إعادة هيكلة الكود (Refactoring) لأنك لا تدري ما الذي قد ينكسر في ملفات أخرى.\\n* قضاء ساعات طويلة في قراءة كود قديم لمعرفة نوع البيانات التي تستقبلها دالة معينة.\\n\\nهنا يأتي دور **TypeScript**: فهي ليست مجرد أداة لإضافة الأنواع، بل هي **عقد هندسي صارم (Type Contract)**، وأداة توثيق حية تفاعلية، وخط دفاع أول يمنع أكثر من 60% من أخطاء الـ Runtime قبل أن يُترجم كودك إلى JavaScript أصلاً!\\n\\n---\\n\\n## فهم نظام الأنواع: Structural Typing مقابل Nominal Typing\\n\\nفي لغات مثل Java أو #C، يعتمد نظام الأنواع على **Nominal Typing**؛ أي أن الكائن يجب أن يكون صراحة مشتقاً من الكلاس المسمى لكي يُقبل.\\n\\nأما **TypeScript**، فهي تعتمد على **Structural Typing** (نظام الأنواع الهيكلي):\\nالمترجم لا يهتم باسم الكائن أو الـ Interface، بل ينظر فقط إلى **شكله الداخلي وحقوله**:\\n\\n```typescript\\ninterface Point2D {\\n  x: number;\\n  y: number;\\n}\\n\\ninterface Coordinate {\\n  x: number;\\n  y: number;\\n}\\n\\nfunction renderPoint(point: Point2D): void {\\n  console.log(`الإحداثيات: X=\\${point.x}, Y=\\${point.y}`);\\n}\\n\\nconst mapCoord: Coordinate = { x: 100, y: 250 };\\n\\n// ✅ يعمل بنجاح تام لأن Coordinate و Point2D متطابقان هيكلياً في الخصائص والأنواع!\\nrenderPoint(mapCoord);\\n\\n// كائن إضافي يحتوي على حقل z زائد\\nconst point3D = { x: 10, y: 20, z: 30 };\\nrenderPoint(point3D); // ✅ مسموح لأن point3D يحتوي على x و y المطلوبين على الأقل\\n```\\n\\n---\\n\\n## احتراف الـ Generics: كتابة كود مرن وقابل لإعادة الاستخدام\\n\\nالـ **Generics** هي الميزة الأقوى في TypeScript؛ فهي تتيح لك كتابة دوال، وكلاسات، وواجهات برمجية تعمل مع أي نوع بيانات مع الحفاظ التام على الأمان وفحص الأنواع دون التضحية بـ `any`.\\n\\n### بناء Generic Repository Pattern موحد لقواعد البيانات:\\n\\n```typescript\\nexport interface BaseEntity {\\n  id: string;\\n  createdAt: Date;\\n  updatedAt: Date;\\n}\\n\\nexport interface IRepository<T extends BaseEntity> {\\n  findById(id: string): Promise<T | null>;\\n  findAll(filter?: Partial<T>): Promise<T[]>;\\n  create(item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;\\n  update(id: string, item: Partial<T>): Promise<T | null>;\\n  delete(id: string): Promise<boolean>;\\n}\\n\\n// كيان المقالات\\nexport interface ArticleEntity extends BaseEntity {\\n  title: string;\\n  slug: string;\\n  content: string;\\n  viewsCount: number;\\n  isPublished: boolean;\\n}\\n\\n// تطبيق الـ Repository للمقالات مع الـ Type Safety التام\\nexport class ArticleRepository implements IRepository<ArticleEntity> {\\n  private items: ArticleEntity[] = [];\\n\\n  async findById(id: string): Promise<ArticleEntity | null> {\\n    return this.items.find(item => item.id === id) || null;\\n  }\\n\\n  async findAll(filter?: Partial<ArticleEntity>): Promise<ArticleEntity[]> {\\n    if (!filter) return this.items;\\n    return this.items.filter(item => {\\n      return Object.entries(filter).every(([key, value]) => (item as any)[key] === value);\\n    });\\n  }\\n\\n  async create(data: Omit<ArticleEntity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ArticleEntity> {\\n    const newArticle: ArticleEntity = {\\n      ...data,\\n      id: `art_\\${Date.now()}`,\\n      createdAt: new Date(),\\n      updatedAt: new Date(),\\n    };\\n    this.items.push(newArticle);\\n    return newArticle;\\n  }\\n\\n  async update(id: string, updateData: Partial<ArticleEntity>): Promise<ArticleEntity | null> {\\n    const index = this.items.findIndex(i => i.id === id);\\n    if (index === -1) return null;\\n\\n    this.items[index] = {\\n      ...this.items[index],\\n      ...updateData,\\n      updatedAt: new Date(),\\n    };\\n    return this.items[index];\\n  }\\n\\n  async delete(id: string): Promise<boolean> {\\n    const initialLen = this.items.length;\\n    this.items = this.items.filter(i => i.id !== id);\\n    return this.items.length < initialLen;\\n  }\\n}\\n```\\n\\n---\\n\\n## الـ Type Narrowing والـ Discriminated Unions\\n\\nعند التعامل مع طلبات الشبكة، تقع الكثير من التطبيقات في أخطاء عندما تكون الحالة غير متسقة. الـ **Discriminated Unions** تحل المشكلة جذرياً:\\n\\n```typescript\\ntype NetworkResult<TData> =\\n  | { status: 'idle' }\\n  | { status: 'loading' }\\n  | { status: 'success'; data: TData; latencyMs: number }\\n  | { status: 'error'; error: Error; statusCode: number };\\n\\nfunction handleApiResponse<T>(response: NetworkResult<T>): string {\\n  switch (response.status) {\\n    case 'idle':\\n      return 'في انتظار بدء الطلب...';\\n    case 'loading':\\n      return 'جاري جلب البيانات من الخادم...';\\n    case 'success':\\n      // المترجم يعرف أن response.data موجود حصرياً هنا وبدون الحاجة لـ Type Casting\\n      return `تم النجاح في \\${response.latencyMs}ms! البيانات جاهزة.`;\\n    case 'error':\\n      // المترجم يعرف أن response.error و response.statusCode متاحان هنا فقط\\n      return `فشل الطلب [HTTP \\${response.statusCode}]: \\${response.error.message}`;\\n  }\\n}\\n```\\n\\n---\\n\\n## أسرار الـ Utility Types: Partial, Pick, Omit, Record\\n\\n```typescript\\ninterface UserAccount {\\n  id: string;\\n  name: string;\\n  email: string;\\n  role: 'ADMIN' | 'EDITOR' | 'USER';\\n  passwordHash: string;\\n  isVerified: boolean;\\n}\\n\\n// 1. Omit: استبعاد الحقول الحساسة لإنشاء DTO عام\\ntype PublicUserDto = Omit<UserAccount, 'passwordHash'>;\\n\\n// 2. Pick: اختيار حقول محددة لبطاقة العرض المصغرة\\ntype UserHeaderSummary = Pick<UserAccount, 'id' | 'name' | 'role'>;\\n\\n// 3. Partial: لتحديث الملف الشخصي حيث تكون كل الحقول اختيارية\\ntype UpdateProfilePayload = Partial<Pick<UserAccount, 'name' | 'email'>>;\\n\\n// 4. Record: لتعريف خريطة الأذونات\\ntype PermissionMap = Record<UserAccount['role'], string[]>;\\n\\nconst permissions: PermissionMap = {\\n  ADMIN: ['MANAGE_USERS', 'PUBLISH_ARTICLES', 'DELETE_MEDIA'],\\n  EDITOR: ['WRITE_ARTICLES', 'EDIT_ARTICLES'],\\n  USER: ['READ_ARTICLES', 'POST_COMMENTS'],\\n};\\n```\\n\\n---\\n\\n## سد الفجوة بين وقت الترجمة ووقت التشغيل (Zod + TypeScript)\\n\\nبما أن TypeScript تُحذف بالكامل عند بناء الكود (Compile Time only)، فإن فحص البيانات الخارجية القادمة من نماذج المستخدم أو الـ APIs يتطلب مكتبة Schema Validation مثل **Zod**:\\n\\n```typescript\\nimport { z } from 'zod';\\n\\nexport const UserRegistrationSchema = z.object({\\n  name: z.string().min(3, 'الاسم يجب أن يكون 3 أحرف على الأقل'),\\n  email: z.string().email('صيغة البريد الإلكتروني غير صحيحة'),\\n  password: z.string().min(8, 'كلمة المرور يجب ألا تقل عن 8 خانات'),\\n  age: z.number().int().min(16, 'العمر يجب أن يكون 16 سنة فما فوق').optional(),\\n});\\n\\n// استخراج نوع TypeScript تلقائياً من الـ Schema بدون تكرار الكود!\\nexport type UserRegistrationInput = z.infer<typeof UserRegistrationSchema>;\\n\\nexport function registerUser(input: unknown): UserRegistrationInput {\\n  // يفحص البيانات أثناء التشغيل ويرمي أخطاء واضحة إذا كانت غير مطابقة\\n  return UserRegistrationSchema.parse(input);\\n}\\n```\\n\\n---\\n\\n## إعدادات tsconfig.json الصارمة لبيئات الإنتاج (Enterprise)\\n\\n```json\\n{\\n  \"compilerOptions\": {\\n    \"target\": \"ES2022\",\\n    \"lib\": [\"DOM\", \"DOM.Iterable\", \"ES2022\"],\\n    \"module\": \"ESNext\",\\n    \"moduleResolution\": \"bundler\",\\n    \"strict\": true,\\n    \"noImplicitAny\": true,\\n    \"strictNullChecks\": true,\\n    \"strictFunctionTypes\": true,\\n    \"noUncheckedIndexedAccess\": true,\\n    \"exactOptionalPropertyTypes\": true,\\n    \"skipLibCheck\": true,\\n    \"forceConsistentCasingInFileNames\": true\\n  }\\n}\\n```\\n\\n---\\n\\n## الخلاصة ومبادئ المطور المحترف\\n\\nTypeScript ليست عبئاً كتابياً، بل هي التأمين الشامل لكودك البرمجي. عندما تتقن الـ Generics، والـ Discriminated Unions، والتكامل مع Zod، ستكتب شفرات برمجية ذات موثوقية لا تلين، وسرعة تطوير تضاعف إنتاجيتك في مشاريع الإنتاج الحقيقية.\\n  `\\n\",\n",
+  content: `## لماذا نحتاج TypeScript ولماذا ليست مجرد قيود كتابية؟
+
+في المراحل الأولى لأي مشروع برمجي، قد تبدو لغة **JavaScript** البسيطة سريعة ومغرية؛ فأنت تكتب المتغيرات مباشرة وتختبر التطبيق في ثوانٍ. ولكن مع توسع المشروع، وزيادة أسطر الكود عن 10,000 سطر، ودخول أكثر من مطور في الفريق، تبدأ الفوضى المعمارية بالظهور:
+* أخطاء الـ \`Cannot read properties of undefined\` التي تظهر فجأة في بيئة الإنتاج أمام المستخدمين.
+* الخوف الشديد من إعادة هيكلة الكود (Refactoring) لأنك لا تدري ما الذي قد ينكسر في ملفات أخرى.
+* قضاء ساعات طويلة في قراءة كود قديم لمعرفة نوع البيانات التي تستقبلها دالة معينة.
+
+هنا يأتي دور **TypeScript**: فهي ليست مجرد أداة لإضافة الأنواع، بل هي **عقد هندسي صارم (Type Contract)**، وأداة توثيق حية تفاعلية، وخط دفاع أول يمنع أكثر من 60% من أخطاء الـ Runtime قبل أن يُترجم كودك إلى JavaScript أصلاً!
+
+---
+
+## فهم نظام الأنواع: Structural Typing مقابل Nominal Typing
+
+في لغات مثل Java أو #C، يعتمد نظام الأنواع على **Nominal Typing**؛ أي أن الكائن يجب أن يكون صراحة مشتقاً من الكلاس المسمى لكي يُقبل.
+
+أما **TypeScript**، فهي تعتمد على **Structural Typing** (نظام الأنواع الهيكلي):
+المترجم لا يهتم باسم الكائن أو الـ Interface، بل ينظر فقط إلى **شكله الداخلي وحقوله**:
+
+\`\`\`typescript
+interface Point2D {
+  x: number;
+  y: number;
+}
+
+interface Coordinate {
+  x: number;
+  y: number;
+}
+
+function renderPoint(point: Point2D): void {
+  console.log(\`الإحداثيات: X=\\\${point.x}, Y=\\\${point.y}\`);
+}
+
+const mapCoord: Coordinate = { x: 100, y: 250 };
+
+// ✅ يعمل بنجاح تام لأن Coordinate و Point2D متطابقان هيكلياً في الخصائص والأنواع!
+renderPoint(mapCoord);
+
+// كائن إضافي يحتوي على حقل z زائد
+const point3D = { x: 10, y: 20, z: 30 };
+renderPoint(point3D); // ✅ مسموح لأن point3D يحتوي على x و y المطلوبين على الأقل
+\`\`\`
+
+---
+
+## احتراف الـ Generics: كتابة كود مرن وقابل لإعادة الاستخدام
+
+الـ **Generics** هي الميزة الأقوى في TypeScript؛ فهي تتيح لك كتابة دوال، وكلاسات، وواجهات برمجية تعمل مع أي نوع بيانات مع الحفاظ التام على الأمان وفحص الأنواع دون التضحية بـ \`any\`.
+
+### بناء Generic Repository Pattern موحد لقواعد البيانات:
+
+\`\`\`typescript
+export interface BaseEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IRepository<T extends BaseEntity> {
+  findById(id: string): Promise<T | null>;
+  findAll(filter?: Partial<T>): Promise<T[]>;
+  create(item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
+  update(id: string, item: Partial<T>): Promise<T | null>;
+  delete(id: string): Promise<boolean>;
+}
+
+// كيان المقالات
+export interface ArticleEntity extends BaseEntity {
+  title: string;
+  slug: string;
+  content: string;
+  viewsCount: number;
+  isPublished: boolean;
+}
+
+// تطبيق الـ Repository للمقالات مع الـ Type Safety التام
+export class ArticleRepository implements IRepository<ArticleEntity> {
+  private items: ArticleEntity[] = [];
+
+  async findById(id: string): Promise<ArticleEntity | null> {
+    return this.items.find(item => item.id === id) || null;
+  }
+
+  async findAll(filter?: Partial<ArticleEntity>): Promise<ArticleEntity[]> {
+    if (!filter) return this.items;
+    return this.items.filter(item => {
+      return Object.entries(filter).every(([key, value]) => (item as any)[key] === value);
+    });
+  }
+
+  async create(data: Omit<ArticleEntity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ArticleEntity> {
+    const newArticle: ArticleEntity = {
+      ...data,
+      id: \`art_\\\${Date.now()}\`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.items.push(newArticle);
+    return newArticle;
+  }
+
+  async update(id: string, updateData: Partial<ArticleEntity>): Promise<ArticleEntity | null> {
+    const index = this.items.findIndex(i => i.id === id);
+    if (index === -1) return null;
+
+    this.items[index] = {
+      ...this.items[index],
+      ...updateData,
+      updatedAt: new Date(),
+    };
+    return this.items[index];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const initialLen = this.items.length;
+    this.items = this.items.filter(i => i.id !== id);
+    return this.items.length < initialLen;
+  }
+}
+\`\`\`
+
+---
+
+## الـ Type Narrowing والـ Discriminated Unions
+
+عند التعامل مع طلبات الشبكة، تقع الكثير من التطبيقات في أخطاء عندما تكون الحالة غير متسقة. الـ **Discriminated Unions** تحل المشكلة جذرياً:
+
+\`\`\`typescript
+type NetworkResult<TData> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: TData; latencyMs: number }
+  | { status: 'error'; error: Error; statusCode: number };
+
+function handleApiResponse<T>(response: NetworkResult<T>): string {
+  switch (response.status) {
+    case 'idle':
+      return 'في انتظار بدء الطلب...';
+    case 'loading':
+      return 'جاري جلب البيانات من الخادم...';
+    case 'success':
+      // المترجم يعرف أن response.data موجود حصرياً هنا وبدون الحاجة لـ Type Casting
+      return \`تم النجاح في \\\${response.latencyMs}ms! البيانات جاهزة.\`;
+    case 'error':
+      // المترجم يعرف أن response.error و response.statusCode متاحان هنا فقط
+      return \`فشل الطلب [HTTP \\\${response.statusCode}]: \\\${response.error.message}\`;
+  }
+}
+\`\`\`
+
+---
+
+## أسرار الـ Utility Types: Partial, Pick, Omit, Record
+
+\`\`\`typescript
+interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  role: 'ADMIN' | 'EDITOR' | 'USER';
+  passwordHash: string;
+  isVerified: boolean;
+}
+
+// 1. Omit: استبعاد الحقول الحساسة لإنشاء DTO عام
+type PublicUserDto = Omit<UserAccount, 'passwordHash'>;
+
+// 2. Pick: اختيار حقول محددة لبطاقة العرض المصغرة
+type UserHeaderSummary = Pick<UserAccount, 'id' | 'name' | 'role'>;
+
+// 3. Partial: لتحديث الملف الشخصي حيث تكون كل الحقول اختيارية
+type UpdateProfilePayload = Partial<Pick<UserAccount, 'name' | 'email'>>;
+
+// 4. Record: لتعريف خريطة الأذونات
+type PermissionMap = Record<UserAccount['role'], string[]>;
+
+const permissions: PermissionMap = {
+  ADMIN: ['MANAGE_USERS', 'PUBLISH_ARTICLES', 'DELETE_MEDIA'],
+  EDITOR: ['WRITE_ARTICLES', 'EDIT_ARTICLES'],
+  USER: ['READ_ARTICLES', 'POST_COMMENTS'],
+};
+\`\`\`
+
+---
+
+## سد الفجوة بين وقت الترجمة ووقت التشغيل (Zod + TypeScript)
+
+بما أن TypeScript تُحذف بالكامل عند بناء الكود (Compile Time only)، فإن فحص البيانات الخارجية القادمة من نماذج المستخدم أو الـ APIs يتطلب مكتبة Schema Validation مثل **Zod**:
+
+\`\`\`typescript
+import { z } from 'zod';
+
+export const UserRegistrationSchema = z.object({
+  name: z.string().min(3, 'الاسم يجب أن يكون 3 أحرف على الأقل'),
+  email: z.string().email('صيغة البريد الإلكتروني غير صحيحة'),
+  password: z.string().min(8, 'كلمة المرور يجب ألا تقل عن 8 خانات'),
+  age: z.number().int().min(16, 'العمر يجب أن يكون 16 سنة فما فوق').optional(),
+});
+
+// استخراج نوع TypeScript تلقائياً من الـ Schema بدون تكرار الكود!
+export type UserRegistrationInput = z.infer<typeof UserRegistrationSchema>;
+
+export function registerUser(input: unknown): UserRegistrationInput {
+  // يفحص البيانات أثناء التشغيل ويرمي أخطاء واضحة إذا كانت غير مطابقة
+  return UserRegistrationSchema.parse(input);
+}
+\`\`\`
+
+---
+
+## إعدادات tsconfig.json الصارمة لبيئات الإنتاج (Enterprise)
+
+\`\`\`json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
+\`\`\`
+
+---
+
+## الخلاصة ومبادئ المطور المحترف
+
+TypeScript ليست عبئاً كتابياً، بل هي التأمين الشامل لكودك البرمجي. عندما تتقن الـ Generics، والـ Discriminated Unions، والتكامل مع Zod، ستكتب شفرات برمجية ذات موثوقية لا تلين، وسرعة تطوير تضاعف إنتاجيتك في مشاريع الإنتاج الحقيقية.
+  \`
+",`,
 };

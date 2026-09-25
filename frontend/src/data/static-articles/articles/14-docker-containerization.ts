@@ -49,5 +49,127 @@ export const article14: StaticArticle = {
     keywords: ['Docker', 'Containers', 'Docker Compose', 'Multi Stage Build', 'Node.js Docker', 'DevOps'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/practical-docker-containerization-guide-web-developers',
   },
-  content: "\"## حل أزمة «شغال على جهازي ومش شغال على السيرفر!»\\n\\nفي تطوير البرمجيات التقليدي، يقضي المطورون ساعات طويلة في حل مشاكل اختلاف إصدارات Node.js، والمكتبات المفقودة، واختلاف أنظمة التشغيل بين أجهزة التطوير (macOS / Windows) وخوادم الإنتاج (Linux Ubuntu).\\n\\nتقوم **Docker** بحزم الكود المصدري، وبيئة التشغيل (Runtime)، والمكتبات، وإعدادات النظام، والاعتماديات بالكامل داخل وحدة معزولة وموحدة تسمى **Container**؛ لتعمل بنفس السلوك والدقة على أي جهاز أو خادم سحابي في العالم.\\n\\n---\\n\\n## الحاويات (Containers) مقابل الأجهزة الافتراضية (VMs)\\n\\n| الخاصية | الحاويات (Docker Containers) | الأجهزة الافتراضية (Virtual Machines) |\\n| :--- | :--- | :--- |\\n| **المعمارية** | تشارك نواة نظام التشغيل المضيف (Shared OS Kernel) | تتطلب نظام تشغيل ضيف كامل (Guest OS) لكل جهاز |\\n| **زمن التشغيل** | أجزاء من الثانية (Milliseconds) | دقائق للإقلاع الكامل |\\n| **استهلاك الموارد** | خفيف جداً (MBs of RAM) | ثقيل جداً (GBs of RAM & CPU) |\\n| **حجم الصورة** | عشرات الميجابايتات (Alpine) | عشرات الجيجابايتات |\\n\\n---\\n\\n## كتابة Multi-Stage Dockerfile احترافي لـ Next.js و Node.js\\n\\n```dockerfile\\n# 1. مرحلة الاعتماديات (Dependencies Layer)\\nFROM node:20-alpine AS deps\\nRUN apk add --no-cache libc6-compat\\nWORKDIR /app\\nCOPY package.json package-lock.json ./\\nRUN npm ci\\n\\n# 2. مرحلة البناء والترجمة (Build Layer)\\nFROM node:20-alpine AS builder\\nWORKDIR /app\\nCOPY --from=deps /app/node_modules ./node_modules\\nCOPY . .\\nENV NEXT_TELEMETRY_DISABLED 1\\nRUN npm run build\\n\\n# 3. صورة الإنتاج النهائية فائقة الخفة والأمان (Runner Layer)\\nFROM node:20-alpine AS runner\\nWORKDIR /app\\nENV NODE_ENV production\\nENV NEXT_TELEMETRY_DISABLED 1\\n\\n# تشغيل كـ Non-Root User للأمان الصارم\\nRUN addgroup --system --gid 1001 nodejs\\nRUN adduser --system --uid 1001 nextjs\\n\\nCOPY --from=builder /app/public ./public\\nCOPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./\\nCOPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static\\n\\nUSER nextjs\\nEXPOSE 3000\\nENV PORT 3000\\nENV HOSTNAME \"0.0.0.0\"\\n\\nCMD [\"node\", \"server.js\"]\\n```\\n\\n---\\n\\n## إدارة البيئات المعقدة عبر Docker Compose\\n\\n```yaml\\n# docker-compose.yml\\nversion: '3.8'\\n\\nservices:\\n  app:\\n    build:\\n      context: .\\n      dockerfile: Dockerfile\\n    ports:\\n      - '3000:3000'\\n    environment:\\n      - NODE_ENV=development\\n      - MONGO_URI=mongodb://db:27017/khamsa_cms\\n      - REDIS_URL=redis://cache:6379\\n    volumes:\\n      - .:/app\\n      - /app/node_modules\\n    depends_on:\\n      - db\\n      - cache\\n\\n  db:\\n    image: mongo:7.0\\n    restart: always\\n    ports:\\n      - '27017:27017'\\n    volumes:\\n      - mongo_data:/data/db\\n\\n  cache:\\n    image: redis:7.2-alpine\\n    restart: always\\n    ports:\\n      - '6379:6379'\\n    volumes:\\n      - redis_data:/data\\n\\nvolumes:\\n  mongo_data:\\n  redis_data:\\n```\\n\\n---\\n\\n## قواعد الأمان الخمس الأساسية للحاويات\\n\\n1. **لا تشغل الحاوية كـ Root أبداً:** استخدم مستخدم مخصص محدود الصلاحيات.\\n2. **استخدم صور Minimal ومحدثة:** مثل `node:20-alpine` لتقليل مساحة الهجوم.\\n3. **فحص الثغرات الأمنية تلقائياً:** عبر أدوات مثل `docker scout` أو `Trivy`.\\n4. **تجنب حفظ أسرار الـ API داخل الـ Dockerfile:** مررها دائماً عبر Environment Variables أثناء التشغيل.\\n5. **استخدم `.dockerignore`:** لمنع نسخ مجلدات `node_modules` و `.git` إلى سياق البناء.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* استخدم دائماً صور **Alpine Linux** لخفة الحجم والأمان.\\n* افصل مراحل البناء عن التشغيل عبر Multi-stage builds لتقليل حجم الصورة بنسبة 90%.\\n* شغّل الحاوية دائماً كـ Non-root user لحماية الخادم السحابي من الاختراق.\",\n",
+  content: `## حل أزمة «شغال على جهازي ومش شغال على السيرفر!»
+
+في تطوير البرمجيات التقليدي، يقضي المطورون ساعات طويلة في حل مشاكل اختلاف إصدارات Node.js، والمكتبات المفقودة، واختلاف أنظمة التشغيل بين أجهزة التطوير (macOS / Windows) وخوادم الإنتاج (Linux Ubuntu).
+
+تقوم **Docker** بحزم الكود المصدري، وبيئة التشغيل (Runtime)، والمكتبات، وإعدادات النظام، والاعتماديات بالكامل داخل وحدة معزولة وموحدة تسمى **Container**؛ لتعمل بنفس السلوك والدقة على أي جهاز أو خادم سحابي في العالم.
+
+---
+
+## الحاويات (Containers) مقابل الأجهزة الافتراضية (VMs)
+
+| الخاصية | الحاويات (Docker Containers) | الأجهزة الافتراضية (Virtual Machines) |
+| :--- | :--- | :--- |
+| **المعمارية** | تشارك نواة نظام التشغيل المضيف (Shared OS Kernel) | تتطلب نظام تشغيل ضيف كامل (Guest OS) لكل جهاز |
+| **زمن التشغيل** | أجزاء من الثانية (Milliseconds) | دقائق للإقلاع الكامل |
+| **استهلاك الموارد** | خفيف جداً (MBs of RAM) | ثقيل جداً (GBs of RAM & CPU) |
+| **حجم الصورة** | عشرات الميجابايتات (Alpine) | عشرات الجيجابايتات |
+
+---
+
+## كتابة Multi-Stage Dockerfile احترافي لـ Next.js و Node.js
+
+\`\`\`dockerfile
+# 1. مرحلة الاعتماديات (Dependencies Layer)
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# 2. مرحلة البناء والترجمة (Build Layer)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm run build
+
+# 3. صورة الإنتاج النهائية فائقة الخفة والأمان (Runner Layer)
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# تشغيل كـ Non-Root User للأمان الصارم
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+\`\`\`
+
+---
+
+## إدارة البيئات المعقدة عبر Docker Compose
+
+\`\`\`yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://db:27017/khamsa_cms
+      - REDIS_URL=redis://cache:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+      - cache
+
+  db:
+    image: mongo:7.0
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  cache:
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:
+\`\`\`
+
+---
+
+## قواعد الأمان الخمس الأساسية للحاويات
+
+1. **لا تشغل الحاوية كـ Root أبداً:** استخدم مستخدم مخصص محدود الصلاحيات.
+2. **استخدم صور Minimal ومحدثة:** مثل \`node:20-alpine\` لتقليل مساحة الهجوم.
+3. **فحص الثغرات الأمنية تلقائياً:** عبر أدوات مثل \`docker scout\` أو \`Trivy\`.
+4. **تجنب حفظ أسرار الـ API داخل الـ Dockerfile:** مررها دائماً عبر Environment Variables أثناء التشغيل.
+5. **استخدم \`.dockerignore\`:** لمنع نسخ مجلدات \`node_modules\` و \`.git\` إلى سياق البناء.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* استخدم دائماً صور **Alpine Linux** لخفة الحجم والأمان.
+* افصل مراحل البناء عن التشغيل عبر Multi-stage builds لتقليل حجم الصورة بنسبة 90%.
+* شغّل الحاوية دائماً كـ Non-root user لحماية الخادم السحابي من الاختراق.",`,
 };

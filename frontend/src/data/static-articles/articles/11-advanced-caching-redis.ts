@@ -49,5 +49,66 @@ export const article11: StaticArticle = {
     keywords: ['Redis', 'Caching', 'Cache Aside', 'TTL', 'Rate Limiting', 'Database Optimization'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/advanced-caching-redis-strategies-practical-patterns',
   },
-  content: "\"## لماذا Redis أسرع من قواعد البيانات التقليدية بـ 100 ضعف؟\\n\\n**Redis (Remote Dictionary Server)** هي قاعدة بيانات تعمل بالكامل داخل الذاكرة العشوائية (In-Memory Data Store) ذات بنية أحادية المسار (Single-Threaded Event Loop)، مما يمنحها القدرة على معالجة أكثر من 100,000 عملية في الثانية بزمن استجابة أقل من 1 ملي ثانية.\\n\\n---\\n\\n## أنماط الـ Caching الأساسية\\n\\n1. **Cache-Aside (Lazy Loading):** يفحص التطبيق الكاش أولاً، إذا وُجدت البيانات يرجعها (Cache Hit)، وإذا لم توجد (Cache Miss) يجلبها من قاعدة البيانات ويحفظها في الكاش للمرات القادمة.\\n2. **Write-Through:** يكتب التطبيق البيانات في الكاش، والكاش يتولى كتابتها فوراً في قاعدة البيانات بالتوازي.\\n3. **Write-Behind (Write-Back):** يكتب التطبيق في الكاش سريعاً، ويتم تجميع الكتابات وحفظها في قاعدة البيانات في الخلفية بشكل غير متزامن.\\n\\n---\\n\\n## تطبيق نمط Cache-Aside عملياً مع فترات TTL ذكية\\n\\n```typescript\\nimport Redis from 'ioredis';\\n\\nconst redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');\\n\\nexport async function getCachedArticle(slug: string, fetchFromDb: () => Promise<any>) {\\n  const cacheKey = `article:slug:${slug}`;\\n\\n  // 1. فحص الكاش\\n  const cachedData = await redis.get(cacheKey);\\n  if (cachedData) {\\n    return JSON.parse(cachedData); // Cache Hit\\n  }\\n\\n  // 2. Cache Miss: الجلب من قاعدة البيانات\\n  const liveData = await fetchFromDb();\\n  if (!liveData) return null;\\n\\n  // 3. إضافة Jitter لمنع Cache Avalanche\\n  const baseTtlSeconds = 3600; // ساعة\\n  const randomJitter = Math.floor(Math.random() * 300); // 0 إلى 5 دقائق\\n  const finalTtl = baseTtlSeconds + randomJitter;\\n\\n  // 4. الحفظ في Redis مع انتهاء صلاحية\\n  await redis.set(cacheKey, JSON.stringify(liveData), 'EX', finalTtl);\\n\\n  return liveData;\\n}\\n```\\n\\n---\\n\\n## كوارث الكاش الثلاث وحلولها المعمارية\\n\\n* **Cache Stampede (Thundering Herd):** عندما ينتهي مفتاح شهير جداً، فتحاول 10,000 عملية في نفس الجزء من الثانية قراءة قاعدة البيانات. الحل: استخدام **Mutex Locks (Redlock)** أو إعادة تجديد الكاش مبكراً قبل انتهائه (Probabilistic Early Expiration).\\n* **Cache Penetration:** عندما يطلب المهاجم معرفات غير موجودة أصلاً لا في الكاش ولا في الداتا بيز لإرهاق السيرفر. الحل: استخدام **Bloom Filters** أو تخزين القيمة الفارغة `null` في الكاش بـ TTL قصير (60 ثانية).\\n* **Cache Avalanche:** انتهاء صلاحية آلاف المفاتيح في نفس اللحظة مما يؤدي لسقوط قاعدة البيانات. الحل: إضافة وقت عشوائي **Jitter** لكل TTL.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* لا تجعل الكاش المصدر الوحيد للبيانات، بل خط دفاع سريع.\\n* ضع دائماً **TTL** لكل مفتاح.\\n* استخدم الـ **Jitter** لتوزيع انتهاء الصلاحية وتفادي الانهيار المتزامن.`\\n\",\n",
+  content: `## لماذا Redis أسرع من قواعد البيانات التقليدية بـ 100 ضعف؟
+
+**Redis (Remote Dictionary Server)** هي قاعدة بيانات تعمل بالكامل داخل الذاكرة العشوائية (In-Memory Data Store) ذات بنية أحادية المسار (Single-Threaded Event Loop)، مما يمنحها القدرة على معالجة أكثر من 100,000 عملية في الثانية بزمن استجابة أقل من 1 ملي ثانية.
+
+---
+
+## أنماط الـ Caching الأساسية
+
+1. **Cache-Aside (Lazy Loading):** يفحص التطبيق الكاش أولاً، إذا وُجدت البيانات يرجعها (Cache Hit)، وإذا لم توجد (Cache Miss) يجلبها من قاعدة البيانات ويحفظها في الكاش للمرات القادمة.
+2. **Write-Through:** يكتب التطبيق البيانات في الكاش، والكاش يتولى كتابتها فوراً في قاعدة البيانات بالتوازي.
+3. **Write-Behind (Write-Back):** يكتب التطبيق في الكاش سريعاً، ويتم تجميع الكتابات وحفظها في قاعدة البيانات في الخلفية بشكل غير متزامن.
+
+---
+
+## تطبيق نمط Cache-Aside عملياً مع فترات TTL ذكية
+
+\`\`\`typescript
+import Redis from 'ioredis';
+
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+
+export async function getCachedArticle(slug: string, fetchFromDb: () => Promise<any>) {
+  const cacheKey = \`article:slug:\${slug}\`;
+
+  // 1. فحص الكاش
+  const cachedData = await redis.get(cacheKey);
+  if (cachedData) {
+    return JSON.parse(cachedData); // Cache Hit
+  }
+
+  // 2. Cache Miss: الجلب من قاعدة البيانات
+  const liveData = await fetchFromDb();
+  if (!liveData) return null;
+
+  // 3. إضافة Jitter لمنع Cache Avalanche
+  const baseTtlSeconds = 3600; // ساعة
+  const randomJitter = Math.floor(Math.random() * 300); // 0 إلى 5 دقائق
+  const finalTtl = baseTtlSeconds + randomJitter;
+
+  // 4. الحفظ في Redis مع انتهاء صلاحية
+  await redis.set(cacheKey, JSON.stringify(liveData), 'EX', finalTtl);
+
+  return liveData;
+}
+\`\`\`
+
+---
+
+## كوارث الكاش الثلاث وحلولها المعمارية
+
+* **Cache Stampede (Thundering Herd):** عندما ينتهي مفتاح شهير جداً، فتحاول 10,000 عملية في نفس الجزء من الثانية قراءة قاعدة البيانات. الحل: استخدام **Mutex Locks (Redlock)** أو إعادة تجديد الكاش مبكراً قبل انتهائه (Probabilistic Early Expiration).
+* **Cache Penetration:** عندما يطلب المهاجم معرفات غير موجودة أصلاً لا في الكاش ولا في الداتا بيز لإرهاق السيرفر. الحل: استخدام **Bloom Filters** أو تخزين القيمة الفارغة \`null\` في الكاش بـ TTL قصير (60 ثانية).
+* **Cache Avalanche:** انتهاء صلاحية آلاف المفاتيح في نفس اللحظة مما يؤدي لسقوط قاعدة البيانات. الحل: إضافة وقت عشوائي **Jitter** لكل TTL.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* لا تجعل الكاش المصدر الوحيد للبيانات، بل خط دفاع سريع.
+* ضع دائماً **TTL** لكل مفتاح.
+* استخدم الـ **Jitter** لتوزيع انتهاء الصلاحية وتفادي الانهيار المتزامن.\`
+",`,
 };

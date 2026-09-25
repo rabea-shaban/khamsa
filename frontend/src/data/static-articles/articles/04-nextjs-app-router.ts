@@ -51,5 +51,165 @@ export const article04: StaticArticle = {
     keywords: ['Next.js', 'App Router', 'Server Actions', 'Next.js Caching', 'SEO Next.js', 'هندسة الويب'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/nextjs-app-router-engineering-guide-production-performance',
   },
-  content: "\"\\n## تشريح الـ Next.js App Router: كيف يعالج الطلبات؟\\n\\nيعتمد **Next.js App Router** على هندسة هجينة تجمع بين ميزات الخادم السحابي وإمكانيات المتصفح الحديث. في هذا النموذج، تصبح المكونات افتراضياً **Server Components**، ولا يتم إرسال كود الـ JavaScript الخاص بها إلى المتصفح، مما يقلل من حجم الـ Bundle بنسبة تتراوح بين 30% إلى 70% مقارنة بالـ Pages Router التقليدي.\\n\\n---\\n\\n## أعماق منظومة الـ Caching في Next.js: المستويات الأربعة\\n\\nلفهم Next.js في بيئات الإنتاج، يجب استيعاب مستويات الـ Caching الأربعة وكيف تتفاعل معاً:\\n\\n```text\\n1. Request Memoization (React) ──> منع تكرار نفس الـ fetch داخل دورة الطلب الواحدة\\n       │\\n2. Data Cache (Next.js Server) ──> حفظ نتائج الـ API وطلبات DB عبر الطلبات\\n       │\\n3. Full Route Cache (Server)   ──> حفظ HTML و RSC Payload للصفحات الثابتة (SSG/ISR)\\n       │\\n4. Router Cache (Client Memory)──> حفظ الصفحات التي زارها المستخدم في المتصفح\\n```\\n\\n### التحكم الدقيق في Data Cache عبر `fetch`:\\n\\n```typescript\\n// 1. Static Data (يخزن إلى الأبد حتى يتم التحديث اليدوي)\\nconst staticData = await fetch('https://api.khamsa.dev/v1/categories', {\\n  cache: 'force-cache',\\n});\\n\\n// 2. Incremental Static Regeneration (يجدد كل ساعة)\\nconst isrData = await fetch('https://api.khamsa.dev/v1/articles', {\\n  next: { revalidate: 3600, tags: ['articles-list'] },\\n});\\n\\n// 3. Dynamic Real-time Data (بدون تخزين مؤقت نهائياً)\\nconst liveData = await fetch('https://api.khamsa.dev/v1/user/notifications', {\\n  cache: 'no-store',\\n});\\n```\\n\\n---\\n\\n## أنماط التصيير: Static (SSG) vs Dynamic (SSR) vs ISR\\n\\n### 1. Static Site Generation (SSG)\\nالصفحة تُبنى بالكامل أثناء الـ `next build` وتُوزع عبر الـ CDN عالمياً، مما يمنحها سرعة فائقة وزمن استجابة أقل من 50ms.\\n\\n```typescript\\n// src/app/articles/[slug]/page.tsx\\nimport { notFound } from 'next/navigation';\\nimport { getAllArticleSlugs, getArticleBySlug } from '@/lib/articles';\\n\\n// توليد جميع المسارات الثابتة وقت الـ Build\\nexport async function generateStaticParams() {\\n  const slugs = await getAllArticleSlugs();\\n  return slugs.map(slug => ({ slug }));\\n}\\n\\nexport default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {\\n  const { slug } = await params;\\n  const article = await getArticleBySlug(slug);\\n\\n  if (!article) notFound();\\n\\n  return (\\n    <article className=\"max-w-3xl mx-auto py-12\">\\n      <h1 className=\"text-4xl font-extrabold\">{article.title}</h1>\\n      <div className=\"mt-6 prose dark:prose-invert\">{article.content}</div>\\n    </article>\\n  );\\n}\\n```\\n\\n---\\n\\n## الـ Server Actions وأمان المعاملات\\n\\nالـ **Server Actions** تتيح لك استدعاء دوال الخادم مباشرة من داخل مكونات React مع حماية مدمجة ضد الـ CSRF:\\n\\n```typescript\\n// src/actions/newsletter.ts\\n'use server';\\n\\nimport { z } from 'zod';\\nimport { revalidateTag } from 'next/cache';\\n\\nconst SubscriberSchema = z.object({\\n  email: z.string().email('يرجى إدخال بريد إلكتروني صحيح'),\\n});\\n\\nexport async function subscribeToNewsletter(formData: FormData) {\\n  const rawEmail = formData.get('email');\\n  const validation = SubscriberSchema.safeParse({ email: rawEmail });\\n\\n  if (!validation.success) {\\n    return { success: false, error: validation.error.issues[0]?.message };\\n  }\\n\\n  try {\\n    // حفظ في قاعدة البيانات\\n    await db.subscriber.create({ data: { email: validation.data.email } });\\n    \\n    // تفريغ كاش القائمة البرمجية\\n    revalidateTag('subscribers-count');\\n\\n    return { success: true, message: 'تم اشتراكك بنجاح في خمسة برمجة!' };\\n  } catch (error) {\\n    return { success: false, error: 'حدث خطأ أثناء التسجيل، حاول ثانية.' };\\n  }\\n}\\n```\\n\\n---\\n\\n## نظام الـ Dynamic Metadata والـ SEO الاحترافي\\n\\nتوفر Next.js واجهة `generateMetadata` لبناء بيانات وصفية ديناميكية لكل صفحة مع خرائط OpenGraph و Twitter Cards و JSON-LD:\\n\\n```typescript\\nimport type { Metadata } from 'next';\\n\\nexport async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {\\n  const { slug } = await params;\\n  const article = await getArticleBySlug(slug);\\n\\n  if (!article) {\\n    return { title: 'المقال غير موجود | خمسة برمجة بالبلدي' };\\n  }\\n\\n  const siteUrl = 'https://khamsa-web.vercel.app';\\n  const canonical = `\\${siteUrl}/articles/\\${article.slug}`;\\n\\n  return {\\n    title: `\\${article.title} | خمسة برمجة بالبلدي`,\\n    description: article.excerpt,\\n    alternates: { canonical },\\n    openGraph: {\\n      title: article.title,\\n      description: article.excerpt,\\n      url: canonical,\\n      siteName: 'خمسة برمجة بالبلدي',\\n      type: 'article',\\n      publishedTime: article.publishedAt,\\n      images: [{ url: article.coverImage, width: 1200, height: 630 }],\\n    },\\n    twitter: {\\n      card: 'summary_large_image',\\n      title: article.title,\\n      description: article.excerpt,\\n      images: [article.coverImage],\\n    },\\n  };\\n}\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nNext.js App Router هو المعيار الذهبي لبناء تطبيقات الويب الحديثة. بفصل منطق الخادم عن العميل، والتحكم الواعي بطبقات الكاش، وتطبيق ممارسات الأداء الصارمة، ستحصل على موقع يحقق 100/100 في معايير Google Lighthouse وجاهز لاستقبال ملايين الزيارات.\\n  `\\n\",\n",
+  content: `## تشريح الـ Next.js App Router: كيف يعالج الطلبات؟
+
+يعتمد **Next.js App Router** على هندسة هجينة تجمع بين ميزات الخادم السحابي وإمكانيات المتصفح الحديث. في هذا النموذج، تصبح المكونات افتراضياً **Server Components**، ولا يتم إرسال كود الـ JavaScript الخاص بها إلى المتصفح، مما يقلل من حجم الـ Bundle بنسبة تتراوح بين 30% إلى 70% مقارنة بالـ Pages Router التقليدي.
+
+---
+
+## أعماق منظومة الـ Caching في Next.js: المستويات الأربعة
+
+لفهم Next.js في بيئات الإنتاج، يجب استيعاب مستويات الـ Caching الأربعة وكيف تتفاعل معاً:
+
+\`\`\`text
+1. Request Memoization (React) ──> منع تكرار نفس الـ fetch داخل دورة الطلب الواحدة
+       │
+2. Data Cache (Next.js Server) ──> حفظ نتائج الـ API وطلبات DB عبر الطلبات
+       │
+3. Full Route Cache (Server)   ──> حفظ HTML و RSC Payload للصفحات الثابتة (SSG/ISR)
+       │
+4. Router Cache (Client Memory)──> حفظ الصفحات التي زارها المستخدم في المتصفح
+\`\`\`
+
+### التحكم الدقيق في Data Cache عبر \`fetch\`:
+
+\`\`\`typescript
+// 1. Static Data (يخزن إلى الأبد حتى يتم التحديث اليدوي)
+const staticData = await fetch('https://api.khamsa.dev/v1/categories', {
+  cache: 'force-cache',
+});
+
+// 2. Incremental Static Regeneration (يجدد كل ساعة)
+const isrData = await fetch('https://api.khamsa.dev/v1/articles', {
+  next: { revalidate: 3600, tags: ['articles-list'] },
+});
+
+// 3. Dynamic Real-time Data (بدون تخزين مؤقت نهائياً)
+const liveData = await fetch('https://api.khamsa.dev/v1/user/notifications', {
+  cache: 'no-store',
+});
+\`\`\`
+
+---
+
+## أنماط التصيير: Static (SSG) vs Dynamic (SSR) vs ISR
+
+### 1. Static Site Generation (SSG)
+الصفحة تُبنى بالكامل أثناء الـ \`next build\` وتُوزع عبر الـ CDN عالمياً، مما يمنحها سرعة فائقة وزمن استجابة أقل من 50ms.
+
+\`\`\`typescript
+// src/app/articles/[slug]/page.tsx
+import { notFound } from 'next/navigation';
+import { getAllArticleSlugs, getArticleBySlug } from '@/lib/articles';
+
+// توليد جميع المسارات الثابتة وقت الـ Build
+export async function generateStaticParams() {
+  const slugs = await getAllArticleSlugs();
+  return slugs.map(slug => ({ slug }));
+}
+
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article) notFound();
+
+  return (
+    <article className="max-w-3xl mx-auto py-12">
+      <h1 className="text-4xl font-extrabold">{article.title}</h1>
+      <div className="mt-6 prose dark:prose-invert">{article.content}</div>
+    </article>
+  );
+}
+\`\`\`
+
+---
+
+## الـ Server Actions وأمان المعاملات
+
+الـ **Server Actions** تتيح لك استدعاء دوال الخادم مباشرة من داخل مكونات React مع حماية مدمجة ضد الـ CSRF:
+
+\`\`\`typescript
+// src/actions/newsletter.ts
+'use server';
+
+import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
+
+const SubscriberSchema = z.object({
+  email: z.string().email('يرجى إدخال بريد إلكتروني صحيح'),
+});
+
+export async function subscribeToNewsletter(formData: FormData) {
+  const rawEmail = formData.get('email');
+  const validation = SubscriberSchema.safeParse({ email: rawEmail });
+
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0]?.message };
+  }
+
+  try {
+    // حفظ في قاعدة البيانات
+    await db.subscriber.create({ data: { email: validation.data.email } });
+    
+    // تفريغ كاش القائمة البرمجية
+    revalidateTag('subscribers-count');
+
+    return { success: true, message: 'تم اشتراكك بنجاح في خمسة برمجة!' };
+  } catch (error) {
+    return { success: false, error: 'حدث خطأ أثناء التسجيل، حاول ثانية.' };
+  }
+}
+\`\`\`
+
+---
+
+## نظام الـ Dynamic Metadata والـ SEO الاحترافي
+
+توفر Next.js واجهة \`generateMetadata\` لبناء بيانات وصفية ديناميكية لكل صفحة مع خرائط OpenGraph و Twitter Cards و JSON-LD:
+
+\`\`\`typescript
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article) {
+    return { title: 'المقال غير موجود | خمسة برمجة بالبلدي' };
+  }
+
+  const siteUrl = 'https://khamsa-web.vercel.app';
+  const canonical = \`\\\${siteUrl}/articles/\\\${article.slug}\`;
+
+  return {
+    title: \`\\\${article.title} | خمسة برمجة بالبلدي\`,
+    description: article.excerpt,
+    alternates: { canonical },
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      url: canonical,
+      siteName: 'خمسة برمجة بالبلدي',
+      type: 'article',
+      publishedTime: article.publishedAt,
+      images: [{ url: article.coverImage, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: [article.coverImage],
+    },
+  };
+}
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+Next.js App Router هو المعيار الذهبي لبناء تطبيقات الويب الحديثة. بفصل منطق الخادم عن العميل، والتحكم الواعي بطبقات الكاش، وتطبيق ممارسات الأداء الصارمة، ستحصل على موقع يحقق 100/100 في معايير Google Lighthouse وجاهز لاستقبال ملايين الزيارات.
+  \`
+",`,
 };

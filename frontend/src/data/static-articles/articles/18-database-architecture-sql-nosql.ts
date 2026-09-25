@@ -50,5 +50,59 @@ export const article18: StaticArticle = {
     keywords: ['PostgreSQL', 'MongoDB', 'SQL', 'NoSQL', 'ACID', 'JSONB', 'قواعد البيانات'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/database-architecture-sql-postgresql-vs-nosql-mongodb',
   },
-  content: "\"## الأسس النظرية: ضمانات ACID مقابل فلسفة BASE\\n\\n* **قواعد بيانات SQL (مثل PostgreSQL):** تركز على نموذج **ACID** (Atomicity, Consistency, Isolation, Durability) والاتساق الصارم الفوري (Strong Consistency).\\n* **قواعد بيانات NoSQL (مثل MongoDB):** تركز على نموذج **BASE** (Basically Available, Soft state, Eventual consistency) والتوسع الأفقي السلس ومرونة الوثائق.\\n\\n---\\n\\n## مصفوفة المقارنة المعمارية الشاملة\\n\\n| الخاصية | PostgreSQL (SQL) | MongoDB (NoSQL) |\\n| :--- | :--- | :--- |\\n| **المخطط (Schema)** | صارم وثابت (Strict Table Schema) | ديناميكي ومرن (Flexible Documents) |\\n| **العلاقات والربط** | JOINs فائقة الكفاءة والموثوقية | $lookup تجميعي أو تطبيقي |\\n| **التوسع الأفقي** | يتطلب أدوات إضافية (Citus) | Sharding مدمج في أصل النظام |\\n| **الاستعلامات المعقدة** | SQL المعياري و CTEs و Window Functions | Aggregation Pipeline |\\n| **أفضل استخدام** | أنظمة التجارة، الحسابات المالية، ERP | أنظمة إدارة المحتوى، التحليلات، تطبيقات التدوين |\\n\\n---\\n\\n## النمذجة العلائقية وقواعد التطبيع (Normalization)\\n\\nفي PostgreSQL، نقوم بتفكيك البيانات إلى جداول مستقلة وتطبيق قواعد التطبيع (1NF إلى 3NF) لمنع تكرار البيانات وضمان سلامة المراجع عبر المفاتيح الأجنبية (Foreign Keys):\\n\\n```sql\\n-- إنشاء جدول المقالات مع القيود الصارمة\\nCREATE TABLE articles (\\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\\n    title VARCHAR(255) NOT NULL,\\n    slug VARCHAR(255) UNIQUE NOT NULL,\\n    content TEXT NOT NULL,\\n    author_id UUID REFERENCES authors(id) ON DELETE CASCADE,\\n    published_at TIMESTAMPTZ,\\n    created_at TIMESTAMPTZ DEFAULT NOW()\\n);\\n\\n-- إنشاء فهرس فريد وسريع للبحث\\nCREATE INDEX idx_articles_slug ON articles(slug);\\nCREATE INDEX idx_articles_published ON articles(published_at DESC) WHERE published_at IS NOT NULL;\\n```\\n\\n---\\n\\n## نمط Polyglot Persistence الحديث\\n\\nفي الأنظمة السحابية المعاصرة، لا نختار قاعدة بيانات واحدة لكل شيء، بل نوظف كل قاعدة بيانات في نقطة قوتها:\\n* **PostgreSQL:** لإدارة المستخدمين، الاشتراكات، والفواتير والمدفوعات لضمان معايير ACID.\\n* **MongoDB:** لإدارة محتوى المقالات والصفحات الغنية بهياكل وثائقية مرنة.\\n* **Redis:** للتخزين المؤقت (Caching)، إدارة الجلسات، وحسابات الـ Rate Limiting.\\n* **Elasticsearch:** لمحرك البحث الذكي في النصوص العربية والتحليلات الضخمة.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nلا توجد قاعدة بيانات واحدة تصلح لكل المهام. اختر **PostgreSQL** عندما تحتاج علاقات معقدة وضمانات مالية صارمة، واختر **MongoDB** لمرونة الوثائق وسرعة تطوير واجهات المحتوى.\",\n",
+  content: `## الأسس النظرية: ضمانات ACID مقابل فلسفة BASE
+
+* **قواعد بيانات SQL (مثل PostgreSQL):** تركز على نموذج **ACID** (Atomicity, Consistency, Isolation, Durability) والاتساق الصارم الفوري (Strong Consistency).
+* **قواعد بيانات NoSQL (مثل MongoDB):** تركز على نموذج **BASE** (Basically Available, Soft state, Eventual consistency) والتوسع الأفقي السلس ومرونة الوثائق.
+
+---
+
+## مصفوفة المقارنة المعمارية الشاملة
+
+| الخاصية | PostgreSQL (SQL) | MongoDB (NoSQL) |
+| :--- | :--- | :--- |
+| **المخطط (Schema)** | صارم وثابت (Strict Table Schema) | ديناميكي ومرن (Flexible Documents) |
+| **العلاقات والربط** | JOINs فائقة الكفاءة والموثوقية | $lookup تجميعي أو تطبيقي |
+| **التوسع الأفقي** | يتطلب أدوات إضافية (Citus) | Sharding مدمج في أصل النظام |
+| **الاستعلامات المعقدة** | SQL المعياري و CTEs و Window Functions | Aggregation Pipeline |
+| **أفضل استخدام** | أنظمة التجارة، الحسابات المالية، ERP | أنظمة إدارة المحتوى، التحليلات، تطبيقات التدوين |
+
+---
+
+## النمذجة العلائقية وقواعد التطبيع (Normalization)
+
+في PostgreSQL، نقوم بتفكيك البيانات إلى جداول مستقلة وتطبيق قواعد التطبيع (1NF إلى 3NF) لمنع تكرار البيانات وضمان سلامة المراجع عبر المفاتيح الأجنبية (Foreign Keys):
+
+\`\`\`sql
+-- إنشاء جدول المقالات مع القيود الصارمة
+CREATE TABLE articles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    content TEXT NOT NULL,
+    author_id UUID REFERENCES authors(id) ON DELETE CASCADE,
+    published_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- إنشاء فهرس فريد وسريع للبحث
+CREATE INDEX idx_articles_slug ON articles(slug);
+CREATE INDEX idx_articles_published ON articles(published_at DESC) WHERE published_at IS NOT NULL;
+\`\`\`
+
+---
+
+## نمط Polyglot Persistence الحديث
+
+في الأنظمة السحابية المعاصرة، لا نختار قاعدة بيانات واحدة لكل شيء، بل نوظف كل قاعدة بيانات في نقطة قوتها:
+* **PostgreSQL:** لإدارة المستخدمين، الاشتراكات، والفواتير والمدفوعات لضمان معايير ACID.
+* **MongoDB:** لإدارة محتوى المقالات والصفحات الغنية بهياكل وثائقية مرنة.
+* **Redis:** للتخزين المؤقت (Caching)، إدارة الجلسات، وحسابات الـ Rate Limiting.
+* **Elasticsearch:** لمحرك البحث الذكي في النصوص العربية والتحليلات الضخمة.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+لا توجد قاعدة بيانات واحدة تصلح لكل المهام. اختر **PostgreSQL** عندما تحتاج علاقات معقدة وضمانات مالية صارمة، واختر **MongoDB** لمرونة الوثائق وسرعة تطوير واجهات المحتوى.",`,
 };

@@ -58,5 +58,249 @@ export const article01: StaticArticle = {
     keywords: ['JavaScript', 'ES6', 'Event Loop', 'Closures', 'Promises', 'Async Await', 'V8 Engine', 'تعلم البرمجة'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/modern-javascript-comprehensive-guide-es6-async',
   },
-  content: "\"\\n## مقدمة: ما الذي يجعل JavaScript فريدة في عالم البرمجيات؟\\n\\nتعتبر لغة **JavaScript** اليوم المحرك الرئيسي لشبكة الويب العالمية؛ فهي اللغة الوحيدة التي تنفذ برمجيات الواجهات في متصفحات المليارات، وتدير خوادم الباك إند عبر Node.js و Deno و Bun، وتبني تطبيقات الهاتف وسطح المكتب. ومع هذا الانتشار غير المسبوق، يقع كثير من المطورين في فخ التعامل معها كلغة سطحية معتمدة على النسخ واللصق، متجاهلين العمق الهندسي المذهل الذي يقف وراء محركاتها.\\n\\nفي هذا الدليل الهندسي الموسع في «خمسة برمجة بالبلدي»، سنغوص في المعمارية الداخلية للغة JavaScript: كيف يترجم المحرك كودك إلى نبضات كهربائية في المعالج، كيف يدير الذاكرة، وسر الـ Event Loop الذي يمنح لغة أحادية المسار القدرة على منافسة أعتى اللغات متعددة الخيوط.\\n\\n---\\n\\n## كيف يقرأ وينفذ المتصفح كود JavaScript؟ (V8 Engine & JIT Compiler)\\n\\nعندما ترسل ملف JavaScript عبر الشبكة إلى متصفح مثل Google Chrome أو Microsoft Edge، يستلمه محرك **V8** (المكتوب بلغة ++C) ويمرره عبر سلسلة إنتاج هندسية دقيقة:\\n\\n```text\\n[ كود JavaScript المصدري ]\\n            │\\n            ▼\\n[ Scanner / Lexer ] ──> يفكك الكود إلى Tokens مجردة\\n            │\\n            ▼\\n[ Parser ] ───────────> يبني شجرة النحو المجردة (Abstract Syntax Tree - AST)\\n            │\\n            ▼\\n[ Ignition Interpreter ] ──> يولد وينفذ Bytecode فورياً وسريعاً\\n            │\\n            ▼ (مراقبة الدوال المتكررة Hot Functions)\\n[ TurboFan Optimizing Compiler ] ──> ينتج Machine Code فائق السرعة للمعالج\\n```\\n\\n### 1. التحليل اللغوي والمعجمي (Lexical Analysis & Parsing)\\nيقوم الـ Scanner بتحويل النص البرمجي إلى Tokens (مثل: `const`, `variableName`, `=`, `function`). بعد ذلك، يبني الـ Parser شجرة **AST** التي تصف العلاقات المنطقية والـ Scopes والقواعد النحوية للكود. إذا وجد خطأ نحوي، يتوقف المحرك فوراً ويرمي `SyntaxError` قبل بدء تشغيل سطر واحد.\\n\\n### 2. المفسر السريع (Ignition Bytecode Interpreter)\\nبدلاً من قضاء وقت طويل في تجميع الكود بالكامل، يقوم مفسر Ignition بتحويل شجرة الـ AST إلى **Bytecode** مدمج وسريع، ويبدأ في تنفيذه مباشرة، مما يمنح المستخدمين بداية تشغيل فورية (Fast Startup Time).\\n\\n### 3. المجمع المحسن الموجه بالأنواع (TurboFan JIT Compiler)\\nأثناء تشغيل الـ Bytecode، يقوم محرك V8 بجمع معلومات إحصائية (Type Feedback Profiling). إذا لاحظ المحرك أن دالة معينة يتم استدعاؤها آلاف المرات ودائماً تستقبل نفس نوع المعاملات (مثلاً أرقام صحيحة)، يرسلها إلى **TurboFan** ليقوم بتجميعها إلى كود آلة مباشر (Optimized Machine Code).\\n\\n> **نصيحة هندسية للأداء:** إذا قمت بتغيير نوع المدخلات فجأة (مثلاً تمرير String لدالة اعتادت استقبال Numbers)، يُجبر TurboFan على التراجع الفوري (De-optimization) والعودة إلى المفسر البطيء، مما يسبب هبوطاً مفاجئاً في أداء التطبيق!\\n\\n---\\n\\n## الذاكرة الداخلية: Memory Heap، Call Stack، والـ Execution Context\\n\\nلكي تفهم أين تعيش متغيراتك، يجب أن تفهم الهيكلين الأساسيين للذاكرة في محرك V8:\\n\\n### 1. الـ Memory Heap (كومة الذاكرة غير المنظمة)\\nمساحة ذاكرة كبيرة وغير مرتبة، يتم فيها حجز مواقع للكائنات ذات الأحجام الديناميكية مثل: الكائنات (Objects)، المصفوفات (Arrays)، والدوال (Functions). لا يتم الوصول إليها بنظام ترتيبي بل عبر عناوين الذاكرة (Memory References).\\n\\n### 2. الـ Call Stack (مكدس الاستدعاءات المنظم)\\nهيكل بيانات يعمل بنظام **LIFO** (Last In, First Out). يتم استخدامه لتتبع الدوال التي يتم تنفيذها حالياً في البرنامج، وتخزين المتغيرات الأولية (Primitives مثل: numbers, booleans, strings).\\n\\n```typescript\\ninterface UserProfile {\\n  id: string;\\n  name: string;\\n}\\n\\nfunction calculateScore(base: number, multiplier: number): number {\\n  const bonus = 10;\\n  return (base * multiplier) + bonus;\\n}\\n\\nfunction processUser(user: UserProfile): void {\\n  const finalScore = calculateScore(50, 2);\\n  console.log(`المستخدم \\${user.name} حقق نتيجة: \\${finalScore}`);\\n}\\n\\nconst currentUser: UserProfile = { id: 'usr_1', name: 'ربيع' };\\nprocessUser(currentUser);\\n```\\n\\n### دورة حياة إطار التنفيذ (Execution Context Lifecycle):\\n1. **Creation Phase (مرحلة الإنشاء والـ Hoisting):** يقوم المحرك بحجز مساحات للمتغيرات والدوال، ويهيئ متغيرات `var` بقيمة `undefined`، بينما يضع متغيرات `let` و `const` في منطقة تسمى **Temporal Dead Zone (TDZ)**، ويهيئ تعريفات الدوال بالكامل.\\n2. **Execution Phase (مرحلة التنفيذ):** يبدأ بتعيين القيم الحقيقية وتنفيذ الأسطر البرمجية سطراً بسطر داخل الـ Call Stack.\\n\\n---\\n\\n## أسرار الـ Event Loop: الفرق بين Microtasks و Macrotasks و Render Steps\\n\\nالسر الذي يجعل JavaScript قادرة على معالجة ملايين الطلبات دون أن تتجمد الشاشة هو معمارية **Event Loop**:\\n\\n```text\\n┌─────────────────────────────────────────────────────────┐\\n│                       CALL STACK                        │ ──> تنفيذ الكود المتزامن\\n└────────────────────────────┬────────────────────────────┘\\n                             │ عندما يفرغ المكدس تماماً (Stack is Empty)\\n                             ▼\\n┌─────────────────────────────────────────────────────────┐\\n│                 MICROTASKS QUEUE (أولوية 1)             │ ──> Promises, queueMicrotask, MutationObserver\\n└────────────────────────────┬────────────────────────────┘\\n                             │ يتم تفريغ الطابور كاملاً حتى الصفر!\\n                             ▼\\n┌─────────────────────────────────────────────────────────┐\\n│                     ANIMATION FRAMES                    │ ──> requestAnimationFrame\\n└────────────────────────────┬────────────────────────────┘\\n                             │ تحديث شاشة العميل ورسم الـ DOM\\n                             ▼\\n┌─────────────────────────────────────────────────────────┐\\n│                  MACROTASKS QUEUE (أولوية 2)            │ ──> setTimeout, setInterval, I/O Events\\n└─────────────────────────────────────────────────────────┘\\n                             │ تنفيذ مهمة واحدة فقط ثم إعادة الدورة\\n```\\n\\n### تجربة معملية تفكيكية:\\n\\n```javascript\\nconsole.log('1. بداية الكود المتزامن');\\n\\nsetTimeout(() => {\\n  console.log('2. مهلة زمنية (Macrotask 1)');\\n  Promise.resolve().then(() => {\\n    console.log('3. وعد متولد داخل المهلة (Microtask داخل Macrotask)');\\n  });\\n}, 0);\\n\\nqueueMicrotask(() => {\\n  console.log('4. ميكرو تاسك مباشر (Microtask 1)');\\n});\\n\\nPromise.resolve()\\n  .then(() => {\\n    console.log('5. وعد أول (Microtask 2)');\\n    return 'بيانات إضافية';\\n  })\\n  .then((data) => {\\n    console.log('6. وعد متسلسل (Microtask 3) مع:', data);\\n  });\\n\\nconsole.log('7. نهاية الكود المتزامن');\\n```\\n\\n**الترتيب الهندسي الدقيق للمخرجات:**\\n1. `1. بداية الكود المتزامن` (من الـ Call Stack مباشرة)\\n2. `7. نهاية الكود المتزامن` (من الـ Call Stack مباشرة)\\n3. `4. ميكرو تاسك مباشر` (أول عنصر في طابور الـ Microtasks)\\n4. `5. وعد أول` (ثاني عنصر في الـ Microtasks)\\n5. `6. وعد متسلسل` (تمت جدولته أثناء تفريغ الـ Microtasks فنفذ فوراً قبل الانتقال للماكرو)\\n6. `2. مهلة زمنية` (انتقل الـ Event Loop لطابور الـ Macrotasks ونفذ أول مهمة)\\n7. `3. وعد متولد داخل المهلة` (أفرغ الـ Microtask المتولد فور انتهاء الـ Macrotask)\\n\\n---\\n\\n## الـ Scopes والـ Lexical Environment والـ Closures عملياً\\n\\nالـ **Closure** هو الرابط السحري الذي يحتفظ به التابع الفرعي ببيئته المعجمية (Lexical Environment) التي نشأ فيها:\\n\\n### تطبيق عملي متقدم: بناء نظام State Hook مصغر (شبيه بـ React useState)\\n\\n```typescript\\nconst MiniReact = (function () {\\n  let stateValue: any; // يحتفظ بالحالة في الـ Closure الخاص بالموديول\\n\\n  return {\\n    useState<T>(initialValue: T): [T, (newValue: T) => void] {\\n      if (stateValue === undefined) {\\n        stateValue = initialValue;\\n      }\\n\\n      const setState = (newValue: T) => {\\n        stateValue = newValue;\\n        console.log('[MiniReact] تم تحديث الحالة إلى:', stateValue);\\n      };\\n\\n      return [stateValue, setState];\\n    },\\n  };\\n})();\\n\\n// استخدام الـ MiniReact\\nconst [count, setCount] = MiniReact.useState<number>(0);\\nconsole.log('القيمة الأولية:', count); // 0\\nsetCount(5); // [MiniReact] تم تحديث الحالة إلى: 5\\n```\\n\\n### كيفية تجنب الـ Memory Leaks الناتجة عن الـ Closures:\\nإذا كانت الدالة الخارجية تنشئ مصفوفات ضخمة، واحتفظت الدالة الداخلية بمرجع لدالة ما، فقد تمنع جامع المهملات (Garbage Collector) من تحرير تلك المصفوفة. الحل هو مسح المراجع غير المطلوبة بتعيينها إلى `null` عند الانتهاء.\\n\\n---\\n\\n## الوراثة في جافاسكريبت: Prototypal Inheritance vs Classes\\n\\n```typescript\\n// وراثة السلسلة النماذجية Prototype Chain\\ninterface Animal {\\n  speak: () => string;\\n}\\n\\nconst animalProto = {\\n  isAlive: true,\\n  speak() {\\n    return 'صوت حيوان عام';\\n  },\\n};\\n\\nconst dog = Object.create(animalProto);\\ndog.breed = 'Golden Retriever';\\ndog.speak = function () {\\n  return 'هوهو!';\\n};\\n\\nconsole.log(dog.speak()); // هوهو! (تم العثور عليها في الكائن نفسه)\\nconsole.log(dog.isAlive); // true (صعد المحرك في الـ Prototype Chain ووجدها في animalProto)\\n```\\n\\n---\\n\\n## أنماط التوازي المتقدمة وإلغاء الطلبات عبر AbortController\\n\\n```typescript\\nasync function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<any> {\\n  const controller = new AbortController();\\n  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);\\n\\n  try {\\n    const res = await fetch(url, { signal: controller.signal });\\n    if (!res.ok) throw new Error(`فشل الطلب: \\${res.status}`);\\n    return await res.json();\\n  } catch (error) {\\n    if ((error as Error).name === 'AbortError') {\\n      throw new Error(`تجاوز الطلب المهلة الزمنية المحددة (\\${timeoutMs}ms)`);\\n    }\\n    throw error;\\n  } finally {\\n    clearTimeout(timeoutId); // تنظيف المؤقت لمنع تسريب الموارد\\n  }\\n}\\n```\\n\\n---\\n\\n## أشهر ٥ أخطاء شائعة في بيئات الإنتاج\\n\\n1. **إهمال معالجة أخطاء الـ Unhandled Promise Rejections:** دائماً تأكد من وجود `try/catch` حول استدعاءات `await`، واستمع لحدث `window.addEventListener('unhandledrejection', ...)`.\\n2. **المقارنة غير الصارمة (Loose Equality `==`):** تسبب تحويل أنواع غير متوقع وكوارث أمنية.\\n3. **التعديل المباشر على مصفوفات الـ State (Object Mutation):** يؤدي لعدم استشعار التغييرات في أطر العمل مثل React. دائماً استخدم النسخ غير القابل للتعديل (Immutable Patterns).\\n4. **تسريبات الـ Event Listeners:** نسيان استدعاء `removeEventListener` عند تفكيك المكونات.\\n5. **استخدام المتغيرات العامة (Global Scope Pollution):** يؤدي لتداخل البيانات بين الجلسات.\\n\\n---\\n\\n## الخلاصة وخارطة طريق المطور المحترف\\n\\nإتقان لغة JavaScript لا يتوقف عند معرفة الصيغ النحوية (Syntax)، بل يبدأ من فهم كيفية تعامل المحرك مع المكدس والذاكرة وإدارة الأحداث. بهذه المعرفة، تصبح قادراً على كتابة برمجيات تتحمل ضغط ملايين الزيارات وتستجيب في أجزاء من الألف من الثانية.\\n  `\\n\",\n",
+  content: `## مقدمة: ما الذي يجعل JavaScript فريدة في عالم البرمجيات؟
+
+تعتبر لغة **JavaScript** اليوم المحرك الرئيسي لشبكة الويب العالمية؛ فهي اللغة الوحيدة التي تنفذ برمجيات الواجهات في متصفحات المليارات، وتدير خوادم الباك إند عبر Node.js و Deno و Bun، وتبني تطبيقات الهاتف وسطح المكتب. ومع هذا الانتشار غير المسبوق، يقع كثير من المطورين في فخ التعامل معها كلغة سطحية معتمدة على النسخ واللصق، متجاهلين العمق الهندسي المذهل الذي يقف وراء محركاتها.
+
+في هذا الدليل الهندسي الموسع في «خمسة برمجة بالبلدي»، سنغوص في المعمارية الداخلية للغة JavaScript: كيف يترجم المحرك كودك إلى نبضات كهربائية في المعالج، كيف يدير الذاكرة، وسر الـ Event Loop الذي يمنح لغة أحادية المسار القدرة على منافسة أعتى اللغات متعددة الخيوط.
+
+---
+
+## كيف يقرأ وينفذ المتصفح كود JavaScript؟ (V8 Engine & JIT Compiler)
+
+عندما ترسل ملف JavaScript عبر الشبكة إلى متصفح مثل Google Chrome أو Microsoft Edge، يستلمه محرك **V8** (المكتوب بلغة ++C) ويمرره عبر سلسلة إنتاج هندسية دقيقة:
+
+\`\`\`text
+[ كود JavaScript المصدري ]
+            │
+            ▼
+[ Scanner / Lexer ] ──> يفكك الكود إلى Tokens مجردة
+            │
+            ▼
+[ Parser ] ───────────> يبني شجرة النحو المجردة (Abstract Syntax Tree - AST)
+            │
+            ▼
+[ Ignition Interpreter ] ──> يولد وينفذ Bytecode فورياً وسريعاً
+            │
+            ▼ (مراقبة الدوال المتكررة Hot Functions)
+[ TurboFan Optimizing Compiler ] ──> ينتج Machine Code فائق السرعة للمعالج
+\`\`\`
+
+### 1. التحليل اللغوي والمعجمي (Lexical Analysis & Parsing)
+يقوم الـ Scanner بتحويل النص البرمجي إلى Tokens (مثل: \`const\`, \`variableName\`, \`=\`, \`function\`). بعد ذلك، يبني الـ Parser شجرة **AST** التي تصف العلاقات المنطقية والـ Scopes والقواعد النحوية للكود. إذا وجد خطأ نحوي، يتوقف المحرك فوراً ويرمي \`SyntaxError\` قبل بدء تشغيل سطر واحد.
+
+### 2. المفسر السريع (Ignition Bytecode Interpreter)
+بدلاً من قضاء وقت طويل في تجميع الكود بالكامل، يقوم مفسر Ignition بتحويل شجرة الـ AST إلى **Bytecode** مدمج وسريع، ويبدأ في تنفيذه مباشرة، مما يمنح المستخدمين بداية تشغيل فورية (Fast Startup Time).
+
+### 3. المجمع المحسن الموجه بالأنواع (TurboFan JIT Compiler)
+أثناء تشغيل الـ Bytecode، يقوم محرك V8 بجمع معلومات إحصائية (Type Feedback Profiling). إذا لاحظ المحرك أن دالة معينة يتم استدعاؤها آلاف المرات ودائماً تستقبل نفس نوع المعاملات (مثلاً أرقام صحيحة)، يرسلها إلى **TurboFan** ليقوم بتجميعها إلى كود آلة مباشر (Optimized Machine Code).
+
+> **نصيحة هندسية للأداء:** إذا قمت بتغيير نوع المدخلات فجأة (مثلاً تمرير String لدالة اعتادت استقبال Numbers)، يُجبر TurboFan على التراجع الفوري (De-optimization) والعودة إلى المفسر البطيء، مما يسبب هبوطاً مفاجئاً في أداء التطبيق!
+
+---
+
+## الذاكرة الداخلية: Memory Heap، Call Stack، والـ Execution Context
+
+لكي تفهم أين تعيش متغيراتك، يجب أن تفهم الهيكلين الأساسيين للذاكرة في محرك V8:
+
+### 1. الـ Memory Heap (كومة الذاكرة غير المنظمة)
+مساحة ذاكرة كبيرة وغير مرتبة، يتم فيها حجز مواقع للكائنات ذات الأحجام الديناميكية مثل: الكائنات (Objects)، المصفوفات (Arrays)، والدوال (Functions). لا يتم الوصول إليها بنظام ترتيبي بل عبر عناوين الذاكرة (Memory References).
+
+### 2. الـ Call Stack (مكدس الاستدعاءات المنظم)
+هيكل بيانات يعمل بنظام **LIFO** (Last In, First Out). يتم استخدامه لتتبع الدوال التي يتم تنفيذها حالياً في البرنامج، وتخزين المتغيرات الأولية (Primitives مثل: numbers, booleans, strings).
+
+\`\`\`typescript
+interface UserProfile {
+  id: string;
+  name: string;
+}
+
+function calculateScore(base: number, multiplier: number): number {
+  const bonus = 10;
+  return (base * multiplier) + bonus;
+}
+
+function processUser(user: UserProfile): void {
+  const finalScore = calculateScore(50, 2);
+  console.log(\`المستخدم \\\${user.name} حقق نتيجة: \\\${finalScore}\`);
+}
+
+const currentUser: UserProfile = { id: 'usr_1', name: 'ربيع' };
+processUser(currentUser);
+\`\`\`
+
+### دورة حياة إطار التنفيذ (Execution Context Lifecycle):
+1. **Creation Phase (مرحلة الإنشاء والـ Hoisting):** يقوم المحرك بحجز مساحات للمتغيرات والدوال، ويهيئ متغيرات \`var\` بقيمة \`undefined\`، بينما يضع متغيرات \`let\` و \`const\` في منطقة تسمى **Temporal Dead Zone (TDZ)**، ويهيئ تعريفات الدوال بالكامل.
+2. **Execution Phase (مرحلة التنفيذ):** يبدأ بتعيين القيم الحقيقية وتنفيذ الأسطر البرمجية سطراً بسطر داخل الـ Call Stack.
+
+---
+
+## أسرار الـ Event Loop: الفرق بين Microtasks و Macrotasks و Render Steps
+
+السر الذي يجعل JavaScript قادرة على معالجة ملايين الطلبات دون أن تتجمد الشاشة هو معمارية **Event Loop**:
+
+\`\`\`text
+┌─────────────────────────────────────────────────────────┐
+│                       CALL STACK                        │ ──> تنفيذ الكود المتزامن
+└────────────────────────────┬────────────────────────────┘
+                             │ عندما يفرغ المكدس تماماً (Stack is Empty)
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│                 MICROTASKS QUEUE (أولوية 1)             │ ──> Promises, queueMicrotask, MutationObserver
+└────────────────────────────┬────────────────────────────┘
+                             │ يتم تفريغ الطابور كاملاً حتى الصفر!
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│                     ANIMATION FRAMES                    │ ──> requestAnimationFrame
+└────────────────────────────┬────────────────────────────┘
+                             │ تحديث شاشة العميل ورسم الـ DOM
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│                  MACROTASKS QUEUE (أولوية 2)            │ ──> setTimeout, setInterval, I/O Events
+└─────────────────────────────────────────────────────────┘
+                             │ تنفيذ مهمة واحدة فقط ثم إعادة الدورة
+\`\`\`
+
+### تجربة معملية تفكيكية:
+
+\`\`\`javascript
+console.log('1. بداية الكود المتزامن');
+
+setTimeout(() => {
+  console.log('2. مهلة زمنية (Macrotask 1)');
+  Promise.resolve().then(() => {
+    console.log('3. وعد متولد داخل المهلة (Microtask داخل Macrotask)');
+  });
+}, 0);
+
+queueMicrotask(() => {
+  console.log('4. ميكرو تاسك مباشر (Microtask 1)');
+});
+
+Promise.resolve()
+  .then(() => {
+    console.log('5. وعد أول (Microtask 2)');
+    return 'بيانات إضافية';
+  })
+  .then((data) => {
+    console.log('6. وعد متسلسل (Microtask 3) مع:', data);
+  });
+
+console.log('7. نهاية الكود المتزامن');
+\`\`\`
+
+**الترتيب الهندسي الدقيق للمخرجات:**
+1. \`1. بداية الكود المتزامن\` (من الـ Call Stack مباشرة)
+2. \`7. نهاية الكود المتزامن\` (من الـ Call Stack مباشرة)
+3. \`4. ميكرو تاسك مباشر\` (أول عنصر في طابور الـ Microtasks)
+4. \`5. وعد أول\` (ثاني عنصر في الـ Microtasks)
+5. \`6. وعد متسلسل\` (تمت جدولته أثناء تفريغ الـ Microtasks فنفذ فوراً قبل الانتقال للماكرو)
+6. \`2. مهلة زمنية\` (انتقل الـ Event Loop لطابور الـ Macrotasks ونفذ أول مهمة)
+7. \`3. وعد متولد داخل المهلة\` (أفرغ الـ Microtask المتولد فور انتهاء الـ Macrotask)
+
+---
+
+## الـ Scopes والـ Lexical Environment والـ Closures عملياً
+
+الـ **Closure** هو الرابط السحري الذي يحتفظ به التابع الفرعي ببيئته المعجمية (Lexical Environment) التي نشأ فيها:
+
+### تطبيق عملي متقدم: بناء نظام State Hook مصغر (شبيه بـ React useState)
+
+\`\`\`typescript
+const MiniReact = (function () {
+  let stateValue: any; // يحتفظ بالحالة في الـ Closure الخاص بالموديول
+
+  return {
+    useState<T>(initialValue: T): [T, (newValue: T) => void] {
+      if (stateValue === undefined) {
+        stateValue = initialValue;
+      }
+
+      const setState = (newValue: T) => {
+        stateValue = newValue;
+        console.log('[MiniReact] تم تحديث الحالة إلى:', stateValue);
+      };
+
+      return [stateValue, setState];
+    },
+  };
+})();
+
+// استخدام الـ MiniReact
+const [count, setCount] = MiniReact.useState<number>(0);
+console.log('القيمة الأولية:', count); // 0
+setCount(5); // [MiniReact] تم تحديث الحالة إلى: 5
+\`\`\`
+
+### كيفية تجنب الـ Memory Leaks الناتجة عن الـ Closures:
+إذا كانت الدالة الخارجية تنشئ مصفوفات ضخمة، واحتفظت الدالة الداخلية بمرجع لدالة ما، فقد تمنع جامع المهملات (Garbage Collector) من تحرير تلك المصفوفة. الحل هو مسح المراجع غير المطلوبة بتعيينها إلى \`null\` عند الانتهاء.
+
+---
+
+## الوراثة في جافاسكريبت: Prototypal Inheritance vs Classes
+
+\`\`\`typescript
+// وراثة السلسلة النماذجية Prototype Chain
+interface Animal {
+  speak: () => string;
+}
+
+const animalProto = {
+  isAlive: true,
+  speak() {
+    return 'صوت حيوان عام';
+  },
+};
+
+const dog = Object.create(animalProto);
+dog.breed = 'Golden Retriever';
+dog.speak = function () {
+  return 'هوهو!';
+};
+
+console.log(dog.speak()); // هوهو! (تم العثور عليها في الكائن نفسه)
+console.log(dog.isAlive); // true (صعد المحرك في الـ Prototype Chain ووجدها في animalProto)
+\`\`\`
+
+---
+
+## أنماط التوازي المتقدمة وإلغاء الطلبات عبر AbortController
+
+\`\`\`typescript
+async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<any> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) throw new Error(\`فشل الطلب: \\\${res.status}\`);
+    return await res.json();
+  } catch (error) {
+    if ((error as Error).name === 'AbortError') {
+      throw new Error(\`تجاوز الطلب المهلة الزمنية المحددة (\\\${timeoutMs}ms)\`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId); // تنظيف المؤقت لمنع تسريب الموارد
+  }
+}
+\`\`\`
+
+---
+
+## أشهر ٥ أخطاء شائعة في بيئات الإنتاج
+
+1. **إهمال معالجة أخطاء الـ Unhandled Promise Rejections:** دائماً تأكد من وجود \`try/catch\` حول استدعاءات \`await\`، واستمع لحدث \`window.addEventListener('unhandledrejection', ...)\`.
+2. **المقارنة غير الصارمة (Loose Equality \`==\`):** تسبب تحويل أنواع غير متوقع وكوارث أمنية.
+3. **التعديل المباشر على مصفوفات الـ State (Object Mutation):** يؤدي لعدم استشعار التغييرات في أطر العمل مثل React. دائماً استخدم النسخ غير القابل للتعديل (Immutable Patterns).
+4. **تسريبات الـ Event Listeners:** نسيان استدعاء \`removeEventListener\` عند تفكيك المكونات.
+5. **استخدام المتغيرات العامة (Global Scope Pollution):** يؤدي لتداخل البيانات بين الجلسات.
+
+---
+
+## الخلاصة وخارطة طريق المطور المحترف
+
+إتقان لغة JavaScript لا يتوقف عند معرفة الصيغ النحوية (Syntax)، بل يبدأ من فهم كيفية تعامل المحرك مع المكدس والذاكرة وإدارة الأحداث. بهذه المعرفة، تصبح قادراً على كتابة برمجيات تتحمل ضغط ملايين الزيارات وتستجيب في أجزاء من الألف من الثانية.
+  \`
+",`,
 };

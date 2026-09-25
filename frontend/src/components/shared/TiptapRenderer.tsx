@@ -425,6 +425,11 @@ function parseMarkdownToBlocks(rawContent: string, tocItems?: TocItem[]): Markdo
   }
   content = content.replace(/^`+\s*/, '').replace(/\s*`+$/, '');
 
+  // Safeguard: Unescape literal \n and \t if received from raw JSON APIs
+  if (content.includes('\\n')) {
+    content = content.replace(/\\n/g, '\n').replace(/\\r/g, '').replace(/\\t/g, '\t');
+  }
+
   const lines = content.split(/\r?\n/);
   const blocks: MarkdownBlock[] = [];
   let i = 0;

@@ -51,5 +51,117 @@ export const article05: StaticArticle = {
     keywords: ['Node.js', 'Libuv', 'Event Loop', 'Node Streams', 'Worker Threads', 'Backend Architecture'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/advanced-nodejs-engineering-event-loop-streams-workers',
   },
-  content: "\"## المعمارية الداخلية لـ Node.js: محرك V8 ومكتبة Libuv\\n\\nكثير من المطورين يعتقدون أن **Node.js** هي مجرد بيئة تشغيل لجافاسكريبت، لكن الحقيقة المعمارية أنها نظام هجين قوي مبني من:\\n* **V8 Engine (C++):** مسؤول عن ترجمة وتنفيذ كود JavaScript وإدارة الذاكرة والـ Garbage Collection.\\n* **Libuv (C Library):** القلب النابض لـ Node.js؛ وهي المسؤولة عن توفير الـ Event Loop، ومسارات العمل الموازية في الـ Thread Pool (4 Threads افتراضياً قابلة للزيادة عبر UV_THREADPOOL_SIZE)، والتعامل مع استدعاءات نظام التشغيل غير المحجوبة (Asynchronous Non-blocking I/O).\\n\\n```text\\n┌─────────────────────────────────────────────────────────────┐\\n│                    JavaScript Application                   │\\n├──────────────────────────────┬──────────────────────────────┤\\n│       V8 Engine (JS)         │     Node.js Core (C++/JS)    │\\n├──────────────────────────────┴──────────────────────────────┤\\n│                  LIBUV (Event Loop & Thread Pool)           │\\n├──────────────────────────────┬──────────────────────────────┤\\n│     Operating System APIs    │        Hardware & CPU        │\\n└──────────────────────────────┴──────────────────────────────┘\\n```\\n\\n---\\n\\n## مراحل الـ Event Loop الستة بالتفصيل الدقيق\\n\\nفي كل دورة (Tick) يقوم بها الـ Event Loop، يمر بالمراحل التالية بدقة متناهية:\\n\\n1. **Timers Phase:** تفحص المؤقتات التي انتهت مهلتها (`setTimeout` و `setInterval`).\\n2. **Pending Callbacks:** تنفذ استدعاءات أخطاء النظام المؤجلة مثل `ECONNREFUSED`.\\n3. **Idle, Prepare:** عمليات تهيئة وتحسين داخلية لمحرك Node.js.\\n4. **Poll Phase:** المرحلة الأهم؛ حيث ينتظر المحرك أحداث الشبكة والملفات الجديدة وينفذ الاستدعاءات المرتبطة بها.\\n5. **Check Phase:** مخصصة حصرياً لتنفيذ استدعاءات `setImmediate()`.\\n6. **Close Callbacks:** تنفذ أحداث الإغلاق مثل `socket.on('close')`.\\n\\n> **ملاحظة ذهبية:** دالة `process.nextTick()` ووعود `Promise.then()` ليست جزءاً من الـ Event Loop التقليدي؛ بل يتم تفريغ طابورهما فوراً بعد انتهاء العملية الحالية وقبل الانتقال للمرحلة التالية مباشرة!\\n\\n---\\n\\n## احتراف الـ Streams: معالجة الملفات الضخمة\\n\\nعندما تريد معالجة ملف بحجم 5GB، فإن استخدام `fs.readFile` سيؤدي حتماً إلى خطأ `JavaScript heap out of memory`. الحل الهندسي الصحيح هو استخدام **Pipeline Streams**:\\n\\n```typescript\\nimport createReadStream from 'node:fs';\\nimport createWriteStream from 'node:fs';\\nimport { pipeline } from 'node:stream/promises';\\nimport { createGzip } from 'node:zlib';\\n\\nasync function compressLargeLogFile(inputPath: string, outputPath: string): Promise<void> {\\n  console.log('بدء ضغط السجلات الضخمة عبر Pipeline Streams...');\\n\\n  try {\\n    await pipeline(\\n      createReadStream.createReadStream(inputPath, { highWaterMark: 64 * 1024 }), // قراءة أجزاء 64KB\\n      createGzip(), // ضغط مباشر أثناء التدفق\\n      createWriteStream.createWriteStream(outputPath) // كتابة فورية على القرص\\n    );\\n\\n    console.log('✅ اكتملت عملية الضغط بنجاح مع استهلاك ذاكرة لم يتجاوز 30MB!');\\n  } catch (error) {\\n    console.error('❌ فشل تدفق البيانات:', error);\\n    throw error;\\n  }\\n}\\n```\\n\\n---\\n\\n## المعالجة المتوازية: Worker Threads للعمليات الحسابية الثقيلة\\n\\nإذا كنت بحاجة لتشفير ملفات أو حسابات إحصائية ضخمة، استخدم **Worker Threads** لمنع تجمد الخادم:\\n\\n```typescript\\n// main-server.ts\\nimport { Worker } from 'node:worker_threads';\\nimport express from 'express';\\n\\nconst app = express();\\n\\nfunction runHeavyWorker(data: number[]): Promise<number> {\\n  return new Promise((resolve, reject) => {\\n    const worker = new Worker('./dist/workers/calc-worker.js', {\\n      workerData: data,\\n    });\\n    worker.on('message', resolve);\\n    worker.on('error', reject);\\n    worker.on('exit', code => {\\n      if (code !== 0) reject(new Error(`توقف الـ Worker بكود: ${code}`));\\n    });\\n  });\\n}\\n\\napp.get('/compute', async (req, res) => {\\n  const dataset = Array.from({ length: 5_000_000 }, () => Math.random());\\n  // تنفيذ الحسابات على مسار معالج منفصل تماماً\\n  const result = await runHeavyWorker(dataset);\\n  res.json({ success: true, result });\\n});\\n```\\n\\n---\\n\\n## كشف وإصلاح تسريبات الذاكرة (Memory Profiling)\\n\\nتحدث تسريبات الذاكرة في Node.js نتيجة الاحتفاظ بمتغيرات عامة أو Event Listeners غير مفككة. استخدم الأمر `--inspect` و Chrome DevTools لأخذ Heap Snapshots ومقارنتها عبر الزمن للعثور على الكائنات التي لا تُحذف.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nNode.js أداة معمارية جبارة عندما تُستخدم بطريقتها الصحيحة:\\n* لا تحجب الـ Event Loop بأي عملية متزامنة (`fs.readFileSync`).\\n* استخدم Streams دائماً مع البيانات المتدفقة والملفات.\\n* وظف Worker Threads للعمليات الحسابية الثقيلة.\\n* راقب استهلاك الـ Heap Memory ومؤشر Event Loop Lag في بيئات الإنتاج.`\\n\",\n",
+  content: `## المعمارية الداخلية لـ Node.js: محرك V8 ومكتبة Libuv
+
+كثير من المطورين يعتقدون أن **Node.js** هي مجرد بيئة تشغيل لجافاسكريبت، لكن الحقيقة المعمارية أنها نظام هجين قوي مبني من:
+* **V8 Engine (C++):** مسؤول عن ترجمة وتنفيذ كود JavaScript وإدارة الذاكرة والـ Garbage Collection.
+* **Libuv (C Library):** القلب النابض لـ Node.js؛ وهي المسؤولة عن توفير الـ Event Loop، ومسارات العمل الموازية في الـ Thread Pool (4 Threads افتراضياً قابلة للزيادة عبر UV_THREADPOOL_SIZE)، والتعامل مع استدعاءات نظام التشغيل غير المحجوبة (Asynchronous Non-blocking I/O).
+
+\`\`\`text
+┌─────────────────────────────────────────────────────────────┐
+│                    JavaScript Application                   │
+├──────────────────────────────┬──────────────────────────────┤
+│       V8 Engine (JS)         │     Node.js Core (C++/JS)    │
+├──────────────────────────────┴──────────────────────────────┤
+│                  LIBUV (Event Loop & Thread Pool)           │
+├──────────────────────────────┬──────────────────────────────┤
+│     Operating System APIs    │        Hardware & CPU        │
+└──────────────────────────────┴──────────────────────────────┘
+\`\`\`
+
+---
+
+## مراحل الـ Event Loop الستة بالتفصيل الدقيق
+
+في كل دورة (Tick) يقوم بها الـ Event Loop، يمر بالمراحل التالية بدقة متناهية:
+
+1. **Timers Phase:** تفحص المؤقتات التي انتهت مهلتها (\`setTimeout\` و \`setInterval\`).
+2. **Pending Callbacks:** تنفذ استدعاءات أخطاء النظام المؤجلة مثل \`ECONNREFUSED\`.
+3. **Idle, Prepare:** عمليات تهيئة وتحسين داخلية لمحرك Node.js.
+4. **Poll Phase:** المرحلة الأهم؛ حيث ينتظر المحرك أحداث الشبكة والملفات الجديدة وينفذ الاستدعاءات المرتبطة بها.
+5. **Check Phase:** مخصصة حصرياً لتنفيذ استدعاءات \`setImmediate()\`.
+6. **Close Callbacks:** تنفذ أحداث الإغلاق مثل \`socket.on('close')\`.
+
+> **ملاحظة ذهبية:** دالة \`process.nextTick()\` ووعود \`Promise.then()\` ليست جزءاً من الـ Event Loop التقليدي؛ بل يتم تفريغ طابورهما فوراً بعد انتهاء العملية الحالية وقبل الانتقال للمرحلة التالية مباشرة!
+
+---
+
+## احتراف الـ Streams: معالجة الملفات الضخمة
+
+عندما تريد معالجة ملف بحجم 5GB، فإن استخدام \`fs.readFile\` سيؤدي حتماً إلى خطأ \`JavaScript heap out of memory\`. الحل الهندسي الصحيح هو استخدام **Pipeline Streams**:
+
+\`\`\`typescript
+import createReadStream from 'node:fs';
+import createWriteStream from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import { createGzip } from 'node:zlib';
+
+async function compressLargeLogFile(inputPath: string, outputPath: string): Promise<void> {
+  console.log('بدء ضغط السجلات الضخمة عبر Pipeline Streams...');
+
+  try {
+    await pipeline(
+      createReadStream.createReadStream(inputPath, { highWaterMark: 64 * 1024 }), // قراءة أجزاء 64KB
+      createGzip(), // ضغط مباشر أثناء التدفق
+      createWriteStream.createWriteStream(outputPath) // كتابة فورية على القرص
+    );
+
+    console.log('✅ اكتملت عملية الضغط بنجاح مع استهلاك ذاكرة لم يتجاوز 30MB!');
+  } catch (error) {
+    console.error('❌ فشل تدفق البيانات:', error);
+    throw error;
+  }
+}
+\`\`\`
+
+---
+
+## المعالجة المتوازية: Worker Threads للعمليات الحسابية الثقيلة
+
+إذا كنت بحاجة لتشفير ملفات أو حسابات إحصائية ضخمة، استخدم **Worker Threads** لمنع تجمد الخادم:
+
+\`\`\`typescript
+// main-server.ts
+import { Worker } from 'node:worker_threads';
+import express from 'express';
+
+const app = express();
+
+function runHeavyWorker(data: number[]): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker('./dist/workers/calc-worker.js', {
+      workerData: data,
+    });
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', code => {
+      if (code !== 0) reject(new Error(\`توقف الـ Worker بكود: \${code}\`));
+    });
+  });
+}
+
+app.get('/compute', async (req, res) => {
+  const dataset = Array.from({ length: 5_000_000 }, () => Math.random());
+  // تنفيذ الحسابات على مسار معالج منفصل تماماً
+  const result = await runHeavyWorker(dataset);
+  res.json({ success: true, result });
+});
+\`\`\`
+
+---
+
+## كشف وإصلاح تسريبات الذاكرة (Memory Profiling)
+
+تحدث تسريبات الذاكرة في Node.js نتيجة الاحتفاظ بمتغيرات عامة أو Event Listeners غير مفككة. استخدم الأمر \`--inspect\` و Chrome DevTools لأخذ Heap Snapshots ومقارنتها عبر الزمن للعثور على الكائنات التي لا تُحذف.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+Node.js أداة معمارية جبارة عندما تُستخدم بطريقتها الصحيحة:
+* لا تحجب الـ Event Loop بأي عملية متزامنة (\`fs.readFileSync\`).
+* استخدم Streams دائماً مع البيانات المتدفقة والملفات.
+* وظف Worker Threads للعمليات الحسابية الثقيلة.
+* راقب استهلاك الـ Heap Memory ومؤشر Event Loop Lag في بيئات الإنتاج.\`
+",`,
 };

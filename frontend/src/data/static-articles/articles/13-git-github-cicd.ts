@@ -49,5 +49,118 @@ export const article13: StaticArticle = {
     keywords: ['Git', 'GitHub', 'CI/CD', 'Git Rebase', 'Trunk Based Development', 'GitHub Actions'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/professional-git-github-branching-strategies-cicd',
   },
-  content: "\"## البنية الداخلية لـ Git: الرسم البياني الموجه (DAG) والكائنات\\n\\nGit في حقيقته ليس مجرد نظام ملفات، بل هو قاعدة بيانات مفتاح-قيمة (Content-Addressable Database) مبنية من 4 كائنات رئيسية مشفرة بـ SHA-1 Hashes:\\n1. **Blob (Binary Large Object):** محتوى الملف الفعلي بدون الاسم أو المسار.\\n2. **Tree:** يمثل المجلد وهيكل الملفات، ويربط أسماء الملفات بالـ Blobs الخاصة بها أو بـ Trees فرعية.\\n3. **Commit:** نقطة زمنية تشير إلى Tree والـ Parent Commit المباشر، وبيانات المطور (Author & Committer) والرسالة الوصفية.\\n4. **Annotated Tag:** وسم دائم يشير إلى إصدار معتمد برقم الإصدار وتوقيع المطور (GPG Signature).\\n\\n```text\\n[ Commit Object ] ──> يشير إلى ──> [ Root Tree Object ]\\n                                      ├──> [ Blob: package.json ]\\n                                      └──> [ Sub-Tree: src/ ]\\n                                                ├──> [ Blob: index.ts ]\\n                                                └──> [ Blob: app.ts ]\\n```\\n\\n---\\n\\n## المعركة الأبدية: Git Merge مقابل Git Rebase\\n\\n* **Git Merge (الدمج ثلاثي الاتجاهات 3-Way Merge):**\\n  - يحافظ على التاريخ الزمني كما حدث بالضبط.\\n  - ينشئ Merge Commit إضافي يربط الفرعين معاً.\\n  - ممتاز لتوثيق تاريخ دمج الميزات في فروع الإنتاج الرئيسية (Release Branches).\\n* **Git Rebase (إعادة التأسيس الخطي Linear History):**\\n  - يعيد كتابة تاريخ الكوميتات بنقلها لتصبح في قمة الفرع الهدف كما لو أنها كُتبت الآن.\\n  - يمنحك سجلاً خطياً نظيفاً وسهلاً في القراءة والتتبع عبر `git bisect` لتحديد مسبب الـ Bug بدقة.\\n  - **القاعدة الذهبية:** لا تقم بعمل Rebase على أي فرع عام ومشترك بين أعضاء الفريق!\\n\\n```bash\\n# تنظيف وتوحيد آخر 3 كوميتات في كوميت واحد نظيف قبل فتح الـ PR\\ngit rebase -i HEAD~3\\n\\n# في الشاشة التفاعلية:\\n# pick a1b2c3d feat: add user authentication\\n# squash e4f5g6h fix typo in auth controller\\n# fixup i7j8k9l remove console.log\\n```\\n\\n---\\n\\n## استراتيجيات الفروع: Git Flow مقابل Trunk-Based Development\\n\\n### 1. Git Flow التقليدي\\nيعتمد على فروع طويلة الأمد (`main`, `develop`, `feature/...`, `release/...`, `hotfix/...`). مناسب للبرمجيات التقليدية التي تصدر تحديثات كل عدة أشهر، ولكنه يسبب تعارضات دمج مؤلمة (Merge Hell) في الفرق السريعة.\\n\\n### 2. Trunk-Based Development الحديث\\nالمعيار المعتمد في كبرى الشركات التقنية مثل Google و Netflix:\\n* المطورون يدفعون التعديلات الصغيرة مباشرة إلى الـ `main` أو عبر فروع قصيرة الأجل (أقل من يومين).\\n* استخدام **Feature Flags (Feature Toggles)** لإخفاء الميزات غير المكتملة في الإنتاج دون تعطيل النشر المستمر.\\n* دورات نشر متعددة يومياً (Continuous Deployment) بأمان وثقة.\\n\\n---\\n\\n## خط إنتاج واختبار تلقائي عبر GitHub Actions\\n\\n```yaml\\n# .github/workflows/ci.yml\\nname: Production Continuous Integration Pipeline\\n\\non:\\n  push:\\n    branches: [main]\\n  pull_request:\\n    branches: [main]\\n\\njobs:\\n  verify:\\n    name: Code Quality & Security Check\\n    runs-on: ubuntu-latest\\n    steps:\\n      - name: Checkout Code\\n        uses: actions/checkout@v4\\n        with:\\n          fetch-depth: 0\\n\\n      - name: Setup Node.js 20 Environment\\n        uses: actions/setup-node@v4\\n        with:\\n          node-version: 20\\n          cache: 'npm'\\n\\n      - name: Install Dependencies with Frozen Lockfile\\n        run: npm ci\\n\\n      - name: ESLint Static Analysis\\n        run: npm run lint\\n\\n      - name: TypeScript Type Checking\\n        run: npm run type-check\\n\\n      - name: Automated Unit & Integration Tests\\n        run: npm test -- --coverage\\n\\n      - name: Build Production Assets Verification\\n        run: npm run build\\n```\\n\\n---\\n\\n## حل النزاعات وحماية الفروع (Branch Protection Rules)\\n\\nلضمان سلامة الكود في الإنتاج، يجب تفعيل قواعد حماية الفروع في GitHub:\\n1. **Require a pull request before merging:** منع الدفع المباشر إلى `main`.\\n2. **Require status checks to pass:** منع الدمج إذا فشل فحص الـ Linter أو الاختبارات الآلية.\\n3. **Require review from code owners:** اشتراط مراجعة وموافقة مهندس معتمد.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* اكتب رسائل Commit معيارية (Conventional Commits: `feat:`, `fix:`, `refactor:`, `perf:`).\\n* لا تدمج كوداً في الإنتاج يدوياً؛ اعتمد دائماً على الـ CI/CD Pipelines الآلية.\\n* اعتمد على Trunk-Based Development لتسريع وتيرة تسليم البرمجيات.\",\n",
+  content: `## البنية الداخلية لـ Git: الرسم البياني الموجه (DAG) والكائنات
+
+Git في حقيقته ليس مجرد نظام ملفات، بل هو قاعدة بيانات مفتاح-قيمة (Content-Addressable Database) مبنية من 4 كائنات رئيسية مشفرة بـ SHA-1 Hashes:
+1. **Blob (Binary Large Object):** محتوى الملف الفعلي بدون الاسم أو المسار.
+2. **Tree:** يمثل المجلد وهيكل الملفات، ويربط أسماء الملفات بالـ Blobs الخاصة بها أو بـ Trees فرعية.
+3. **Commit:** نقطة زمنية تشير إلى Tree والـ Parent Commit المباشر، وبيانات المطور (Author & Committer) والرسالة الوصفية.
+4. **Annotated Tag:** وسم دائم يشير إلى إصدار معتمد برقم الإصدار وتوقيع المطور (GPG Signature).
+
+\`\`\`text
+[ Commit Object ] ──> يشير إلى ──> [ Root Tree Object ]
+                                      ├──> [ Blob: package.json ]
+                                      └──> [ Sub-Tree: src/ ]
+                                                ├──> [ Blob: index.ts ]
+                                                └──> [ Blob: app.ts ]
+\`\`\`
+
+---
+
+## المعركة الأبدية: Git Merge مقابل Git Rebase
+
+* **Git Merge (الدمج ثلاثي الاتجاهات 3-Way Merge):**
+  - يحافظ على التاريخ الزمني كما حدث بالضبط.
+  - ينشئ Merge Commit إضافي يربط الفرعين معاً.
+  - ممتاز لتوثيق تاريخ دمج الميزات في فروع الإنتاج الرئيسية (Release Branches).
+* **Git Rebase (إعادة التأسيس الخطي Linear History):**
+  - يعيد كتابة تاريخ الكوميتات بنقلها لتصبح في قمة الفرع الهدف كما لو أنها كُتبت الآن.
+  - يمنحك سجلاً خطياً نظيفاً وسهلاً في القراءة والتتبع عبر \`git bisect\` لتحديد مسبب الـ Bug بدقة.
+  - **القاعدة الذهبية:** لا تقم بعمل Rebase على أي فرع عام ومشترك بين أعضاء الفريق!
+
+\`\`\`bash
+# تنظيف وتوحيد آخر 3 كوميتات في كوميت واحد نظيف قبل فتح الـ PR
+git rebase -i HEAD~3
+
+# في الشاشة التفاعلية:
+# pick a1b2c3d feat: add user authentication
+# squash e4f5g6h fix typo in auth controller
+# fixup i7j8k9l remove console.log
+\`\`\`
+
+---
+
+## استراتيجيات الفروع: Git Flow مقابل Trunk-Based Development
+
+### 1. Git Flow التقليدي
+يعتمد على فروع طويلة الأمد (\`main\`, \`develop\`, \`feature/...\`, \`release/...\`, \`hotfix/...\`). مناسب للبرمجيات التقليدية التي تصدر تحديثات كل عدة أشهر، ولكنه يسبب تعارضات دمج مؤلمة (Merge Hell) في الفرق السريعة.
+
+### 2. Trunk-Based Development الحديث
+المعيار المعتمد في كبرى الشركات التقنية مثل Google و Netflix:
+* المطورون يدفعون التعديلات الصغيرة مباشرة إلى الـ \`main\` أو عبر فروع قصيرة الأجل (أقل من يومين).
+* استخدام **Feature Flags (Feature Toggles)** لإخفاء الميزات غير المكتملة في الإنتاج دون تعطيل النشر المستمر.
+* دورات نشر متعددة يومياً (Continuous Deployment) بأمان وثقة.
+
+---
+
+## خط إنتاج واختبار تلقائي عبر GitHub Actions
+
+\`\`\`yaml
+# .github/workflows/ci.yml
+name: Production Continuous Integration Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Code Quality & Security Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20 Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies with Frozen Lockfile
+        run: npm ci
+
+      - name: ESLint Static Analysis
+        run: npm run lint
+
+      - name: TypeScript Type Checking
+        run: npm run type-check
+
+      - name: Automated Unit & Integration Tests
+        run: npm test -- --coverage
+
+      - name: Build Production Assets Verification
+        run: npm run build
+\`\`\`
+
+---
+
+## حل النزاعات وحماية الفروع (Branch Protection Rules)
+
+لضمان سلامة الكود في الإنتاج، يجب تفعيل قواعد حماية الفروع في GitHub:
+1. **Require a pull request before merging:** منع الدفع المباشر إلى \`main\`.
+2. **Require status checks to pass:** منع الدمج إذا فشل فحص الـ Linter أو الاختبارات الآلية.
+3. **Require review from code owners:** اشتراط مراجعة وموافقة مهندس معتمد.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* اكتب رسائل Commit معيارية (Conventional Commits: \`feat:\`, \`fix:\`, \`refactor:\`, \`perf:\`).
+* لا تدمج كوداً في الإنتاج يدوياً؛ اعتمد دائماً على الـ CI/CD Pipelines الآلية.
+* اعتمد على Trunk-Based Development لتسريع وتيرة تسليم البرمجيات.",`,
 };

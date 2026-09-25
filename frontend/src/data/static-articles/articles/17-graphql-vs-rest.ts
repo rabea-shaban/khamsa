@@ -51,5 +51,92 @@ export const article17: StaticArticle = {
     keywords: ['GraphQL', 'REST API', 'DataLoader', 'N+1 Problem', 'Schema Definition', 'API Architecture'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/graphql-vs-rest-apis-architectural-comparison-practical-guide',
   },
-  content: "\"## مقارنة المشاكل والحلول في معمارية الـ APIs\\n\\n* **Over-fetching في REST:** عندما تطلب `/users/1` لاستخراج الاسم فقط، يرجع لك الخادم 40 حقلاً بما فيها التواريخ والعناوين مما يهدر الباندويث ويزيد من استهلاك بيانات الهاتف.\\n* **Under-fetching في REST:** عندما تحتاج لعرض اسم المستخدم وآخر مقالاته وتعليقاته، تضطر لإرسال 3 طلبات HTTP متتالية مع زيادة في زمن الاستجابة الكلي (Latency).\\n* **حل GraphQL:** طلب واحد يحدد فيه العميل الحقول المطلوبة بدقة متناهية:\\n\\n```graphql\\nquery GetUserProfile {\\n  user(id: \"usr_1\") {\\n    name\\n    email\\n    articles(limit: 3) {\\n      id\\n      title\\n      slug\\n    }\\n  }\\n}\\n```\\n\\n---\\n\\n## مخطط البيانات (SDL) وبناء دوال الحل (Resolvers)\\n\\n```typescript\\nimport { createSchema, createYoga } from 'graphql-yoga';\\n\\nconst typeDefinitions = /* GraphQL */ `\\n  type Article {\\n    id: ID!\\n    title: String!\\n    slug: String!\\n    category: String!\\n  }\\n\\n  type Query {\\n    articles(category: String): [Article!]!\\n    article(slug: String!): Article\\n  }\\n`;\\n\\nconst resolvers = {\\n  Query: {\\n    articles: async (_: unknown, args: { category?: string }, ctx: Context) => {\\n      return ctx.db.articles.findMany({ where: args.category ? { category: args.category } : {} });\\n    },\\n    article: async (_: unknown, args: { slug: string }, ctx: Context) => {\\n      return ctx.db.articles.findUnique({ where: { slug: args.slug } });\\n    },\\n  },\\n};\\n```\\n\\n---\\n\\n## حل كارثة استعلامات N+1 باستخدام DataLoader\\n\\n```typescript\\nimport DataLoader from 'dataloader';\\nimport { db } from '@/lib/db';\\n\\n// تجميع كل المعرفات في استعلام واحد فقط بنمط Batching\\nexport const authorLoader = new DataLoader<string, Author>(async authorIds => {\\n  const authors = await db.authors.findMany({\\n    where: { id: { in: [...authorIds] } },\\n  });\\n\\n  const authorMap = new Map(authors.map(a => [a.id, a]));\\n  return authorIds.map(id => authorMap.get(id) || null);\\n});\\n```\\n\\n---\\n\\n## مصفوفة القرار: متى تختار REST ومتى تختار GraphQL؟\\n\\n| المعيار | REST APIs | GraphQL |\\n| :--- | :--- | :--- |\\n| **الـ Caching** | بسيط جداً ومدمج عبر HTTP و CDNs | يتطلب حلولاً معقدة من طرف العميل (Apollo Client) |\\n| **حجم البيانات** | قد يحتوي على بيانات زائدة | دقيق 100% حسب طلب العميل |\\n| **أمان الـ Endpoints** | بسيط وتوجيه مسارات محدد | يتطلب تحديد عمق الاستعلام (Query Depth Limiting) |\\n| **التطبيقات المناسبة** | تطبيقات التجارة، الـ Webhooks، الميكروسيرفس | تطبيقات الجوال، لوحات التحكم المعقدة، والواجهات المتطورة |\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nاختر الأداة المناسبة لطبيعة النظام وليس بناءً على التريندات؛ REST ممتاز للبساطة والتكاملات، و GraphQL رائع للواجهات الغنية بالبيانات والتطبيقات متعددة المنصات.\",\n",
+  content: `## مقارنة المشاكل والحلول في معمارية الـ APIs
+
+* **Over-fetching في REST:** عندما تطلب \`/users/1\` لاستخراج الاسم فقط، يرجع لك الخادم 40 حقلاً بما فيها التواريخ والعناوين مما يهدر الباندويث ويزيد من استهلاك بيانات الهاتف.
+* **Under-fetching في REST:** عندما تحتاج لعرض اسم المستخدم وآخر مقالاته وتعليقاته، تضطر لإرسال 3 طلبات HTTP متتالية مع زيادة في زمن الاستجابة الكلي (Latency).
+* **حل GraphQL:** طلب واحد يحدد فيه العميل الحقول المطلوبة بدقة متناهية:
+
+\`\`\`graphql
+query GetUserProfile {
+  user(id: "usr_1") {
+    name
+    email
+    articles(limit: 3) {
+      id
+      title
+      slug
+    }
+  }
+}
+\`\`\`
+
+---
+
+## مخطط البيانات (SDL) وبناء دوال الحل (Resolvers)
+
+\`\`\`typescript
+import { createSchema, createYoga } from 'graphql-yoga';
+
+const typeDefinitions = /* GraphQL */ \`
+  type Article {
+    id: ID!
+    title: String!
+    slug: String!
+    category: String!
+  }
+
+  type Query {
+    articles(category: String): [Article!]!
+    article(slug: String!): Article
+  }
+\`;
+
+const resolvers = {
+  Query: {
+    articles: async (_: unknown, args: { category?: string }, ctx: Context) => {
+      return ctx.db.articles.findMany({ where: args.category ? { category: args.category } : {} });
+    },
+    article: async (_: unknown, args: { slug: string }, ctx: Context) => {
+      return ctx.db.articles.findUnique({ where: { slug: args.slug } });
+    },
+  },
+};
+\`\`\`
+
+---
+
+## حل كارثة استعلامات N+1 باستخدام DataLoader
+
+\`\`\`typescript
+import DataLoader from 'dataloader';
+import { db } from '@/lib/db';
+
+// تجميع كل المعرفات في استعلام واحد فقط بنمط Batching
+export const authorLoader = new DataLoader<string, Author>(async authorIds => {
+  const authors = await db.authors.findMany({
+    where: { id: { in: [...authorIds] } },
+  });
+
+  const authorMap = new Map(authors.map(a => [a.id, a]));
+  return authorIds.map(id => authorMap.get(id) || null);
+});
+\`\`\`
+
+---
+
+## مصفوفة القرار: متى تختار REST ومتى تختار GraphQL؟
+
+| المعيار | REST APIs | GraphQL |
+| :--- | :--- | :--- |
+| **الـ Caching** | بسيط جداً ومدمج عبر HTTP و CDNs | يتطلب حلولاً معقدة من طرف العميل (Apollo Client) |
+| **حجم البيانات** | قد يحتوي على بيانات زائدة | دقيق 100% حسب طلب العميل |
+| **أمان الـ Endpoints** | بسيط وتوجيه مسارات محدد | يتطلب تحديد عمق الاستعلام (Query Depth Limiting) |
+| **التطبيقات المناسبة** | تطبيقات التجارة، الـ Webhooks، الميكروسيرفس | تطبيقات الجوال، لوحات التحكم المعقدة، والواجهات المتطورة |
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+اختر الأداة المناسبة لطبيعة النظام وليس بناءً على التريندات؛ REST ممتاز للبساطة والتكاملات، و GraphQL رائع للواجهات الغنية بالبيانات والتطبيقات متعددة المنصات.",`,
 };

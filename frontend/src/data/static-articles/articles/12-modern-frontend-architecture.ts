@@ -49,5 +49,87 @@ export const article12: StaticArticle = {
     keywords: ['Frontend Architecture', 'React', 'Zustand', 'TanStack Query', 'Compound Components', 'State Management'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/modern-frontend-architecture-state-management-component-design',
   },
-  content: "\"## تعقيدات الـ Frontend في التطبيقات المؤسسية\\n\\nفي التطبيقات الضخمة، تصبح إدارة الواجهات الأمامية تحدياً هندسياً معقداً يشمل: مشاركة البيانات بين مكونات متباعدة، الحفاظ على سرعة الاستجابة وتفادي الـ Re-renders غير الضرورية، وتصميم مكونات قابلة للتوسيع وإعادة الاستخدام.\\n\\n---\\n\\n## تصنيف الحالة في تطبيقات الويب الحديثة\\n\\nالمعمارية الصحيحة تقسم الحالة إلى 3 أنواع مستقلة تماماً:\\n\\n1. **Server State:** بيانات قادمة من الخادم غير متزامنة وقابلة للتغيير (تُدار عبر **TanStack Query**).\\n2. **Client State:** تفاعلات الواجهة فقط مثل: القائمة مفتوحة أم مغلقة، الثيم الداكن (تُدار عبر **Zustand**).\\n3. **URL State:** الفلاتر، الصفحة الحالية، والبحث (تُدار عبر **Query Parameters** لضمان قابلية المشاركة عبر الروابط).\\n\\n---\\n\\n## إدارة الـ Client State بخفة عبر Zustand\\n\\n```typescript\\nimport { create } from 'zustand';\\nimport { persist } from 'zustand/middleware';\\n\\ninterface UiPreferencesState {\\n  theme: 'light' | 'dark' | 'system';\\n  isSidebarOpen: boolean;\\n  setTheme: (theme: 'light' | 'dark' | 'system') => void;\\n  toggleSidebar: () => void;\\n}\\n\\nexport const useUiStore = create<UiPreferencesState>()(\\n  persist(\\n    set => ({\\n      theme: 'dark',\\n      isSidebarOpen: true,\\n      setTheme: theme => set({ theme }),\\n      toggleSidebar: () => set(state => ({ isSidebarOpen: !state.isSidebarOpen })),\\n    }),\\n    { name: 'khamsa-ui-preferences' }\\n  )\\n);\\n```\\n\\n---\\n\\n## نمط الـ Compound Components\\n\\nيتيح لك هذا النمط بناء مكونات متكاملة مثل الـ Tabs أو الـ Accordion تشارك الحالة داخلياً عبر Context وتمنح المطور مرونة كاملة في التصميم:\\n\\n```typescript\\n// مكون الـ Tabs بنمط Compound Component\\nimport React, { createContext, useContext, useState } from 'react';\\n\\nconst TabsContext = createContext<{ activeTab: string; setActiveTab: (tab: string) => void } | null>(null);\\n\\nexport function Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {\\n  const [activeTab, setActiveTab] = useState(defaultTab);\\n  return <TabsContext.Provider value={{ activeTab, setActiveTab }}>{children}</TabsContext.Provider>;\\n}\\n\\nexport function TabTrigger({ value, children }: { value: string; children: React.ReactNode }) {\\n  const ctx = useContext(TabsContext);\\n  if (!ctx) throw new Error('TabTrigger must be used within Tabs');\\n  const isActive = ctx.activeTab === value;\\n\\n  return (\\n    <button\\n      onClick={() => ctx.setActiveTab(value)}\\n      className={`px-4 py-2 font-bold ${isActive ? 'text-primary border-b-2 border-primary' : 'text-muted'}`}\\n    >\\n      {children}\\n    </button>\\n  );\\n}\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* استخدم الـ URL لحفظ أي حالة يحتاجها المستخدم عند نسخ الرابط أو الضغط على زر الرجوع.\\n* اعتمد على TanStack Query لكل طلبات الشبكة والكاش.\\n* اعتمد على Zustand للحالة المشتركة بين المكونات التفاعلية.`\\n\",\n",
+  content: `## تعقيدات الـ Frontend في التطبيقات المؤسسية
+
+في التطبيقات الضخمة، تصبح إدارة الواجهات الأمامية تحدياً هندسياً معقداً يشمل: مشاركة البيانات بين مكونات متباعدة، الحفاظ على سرعة الاستجابة وتفادي الـ Re-renders غير الضرورية، وتصميم مكونات قابلة للتوسيع وإعادة الاستخدام.
+
+---
+
+## تصنيف الحالة في تطبيقات الويب الحديثة
+
+المعمارية الصحيحة تقسم الحالة إلى 3 أنواع مستقلة تماماً:
+
+1. **Server State:** بيانات قادمة من الخادم غير متزامنة وقابلة للتغيير (تُدار عبر **TanStack Query**).
+2. **Client State:** تفاعلات الواجهة فقط مثل: القائمة مفتوحة أم مغلقة، الثيم الداكن (تُدار عبر **Zustand**).
+3. **URL State:** الفلاتر، الصفحة الحالية، والبحث (تُدار عبر **Query Parameters** لضمان قابلية المشاركة عبر الروابط).
+
+---
+
+## إدارة الـ Client State بخفة عبر Zustand
+
+\`\`\`typescript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface UiPreferencesState {
+  theme: 'light' | 'dark' | 'system';
+  isSidebarOpen: boolean;
+  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+  toggleSidebar: () => void;
+}
+
+export const useUiStore = create<UiPreferencesState>()(
+  persist(
+    set => ({
+      theme: 'dark',
+      isSidebarOpen: true,
+      setTheme: theme => set({ theme }),
+      toggleSidebar: () => set(state => ({ isSidebarOpen: !state.isSidebarOpen })),
+    }),
+    { name: 'khamsa-ui-preferences' }
+  )
+);
+\`\`\`
+
+---
+
+## نمط الـ Compound Components
+
+يتيح لك هذا النمط بناء مكونات متكاملة مثل الـ Tabs أو الـ Accordion تشارك الحالة داخلياً عبر Context وتمنح المطور مرونة كاملة في التصميم:
+
+\`\`\`typescript
+// مكون الـ Tabs بنمط Compound Component
+import React, { createContext, useContext, useState } from 'react';
+
+const TabsContext = createContext<{ activeTab: string; setActiveTab: (tab: string) => void } | null>(null);
+
+export function Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  return <TabsContext.Provider value={{ activeTab, setActiveTab }}>{children}</TabsContext.Provider>;
+}
+
+export function TabTrigger({ value, children }: { value: string; children: React.ReactNode }) {
+  const ctx = useContext(TabsContext);
+  if (!ctx) throw new Error('TabTrigger must be used within Tabs');
+  const isActive = ctx.activeTab === value;
+
+  return (
+    <button
+      onClick={() => ctx.setActiveTab(value)}
+      className={\`px-4 py-2 font-bold \${isActive ? 'text-primary border-b-2 border-primary' : 'text-muted'}\`}
+    >
+      {children}
+    </button>
+  );
+}
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* استخدم الـ URL لحفظ أي حالة يحتاجها المستخدم عند نسخ الرابط أو الضغط على زر الرجوع.
+* اعتمد على TanStack Query لكل طلبات الشبكة والكاش.
+* اعتمد على Zustand للحالة المشتركة بين المكونات التفاعلية.\`
+",`,
 };

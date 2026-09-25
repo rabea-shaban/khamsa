@@ -51,5 +51,84 @@ export const article09: StaticArticle = {
     keywords: ['Authentication', 'JWT', 'Sessions', 'RBAC', 'OAuth2', 'أمان الويب', 'Node.js Auth'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/authentication-authorization-jwt-sessions-oauth2-rbac',
   },
-  content: "\"## الفرق الجوهري: Authentication مقابل Authorization\\n\\n* **Authentication (المصادقة - من أنت؟):** عملية إثبات هوية المستخدم (عبر البريد وكلمة المرور، أو OTP، أو تسجيل الدخول بجوجل).\\n* **Authorization (التفويض - ماذا يحق لك أن تفعل؟):** فحص الصلاحيات لمعرفة هل يحق لهذا المستخدم تعديل هذا المقال أو حذف هذا المستخدم.\\n\\n---\\n\\n## تشريح الـ JSON Web Token (JWT)\\n\\nالـ JWT يتكون من ثلاثة أجزاء مفصولة بنقاط:\\n\\n```text\\n[ Header (الخوارزمية) ] . [ Payload (بيانات الهوية والصلاحيات) ] . [ Signature (التوقيع الرقمي) ]\\n```\\n\\n> **تحذير أمني خطير:** البيانات داخل الـ Payload **ليست مشفرة**؛ بل هي مجرد ترميز Base64Url! يمكن لأي شخص فكها وقراءتها. التوقيع وظيفته فقط إثبات أن البيانات لم يتم التلاعب بها من طرف ثالث.\\n\\n---\\n\\n## استراتيجية تدوير الرموز (Refresh Token Rotation)\\n\\nلتحقيق التوازن بين الأمان العالي وتجربة المستخدم السلسة، نستخدم رمزين:\\n1. **Access Token:** عمره قصير جداً (15 دقيقة)، يُستخدم لطلب الـ APIs.\\n2. **Refresh Token:** عمره أطول (7 أيام)، يُخزن في HttpOnly Cookie ويُستخدم لطلب Access Token جديد عند انتهاء صلاحيته. في كل مرة يُستخدم فيها الـ Refresh Token، يتم حذفه فوراً وتوليد Refresh Token جديد بالكامل (Token Rotation). إذا حاول مهاجم استخدام الـ Token القديم مرة ثانية، يقوم الخادم بحظر جميع الجلسات المرتبطة فوراً كإجراء أمني!\\n\\n```typescript\\n// تطبيق الـ Auth Middleware ونظام الصلاحيات RBAC في Express\\nimport { Request, Response, NextFunction } from 'express';\\nimport jwt from 'jsonwebtoken';\\n\\nexport type UserRole = 'ADMIN' | 'EDITOR' | 'USER';\\n\\nexport interface AuthPayload {\\n  userId: string;\\n  role: UserRole;\\n  email: string;\\n}\\n\\nexport function authenticate(req: Request, res: Response, next: NextFunction) {\\n  const authHeader = req.headers.authorization;\\n  if (!authHeader?.startsWith('Bearer ')) {\\n    return res.status(401).json({ success: false, message: 'مطلوب تسجيل الدخول للمتابعة' });\\n  }\\n\\n  const token = authHeader.split(' ')[1];\\n\\n  try {\\n    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as AuthPayload;\\n    (req as any).user = decoded;\\n    next();\\n  } catch (error) {\\n    return res.status(401).json({ success: false, message: 'انتهت صلاحية الجلسة، يرجى التحديث' });\\n  }\\n}\\n\\n// Middleware للتحقق من الأدوار (RBAC)\\nexport function requireRoles(...allowedRoles: UserRole[]) {\\n  return (req: Request, res: Response, next: NextFunction) => {\\n    const user = (req as any).user as AuthPayload | undefined;\\n\\n    if (!user || !allowedRoles.includes(user.role)) {\\n      return res.status(403).json({\\n        success: false,\\n        message: 'ليس لديك الصلاحيات الكافية لتنفيذ هذا الإجراء',\\n      });\\n    }\\n\\n    next();\\n  };\\n}\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* لا تخزن البيانات الحساسة (مثل كلمات المرور أو أرقام البطاقات) داخل الـ JWT Payload.\\n* استخدم دائماً HTTPS لحماية الـ Tokens أثناء النقل عبر الشبكة.\\n* طبق تدوير الـ Refresh Tokens ونظام الـ RBAC للتحكم الدقيق في صلاحيات المستخدمين.`\\n\",\n",
+  content: `## الفرق الجوهري: Authentication مقابل Authorization
+
+* **Authentication (المصادقة - من أنت؟):** عملية إثبات هوية المستخدم (عبر البريد وكلمة المرور، أو OTP، أو تسجيل الدخول بجوجل).
+* **Authorization (التفويض - ماذا يحق لك أن تفعل؟):** فحص الصلاحيات لمعرفة هل يحق لهذا المستخدم تعديل هذا المقال أو حذف هذا المستخدم.
+
+---
+
+## تشريح الـ JSON Web Token (JWT)
+
+الـ JWT يتكون من ثلاثة أجزاء مفصولة بنقاط:
+
+\`\`\`text
+[ Header (الخوارزمية) ] . [ Payload (بيانات الهوية والصلاحيات) ] . [ Signature (التوقيع الرقمي) ]
+\`\`\`
+
+> **تحذير أمني خطير:** البيانات داخل الـ Payload **ليست مشفرة**؛ بل هي مجرد ترميز Base64Url! يمكن لأي شخص فكها وقراءتها. التوقيع وظيفته فقط إثبات أن البيانات لم يتم التلاعب بها من طرف ثالث.
+
+---
+
+## استراتيجية تدوير الرموز (Refresh Token Rotation)
+
+لتحقيق التوازن بين الأمان العالي وتجربة المستخدم السلسة، نستخدم رمزين:
+1. **Access Token:** عمره قصير جداً (15 دقيقة)، يُستخدم لطلب الـ APIs.
+2. **Refresh Token:** عمره أطول (7 أيام)، يُخزن في HttpOnly Cookie ويُستخدم لطلب Access Token جديد عند انتهاء صلاحيته. في كل مرة يُستخدم فيها الـ Refresh Token، يتم حذفه فوراً وتوليد Refresh Token جديد بالكامل (Token Rotation). إذا حاول مهاجم استخدام الـ Token القديم مرة ثانية، يقوم الخادم بحظر جميع الجلسات المرتبطة فوراً كإجراء أمني!
+
+\`\`\`typescript
+// تطبيق الـ Auth Middleware ونظام الصلاحيات RBAC في Express
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+export type UserRole = 'ADMIN' | 'EDITOR' | 'USER';
+
+export interface AuthPayload {
+  userId: string;
+  role: UserRole;
+  email: string;
+}
+
+export function authenticate(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'مطلوب تسجيل الدخول للمتابعة' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as AuthPayload;
+    (req as any).user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ success: false, message: 'انتهت صلاحية الجلسة، يرجى التحديث' });
+  }
+}
+
+// Middleware للتحقق من الأدوار (RBAC)
+export function requireRoles(...allowedRoles: UserRole[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user as AuthPayload | undefined;
+
+    if (!user || !allowedRoles.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'ليس لديك الصلاحيات الكافية لتنفيذ هذا الإجراء',
+      });
+    }
+
+    next();
+  };
+}
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* لا تخزن البيانات الحساسة (مثل كلمات المرور أو أرقام البطاقات) داخل الـ JWT Payload.
+* استخدم دائماً HTTPS لحماية الـ Tokens أثناء النقل عبر الشبكة.
+* طبق تدوير الـ Refresh Tokens ونظام الـ RBAC للتحكم الدقيق في صلاحيات المستخدمين.\`
+",`,
 };

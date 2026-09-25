@@ -50,5 +50,172 @@ export const article06: StaticArticle = {
     keywords: ['Express', 'Clean Architecture', 'REST API', 'Node.js', 'Zod', 'Backend Engineering'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/building-production-restful-apis-express-clean-architecture',
   },
-  content: "\"## لماذا تفشل المشاريع بدون معمارية نظيفة؟\\n\\nيبدأ الكثير من مطوري الـ Backend بكتابة كل شيء داخل ملف `index.js` أو داخل ملفات الـ Routes: قراءة المدخلات، الاستعلام المباشر من قاعدة البيانات، إرسال الإيميلات، وإرجاع الرد.\\n\\nمع مرور 6 أشهر ونمو المشروع:\\n* يصبح التعديل على أي ميزة كابوساً ينذر بانهيار ميزات أخرى.\\n* يستحيل كتابة اختبارات آلية (Unit Tests).\\n* يصعب تبديل قاعدة البيانات أو إضافة قنوات جديدة مثل WebSockets.\\n\\n**Clean Architecture** تعتمد على مبدأ بسيط وحاسم: **فصل الاهتمامات (Separation of Concerns)** واستقلال منطق العمل عن إطار العمل (Framework Independence).\\n\\n---\\n\\n## نمط الطبقات: Routes ➔ Controllers ➔ Services ➔ Repositories\\n\\n```text\\n[ العميل (Client) ]\\n        │ HTTP Request\\n        ▼\\n[ Routes Layer ] ───────> توجيه المسار والتحقق من الأذونات\\n        │\\n        ▼\\n[ Middleware (Zod) ] ───> التحقق الصارم من صحة البيانات\\n        │\\n        ▼\\n[ Controller Layer ] ───> استخراج البيانات وتنسيق رد الـ HTTP\\n        │\\n        ▼\\n[ Service Layer ] ──────> تنفيذ قواعد العمل والمنطق الحسابي (Business Logic)\\n        │\\n        ▼\\n[ Repository Layer ] ───> التعامل المباشر مع قاعدة البيانات (MongoDB / PostgreSQL)\\n```\\n\\n---\\n\\n## تطبيق عملي: نظام إنشاء المقالات بهندسة نظيفة\\n\\n### 1. طبقة التحقق (Zod Schema)\\n\\n```typescript\\nimport { z } from 'zod';\\n\\nexport const CreateArticleSchema = z.object({\\n  title: z.string().min(5, 'عنوان المقال يجب ألا يقل عن 5 أحرف').max(150),\\n  slug: z.string().regex(/^[a-z0-9-]+$/, 'الرابط يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط'),\\n  content: z.string().min(50, 'المحتوى يجب ألا يقل عن 50 حرفاً'),\\n  category: z.string().min(2),\\n  tags: z.array(z.string()).min(1, 'يجب إضافة وسم واحد على الأقل'),\\n});\\n\\nexport type CreateArticleDto = z.infer<typeof CreateArticleSchema>;\\n```\\n\\n### 2. طبقة الـ Service (المنطق البرمجي)\\n\\n```typescript\\nexport class ArticleService {\\n  constructor(private readonly articleRepo: ArticleRepository) {}\\n\\n  async createArticle(dto: CreateArticleDto, authorId: string) {\\n    // 1. التحقق من عدم تكرار الـ Slug\\n    const existing = await this.articleRepo.findBySlug(dto.slug);\\n    if (existing) {\\n      throw new ConflictError('هذا الرابط المخصص (Slug) مستخدم بالفعل.');\\n    }\\n\\n    // 2. تطبيق منطق العمل (حساب زمن القراءة وتوليد التاريخ)\\n    const wordsCount = dto.content.split(/\\\\s+/).length;\\n    const readTimeMinutes = Math.ceil(wordsCount / 200);\\n\\n    // 3. الحفظ في قاعدة البيانات\\n    return this.articleRepo.create({\\n      ...dto,\\n      authorId,\\n      readTimeMinutes,\\n      status: 'PUBLISHED',\\n      createdAt: new Date(),\\n    });\\n  }\\n}\\n```\\n\\n---\\n\\n## نظام معالجة الأخطاء المركزي (Centralized Error Handler)\\n\\nبدلاً من التعامل العشوائي مع الأخطاء، نبني فئات مخصصة للأخطاء و Middleware مركزي:\\n\\n```typescript\\n// errors/AppError.ts\\nexport class AppError extends Error {\\n  constructor(public statusCode: number, message: string, public errors?: unknown) {\\n    super(message);\\n    Object.setPrototypeOf(this, new.target.prototype);\\n  }\\n}\\n\\nexport class NotFoundError extends AppError {\\n  constructor(message = 'العنصر المطلوب غير موجود') {\\n    super(404, message);\\n  }\\n}\\n\\nexport class ConflictError extends AppError {\\n  constructor(message = 'تعارض في البيانات') {\\n    super(409, message);\\n  }\\n}\\n\\n// middlewares/errorHandler.ts\\nimport { Request, Response, NextFunction } from 'express';\\n\\nexport function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {\\n  const statusCode = err instanceof AppError ? err.statusCode : 500;\\n  const message = err.message || 'حدث خطأ داخلي في الخادم';\\n\\n  console.error(`[${req.method}] ${req.url} - Error:`, err);\\n\\n  res.status(statusCode).json({\\n    success: false,\\n    statusCode,\\n    message,\\n    errors: err instanceof AppError ? err.errors : undefined,\\n    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,\\n  });\\n}\\n```\\n\\n---\\n\\n## خط دفاع الأمان: Helmet و Rate Limiting و CORS\\n\\n```typescript\\nimport express from 'express';\\nimport helmet from 'helmet';\\nimport cors from 'cors';\\nimport rateLimit from 'express-rate-limit';\\n\\nconst app = express();\\n\\n// 1. ترويسات الأمان\\napp.use(helmet());\\n\\n// 2. قيود الـ CORS المحددة\\napp.use(cors({\\n  origin: process.env.CLIENT_ORIGIN || 'https://khamsa-web.vercel.app',\\n  credentials: true,\\n}));\\n\\n// 3. صد الهجمات عبر Rate Limiter\\napp.use(rateLimit({\\n  windowMs: 15 * 60 * 1000, // 15 دقيقة\\n  max: 100, // 100 طلب لكل عنوان IP\\n  message: { success: false, message: 'تجاوزت الحد المسموح من الطلبات، يرجى الانتظار' },\\n}));\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\nبناء APIs قوية يتطلب الانضباط من اليوم الأول:\\n* اجعل الـ Controllers نحيفة (Skinny Controllers).\\n* ضع كل منطق العمل داخل الـ Services.\\n* لا تثق أبداً في مدخلات المستخدم واستخدم Zod للتحقق.\\n* وفر معالجة مركزية موحدة لكل الأخطاء لضمان ردود متسقة للـ Frontend.`\\n\",\n",
+  content: `## لماذا تفشل المشاريع بدون معمارية نظيفة؟
+
+يبدأ الكثير من مطوري الـ Backend بكتابة كل شيء داخل ملف \`index.js\` أو داخل ملفات الـ Routes: قراءة المدخلات، الاستعلام المباشر من قاعدة البيانات، إرسال الإيميلات، وإرجاع الرد.
+
+مع مرور 6 أشهر ونمو المشروع:
+* يصبح التعديل على أي ميزة كابوساً ينذر بانهيار ميزات أخرى.
+* يستحيل كتابة اختبارات آلية (Unit Tests).
+* يصعب تبديل قاعدة البيانات أو إضافة قنوات جديدة مثل WebSockets.
+
+**Clean Architecture** تعتمد على مبدأ بسيط وحاسم: **فصل الاهتمامات (Separation of Concerns)** واستقلال منطق العمل عن إطار العمل (Framework Independence).
+
+---
+
+## نمط الطبقات: Routes ➔ Controllers ➔ Services ➔ Repositories
+
+\`\`\`text
+[ العميل (Client) ]
+        │ HTTP Request
+        ▼
+[ Routes Layer ] ───────> توجيه المسار والتحقق من الأذونات
+        │
+        ▼
+[ Middleware (Zod) ] ───> التحقق الصارم من صحة البيانات
+        │
+        ▼
+[ Controller Layer ] ───> استخراج البيانات وتنسيق رد الـ HTTP
+        │
+        ▼
+[ Service Layer ] ──────> تنفيذ قواعد العمل والمنطق الحسابي (Business Logic)
+        │
+        ▼
+[ Repository Layer ] ───> التعامل المباشر مع قاعدة البيانات (MongoDB / PostgreSQL)
+\`\`\`
+
+---
+
+## تطبيق عملي: نظام إنشاء المقالات بهندسة نظيفة
+
+### 1. طبقة التحقق (Zod Schema)
+
+\`\`\`typescript
+import { z } from 'zod';
+
+export const CreateArticleSchema = z.object({
+  title: z.string().min(5, 'عنوان المقال يجب ألا يقل عن 5 أحرف').max(150),
+  slug: z.string().regex(/^[a-z0-9-]+$/, 'الرابط يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط'),
+  content: z.string().min(50, 'المحتوى يجب ألا يقل عن 50 حرفاً'),
+  category: z.string().min(2),
+  tags: z.array(z.string()).min(1, 'يجب إضافة وسم واحد على الأقل'),
+});
+
+export type CreateArticleDto = z.infer<typeof CreateArticleSchema>;
+\`\`\`
+
+### 2. طبقة الـ Service (المنطق البرمجي)
+
+\`\`\`typescript
+export class ArticleService {
+  constructor(private readonly articleRepo: ArticleRepository) {}
+
+  async createArticle(dto: CreateArticleDto, authorId: string) {
+    // 1. التحقق من عدم تكرار الـ Slug
+    const existing = await this.articleRepo.findBySlug(dto.slug);
+    if (existing) {
+      throw new ConflictError('هذا الرابط المخصص (Slug) مستخدم بالفعل.');
+    }
+
+    // 2. تطبيق منطق العمل (حساب زمن القراءة وتوليد التاريخ)
+    const wordsCount = dto.content.split(/\\s+/).length;
+    const readTimeMinutes = Math.ceil(wordsCount / 200);
+
+    // 3. الحفظ في قاعدة البيانات
+    return this.articleRepo.create({
+      ...dto,
+      authorId,
+      readTimeMinutes,
+      status: 'PUBLISHED',
+      createdAt: new Date(),
+    });
+  }
+}
+\`\`\`
+
+---
+
+## نظام معالجة الأخطاء المركزي (Centralized Error Handler)
+
+بدلاً من التعامل العشوائي مع الأخطاء، نبني فئات مخصصة للأخطاء و Middleware مركزي:
+
+\`\`\`typescript
+// errors/AppError.ts
+export class AppError extends Error {
+  constructor(public statusCode: number, message: string, public errors?: unknown) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message = 'العنصر المطلوب غير موجود') {
+    super(404, message);
+  }
+}
+
+export class ConflictError extends AppError {
+  constructor(message = 'تعارض في البيانات') {
+    super(409, message);
+  }
+}
+
+// middlewares/errorHandler.ts
+import { Request, Response, NextFunction } from 'express';
+
+export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+  const statusCode = err instanceof AppError ? err.statusCode : 500;
+  const message = err.message || 'حدث خطأ داخلي في الخادم';
+
+  console.error(\`[\${req.method}] \${req.url} - Error:\`, err);
+
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+    errors: err instanceof AppError ? err.errors : undefined,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
+}
+\`\`\`
+
+---
+
+## خط دفاع الأمان: Helmet و Rate Limiting و CORS
+
+\`\`\`typescript
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+
+const app = express();
+
+// 1. ترويسات الأمان
+app.use(helmet());
+
+// 2. قيود الـ CORS المحددة
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || 'https://khamsa-web.vercel.app',
+  credentials: true,
+}));
+
+// 3. صد الهجمات عبر Rate Limiter
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 دقيقة
+  max: 100, // 100 طلب لكل عنوان IP
+  message: { success: false, message: 'تجاوزت الحد المسموح من الطلبات، يرجى الانتظار' },
+}));
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+بناء APIs قوية يتطلب الانضباط من اليوم الأول:
+* اجعل الـ Controllers نحيفة (Skinny Controllers).
+* ضع كل منطق العمل داخل الـ Services.
+* لا تثق أبداً في مدخلات المستخدم واستخدم Zod للتحقق.
+* وفر معالجة مركزية موحدة لكل الأخطاء لضمان ردود متسقة للـ Frontend.\`
+",`,
 };

@@ -51,5 +51,123 @@ export const article08: StaticArticle = {
     keywords: ['Web Security', 'OWASP Top 10', 'XSS', 'CSRF', 'NoSQL Injection', 'CSP', 'Argon2', 'أمن المعلومات'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/web-security-developer-guide-owasp-top-10',
   },
-  content: "\"## عقلية الأمان: مبدأ انعدام الثقة (Zero-Trust Architecture)\\n\\nالقاعدة الذهبية الأولى في أمن تطبيقات الويب هي:\\n> **«كل مدخل قادم من العميل هو مدخل ضار حتى يثبت العكس بالتنقية والفحص الصارم!»**\\n\\nالأمان ليس مجرد إضافة Middleware في نهاية المشروع، بل هو فلسفة هندسية مدمجة في كل سطر كود.\\n\\n---\\n\\n## ثغرات XSS: أنواعها وطرق الوقاية منها\\n\\nتسمح ثغرة **Cross-Site Scripting (XSS)** للمهاجم بتنفيذ كود JavaScript خبيث في متصفح الضحية لسرقة بيانات الاعتماد أو التلاعب بالصفحة:\\n\\n```typescript\\n// ❌ كود خطير: تمرير مدخلات المستخدم مباشرة للـ HTML\\n<div dangerouslySetInnerHTML={{ __html: userComment }} />\\n\\n// ✅ كود آمن: استخدام مكتبة تنقية معتمدة مثل DOMPurify\\nimport DOMPurify from 'isomorphic-dompurify';\\n\\nconst safeHtml = DOMPurify.sanitize(userComment, {\\n  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'code', 'pre'],\\n  ALLOWED_ATTR: ['href', 'title', 'target'],\\n});\\n\\n<div dangerouslySetInnerHTML={{ __html: safeHtml }} />\\n```\\n\\n---\\n\\n## ترويسات الأمان الإلزامية و Content Security Policy (CSP)\\n\\nاستخدم **Helmet** لضبط ترويسات HTTP التي تعطل هجمات Clickjacking و XSS والتنصت:\\n\\n```typescript\\nimport helmet from 'helmet';\\nimport express from 'express';\\n\\nconst app = express();\\n\\napp.use(\\n  helmet({\\n    contentSecurityPolicy: {\\n      directives: {\\n        defaultSrc: [\"'self'\"],\\n        scriptSrc: [\"'self'\", 'https://pagead2.googlesyndication.com', 'https://www.googletagmanager.com'],\\n        styleSrc: [\"'self'\", \"'unsafe-inline'\", 'https://fonts.googleapis.com'],\\n        fontSrc: [\"'self'\", 'https://fonts.gstatic.com'],\\n        imgSrc: [\"'self'\", 'data:', 'https:', 'blob:'],\\n        frameSrc: [\"'self'\", 'https://www.youtube.com', 'https://www.tiktok.com'],\\n        connectSrc: [\"'self'\", 'https://khamsa-webapi.vercel.app', 'https://www.google-analytics.com'],\\n        objectSrc: [\"'none'\"],\\n        upgradeInsecureRequests: [],\\n      },\\n    },\\n    crossOriginEmbedderPolicy: false,\\n    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },\\n  })\\n);\\n```\\n\\n---\\n\\n## تشفير كلمات المرور باستخدام Argon2\\n\\nتجنب خوارزميات MD5 و SHA القديمة؛ واستخدم دائماً **Argon2id**:\\n\\n```typescript\\nimport argon2 from 'argon2';\\n\\nexport async function hashPassword(plainText: string): Promise<string> {\\n  return argon2.hash(plainText, {\\n    type: argon2.argon2id,\\n    memoryCost: 2 ** 16, // 64MB RAM\\n    timeCost: 3,         // 3 iterations\\n    parallelism: 1,\\n  });\\n}\\n\\nexport async function verifyPassword(hash: string, plainText: string): Promise<boolean> {\\n  try {\\n    return await argon2.verify(hash, plainText);\\n  } catch {\\n    return false;\\n  }\\n}\\n```\\n\\n---\\n\\n## الوقاية من هجمات NoSQL Injection\\n\\n```typescript\\n// ❌ خطير: تمرير مدخلات المستخدم مباشرة إلى استعلام Mongoose\\napp.post('/login', async (req, res) => {\\n  // إذا أرسل المهاجم { \"username\": { \"$ne\": null }, \"password\": { \"$ne\": null } }\\n  const user = await User.findOne({ username: req.body.username, password: req.body.password });\\n});\\n\\n// ✅ آمن: التحقق الصارم من نوع البيانات باستخدام Zod\\nconst LoginSchema = z.object({\\n  username: z.string().min(3),\\n  password: z.string().min(8),\\n});\\n\\napp.post('/login', async (req, res) => {\\n  const { username, password } = LoginSchema.parse(req.body);\\n  const user = await User.findOne({ username: String(username) });\\n});\\n```\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* استخدم دائماً HTTPS الإلزامي عبر HSTS.\\n* خزن Tokens في **HttpOnly, Secure, SameSite=Lax** Cookies.\\n* نفذ Rate Limiting صارم على مسارات المصادقة وتسجيل الدخول لمنع هجمات الـ Brute Force.`\\n\",\n",
+  content: `## عقلية الأمان: مبدأ انعدام الثقة (Zero-Trust Architecture)
+
+القاعدة الذهبية الأولى في أمن تطبيقات الويب هي:
+> **«كل مدخل قادم من العميل هو مدخل ضار حتى يثبت العكس بالتنقية والفحص الصارم!»**
+
+الأمان ليس مجرد إضافة Middleware في نهاية المشروع، بل هو فلسفة هندسية مدمجة في كل سطر كود.
+
+---
+
+## ثغرات XSS: أنواعها وطرق الوقاية منها
+
+تسمح ثغرة **Cross-Site Scripting (XSS)** للمهاجم بتنفيذ كود JavaScript خبيث في متصفح الضحية لسرقة بيانات الاعتماد أو التلاعب بالصفحة:
+
+\`\`\`typescript
+// ❌ كود خطير: تمرير مدخلات المستخدم مباشرة للـ HTML
+<div dangerouslySetInnerHTML={{ __html: userComment }} />
+
+// ✅ كود آمن: استخدام مكتبة تنقية معتمدة مثل DOMPurify
+import DOMPurify from 'isomorphic-dompurify';
+
+const safeHtml = DOMPurify.sanitize(userComment, {
+  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'code', 'pre'],
+  ALLOWED_ATTR: ['href', 'title', 'target'],
+});
+
+<div dangerouslySetInnerHTML={{ __html: safeHtml }} />
+\`\`\`
+
+---
+
+## ترويسات الأمان الإلزامية و Content Security Policy (CSP)
+
+استخدم **Helmet** لضبط ترويسات HTTP التي تعطل هجمات Clickjacking و XSS والتنصت:
+
+\`\`\`typescript
+import helmet from 'helmet';
+import express from 'express';
+
+const app = express();
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://pagead2.googlesyndication.com', 'https://www.googletagmanager.com'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+        frameSrc: ["'self'", 'https://www.youtube.com', 'https://www.tiktok.com'],
+        connectSrc: ["'self'", 'https://khamsa-webapi.vercel.app', 'https://www.google-analytics.com'],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  })
+);
+\`\`\`
+
+---
+
+## تشفير كلمات المرور باستخدام Argon2
+
+تجنب خوارزميات MD5 و SHA القديمة؛ واستخدم دائماً **Argon2id**:
+
+\`\`\`typescript
+import argon2 from 'argon2';
+
+export async function hashPassword(plainText: string): Promise<string> {
+  return argon2.hash(plainText, {
+    type: argon2.argon2id,
+    memoryCost: 2 ** 16, // 64MB RAM
+    timeCost: 3,         // 3 iterations
+    parallelism: 1,
+  });
+}
+
+export async function verifyPassword(hash: string, plainText: string): Promise<boolean> {
+  try {
+    return await argon2.verify(hash, plainText);
+  } catch {
+    return false;
+  }
+}
+\`\`\`
+
+---
+
+## الوقاية من هجمات NoSQL Injection
+
+\`\`\`typescript
+// ❌ خطير: تمرير مدخلات المستخدم مباشرة إلى استعلام Mongoose
+app.post('/login', async (req, res) => {
+  // إذا أرسل المهاجم { "username": { "$ne": null }, "password": { "$ne": null } }
+  const user = await User.findOne({ username: req.body.username, password: req.body.password });
+});
+
+// ✅ آمن: التحقق الصارم من نوع البيانات باستخدام Zod
+const LoginSchema = z.object({
+  username: z.string().min(3),
+  password: z.string().min(8),
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = LoginSchema.parse(req.body);
+  const user = await User.findOne({ username: String(username) });
+});
+\`\`\`
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* استخدم دائماً HTTPS الإلزامي عبر HSTS.
+* خزن Tokens في **HttpOnly, Secure, SameSite=Lax** Cookies.
+* نفذ Rate Limiting صارم على مسارات المصادقة وتسجيل الدخول لمنع هجمات الـ Brute Force.\`
+",`,
 };

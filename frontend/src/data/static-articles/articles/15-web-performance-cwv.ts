@@ -50,5 +50,75 @@ export const article15: StaticArticle = {
     keywords: ['Core Web Vitals', 'Web Performance', 'LCP', 'INP', 'CLS', 'Next.js Performance', 'تحسين محركات البحث'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/web-performance-core-web-vitals-speed-optimization',
   },
-  content: "\"## لماذا الأداء ليس رفاهية بل معيار تصدر في محركات البحث؟\\n\\nأكدت Google في أحدث خوارزمياتها أن تجربة المستخدم وسرعة الصفحة أصبحت من العوامل المباشرة في تصنيف وترتيب نتائج البحث (Search Ranking). المستخدم لا ينتظر أكثر من ثانيتين لتحميل الموقع، وكل 100 ملي ثانية تأخير تقلل من معدل التحويل (Conversion Rate) بنسبة 7%.\\n\\n---\\n\\n## الثلاثي الذهبي لـ Core Web Vitals\\n\\n1. **LCP (Largest Contentful Paint):** يقيس سرعة تحميل أكبر عنصر مرئي في الشاشة (مثل صورة المقال الرئيسية أو العنوان الكبير). يجب أن يكتمل في **أقل من 2.5 ثانية**، والهدف الممتاز هو **أقل من 1.2 ثانية**.\\n2. **INP (Interaction to Next Paint):** يقيس استجابة الصفحة للنقرات والتفاعلات طوال مدة زيارة المستخدم. يجب أن يكون **أقل من 200 ملي ثانية**.\\n3. **CLS (Cumulative Layout Shift):** يقيس الاستقرار البصري للعناصر ومنع تحركها واهتزازها المفاجئ أثناء التحميل. يجب أن يكون **أقل من 0.1**، والمثالي هو **0.00**.\\n\\n---\\n\\n## استراتيجية القضاء التام على الـ CLS\\n\\nيحدث اهتزاز الصفحة (Layout Shift) غالباً بسبب:\\n* صور وفيديوهات بدون أبعاد محددة في الـ HTML/CSS.\\n* مساحات إعلانية تفاعلية تظهر فجأة وتدفع المحتوى لأسفل.\\n* خطوط ويب تتأخر في التحميل مسببة وميض الخط (FOUT).\\n\\n```css\\n/* حجز مساحات ثابتة للمحتوى والصور والإعلانات */\\n.ad-slot-container {\\n  min-height: 250px;\\n  width: 100%;\\n  display: flex;\\n  align-items: center;\\n  justify-content: center;\\n  contain: layout;\\n}\\n\\nimg.responsive-cover {\\n  width: 100%;\\n  height: auto;\\n  aspect-ratio: 16 / 9; /* يمنع اهتزاز الصفحة إطلاقاً أثناء التحميل */\\n}\\n```\\n\\n---\\n\\n## تسريع الـ LCP وتحسين مسار التصيير الحرج (Critical Rendering Path)\\n\\n```html\\n<!-- 1. تحميل مسبق لصورة الـ LCP ذات الأولوية القصوى -->\\n<link rel=\"preload\" fetchpriority=\"high\" as=\"image\" href=\"/images/hero.webp\" type=\"image/webp\">\\n\\n<!-- 2. الاتصال المسبق بخوادم الخطوط والـ CDN -->\\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\\n```\\n\\n### تحسين الصور الحديثة:\\n* استخدم صيغتي **AVIF** و **WebP** اللتين تقدمان ضغطاً أفضل بنسبة 50% مقارنة بـ JPEG مع الحفاظ على نقاء الألوان.\\n* وفر أحجاماً متجاوبة باستخدام `srcset` لتزويد شاشات الهواتف بصور خفيفة ومناسبة لعرض الشاشة.\\n\\n---\\n\\n## تقليل زمن الاستجابة INP وحظر المسار الرئيسي\\n\\n* قسّم المهام الحسابية الطويلة (Long Tasks > 50ms) باستخدام `scheduler.yield()` أو `setTimeout(..., 0)`.\\n* تجنب العمليات الحسابية الثقيلة أثناء معالجة أحداث `scroll` و `resize` واستخدم **Debounce** أو **Throttle**.\\n* انقل معالجة البيانات والتحليلات إلى **Web Workers** في الخلفية.\\n\\n---\\n\\n## الخلاصة وأفضل الممارسات\\n\\n* استخدم دائماً خطوط النظام أو خطوط مجهزة مسبقاً بـ `font-display: swap`.\\n* حمّل صور الـ Above-the-fold فوراً بـ `priority`، والصور الأخرى بـ Lazy Loading.\\n* قس مؤشراتك الواقعية باستخدام Google Search Console Core Web Vitals Report ومكتبة `web-vitals`.\",\n",
+  content: `## لماذا الأداء ليس رفاهية بل معيار تصدر في محركات البحث؟
+
+أكدت Google في أحدث خوارزمياتها أن تجربة المستخدم وسرعة الصفحة أصبحت من العوامل المباشرة في تصنيف وترتيب نتائج البحث (Search Ranking). المستخدم لا ينتظر أكثر من ثانيتين لتحميل الموقع، وكل 100 ملي ثانية تأخير تقلل من معدل التحويل (Conversion Rate) بنسبة 7%.
+
+---
+
+## الثلاثي الذهبي لـ Core Web Vitals
+
+1. **LCP (Largest Contentful Paint):** يقيس سرعة تحميل أكبر عنصر مرئي في الشاشة (مثل صورة المقال الرئيسية أو العنوان الكبير). يجب أن يكتمل في **أقل من 2.5 ثانية**، والهدف الممتاز هو **أقل من 1.2 ثانية**.
+2. **INP (Interaction to Next Paint):** يقيس استجابة الصفحة للنقرات والتفاعلات طوال مدة زيارة المستخدم. يجب أن يكون **أقل من 200 ملي ثانية**.
+3. **CLS (Cumulative Layout Shift):** يقيس الاستقرار البصري للعناصر ومنع تحركها واهتزازها المفاجئ أثناء التحميل. يجب أن يكون **أقل من 0.1**، والمثالي هو **0.00**.
+
+---
+
+## استراتيجية القضاء التام على الـ CLS
+
+يحدث اهتزاز الصفحة (Layout Shift) غالباً بسبب:
+* صور وفيديوهات بدون أبعاد محددة في الـ HTML/CSS.
+* مساحات إعلانية تفاعلية تظهر فجأة وتدفع المحتوى لأسفل.
+* خطوط ويب تتأخر في التحميل مسببة وميض الخط (FOUT).
+
+\`\`\`css
+/* حجز مساحات ثابتة للمحتوى والصور والإعلانات */
+.ad-slot-container {
+  min-height: 250px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  contain: layout;
+}
+
+img.responsive-cover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9; /* يمنع اهتزاز الصفحة إطلاقاً أثناء التحميل */
+}
+\`\`\`
+
+---
+
+## تسريع الـ LCP وتحسين مسار التصيير الحرج (Critical Rendering Path)
+
+\`\`\`html
+<!-- 1. تحميل مسبق لصورة الـ LCP ذات الأولوية القصوى -->
+<link rel="preload" fetchpriority="high" as="image" href="/images/hero.webp" type="image/webp">
+
+<!-- 2. الاتصال المسبق بخوادم الخطوط والـ CDN -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+\`\`\`
+
+### تحسين الصور الحديثة:
+* استخدم صيغتي **AVIF** و **WebP** اللتين تقدمان ضغطاً أفضل بنسبة 50% مقارنة بـ JPEG مع الحفاظ على نقاء الألوان.
+* وفر أحجاماً متجاوبة باستخدام \`srcset\` لتزويد شاشات الهواتف بصور خفيفة ومناسبة لعرض الشاشة.
+
+---
+
+## تقليل زمن الاستجابة INP وحظر المسار الرئيسي
+
+* قسّم المهام الحسابية الطويلة (Long Tasks > 50ms) باستخدام \`scheduler.yield()\` أو \`setTimeout(..., 0)\`.
+* تجنب العمليات الحسابية الثقيلة أثناء معالجة أحداث \`scroll\` و \`resize\` واستخدم **Debounce** أو **Throttle**.
+* انقل معالجة البيانات والتحليلات إلى **Web Workers** في الخلفية.
+
+---
+
+## الخلاصة وأفضل الممارسات
+
+* استخدم دائماً خطوط النظام أو خطوط مجهزة مسبقاً بـ \`font-display: swap\`.
+* حمّل صور الـ Above-the-fold فوراً بـ \`priority\`، والصور الأخرى بـ Lazy Loading.
+* قس مؤشراتك الواقعية باستخدام Google Search Console Core Web Vitals Report ومكتبة \`web-vitals\`.",`,
 };

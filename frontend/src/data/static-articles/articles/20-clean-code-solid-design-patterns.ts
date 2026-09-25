@@ -51,5 +51,114 @@ export const article20: StaticArticle = {
     keywords: ['SOLID Principles', 'Clean Code', 'Design Patterns', 'TypeScript Architecture', 'Dependency Inversion', 'Strategy Pattern'],
     canonicalUrl: 'https://khamsa-web.vercel.app/articles/clean-software-engineering-solid-principles-design-patterns',
   },
-  content: "\"## ما هو الكود النظيف؟ ولماذا ندفع ديناً تقنياً (Technical Debt) عندما نهمله؟\\n\\nالكود النظيف (Clean Code) ليس كوداً خالياً من الأخطاء فحسب، بل هو كود:\\n1. **سهل القراءة والفهم:** للمطورين الآخرين ولنفسك بعد 6 أشهر.\\n2. **سهل التعديل والتطوير:** إضافة ميزة جديدة لا تكسر ميزات قديمة.\\n3. **سهل الاختبار الآلي:** معزول ومغطى باختبارات وحدة موثوقة.\\n\\nالإهمال في كتابة الكود النظيف يراكم **الدين التقني (Technical Debt)**؛ ومع الوقت يصبح كل تعديل بسيط يستغرق أياماً بدلاً من ساعات.\\n\\n---\\n\\n## مبادئ SOLID الخمسة مع أمثلة TypeScript عملية\\n\\n### 1. Single Responsibility Principle (SRP)\\n> «يجب أن يكون لكل وحدة برمجية أو كلاس سبب واحد فقط للتغيير.»\\nفصل مسؤولية التحقق من البيانات، عن الحفظ في قاعدة البيانات، عن إرسال الإشعارات.\\n\\n### 2. Open/Closed Principle (OCP)\\n> «البرمجيات يجب أن تكون مفتوحة للتوسع (Open for extension)، مغلقة أمام التعديل المباشر (Closed for modification).»\\nإضافة طرق جديدة للدفع أو التقارير عبر إنشاء كلاسات جديدة دون تعديل الكلاس الرئيسي.\\n\\n### 3. Liskov Substitution Principle (LSP)\\n> «الفئات المشتقة يجب أن تكون قابلة للاستبدال بالفئات الأساسية دون الإخلال بصحة وسلوك البرنامج.»\\n\\n### 4. Interface Segregation Principle (ISP)\\n> «لا تجبر العميل على الاعتماد على واجهات تحتوي على دوال لا يستخدمها.»\\nتقسيم الواجهات الكبيرة إلى واجهات صغيرة مركزة ومحددة.\\n\\n### 5. Dependency Inversion Principle (DIP)\\n> «الوحدات عالية المستوى يجب ألا تعتمد على وحدات منخفضة المستوى مباشرة، بل يجب أن يعتمد كلاهما على تجريدات (Interfaces).»\\n\\n---\\n\\n## تطبيق عملي: نمط Strategy Pattern لمعالجة بوابات الدفع\\n\\n```typescript\\n// 1. التجريد (Interface)\\nexport interface PaymentStrategy {\\n  processPayment(amount: number): Promise<{ success: boolean; transactionId: string }>;\\n}\\n\\n// 2. استراتيجيات الدفع المختلفة\\nexport class StripePaymentStrategy implements PaymentStrategy {\\n  async processPayment(amount: number) {\\n    console.log(`معالجة الدفع عبر Stripe لمبلغ ${amount} دولار...`);\\n    return { success: true, transactionId: `str_${Date.now()}` };\\n  }\\n}\\n\\nexport class PayPalPaymentStrategy implements PaymentStrategy {\\n  async processPayment(amount: number) {\\n    console.log(`معالجة الدفع عبر PayPal لمبلغ ${amount} دولار...`);\\n    return { success: true, transactionId: `pal_${Date.now()}` };\\n  }\\n}\\n\\n// 3. السياق (Context) المستقل عن نوع البوابة\\nexport class CheckoutService {\\n  constructor(private strategy: PaymentStrategy) {}\\n\\n  setStrategy(newStrategy: PaymentStrategy) {\\n    this.strategy = newStrategy;\\n  }\\n\\n  async checkout(orderTotal: number) {\\n    return this.strategy.processPayment(orderTotal);\\n  }\\n}\\n```\\n\\n---\\n\\n## نمط Factory Method Pattern لإنشاء الإشعارات\\n\\n```typescript\\nexport interface INotificationService {\\n  send(recipient: string, message: string): Promise<void>;\\n}\\n\\nexport class EmailNotification implements INotificationService {\\n  async send(recipient: string, message: string) {\\n    console.log(`إرسال بريد إلكتروني إلى ${recipient}: ${message}`);\\n  }\\n}\\n\\nexport class SMSNotification implements INotificationService {\\n  async send(recipient: string, message: string) {\\n    console.log(`إرسال رسالة نصية SMS إلى ${recipient}: ${message}`);\\n  }\\n}\\n\\nexport class NotificationFactory {\\n  static create(channel: 'EMAIL' | 'SMS'): INotificationService {\\n    switch (channel) {\\n      case 'EMAIL':\\n        return new EmailNotification();\\n      case 'SMS':\\n        return new SMSNotification();\\n      default:\\n        throw new Error('قناة إشعارات غير مدعومة');\\n    }\\n  }\\n}\\n```\\n\\n---\\n\\n## الخلاصة وميثاق مهندس البرمجيات\\n\\nكتابة الكود النظيف ليست عبئاً إضافياً، بل هي العلامة الفارقة بين المبرمج الهاوي ومهندس البرمجيات المحترف الذي يبني أنظمة تعيش وتنمو لسنوات.\",\n",
+  content: `## ما هو الكود النظيف؟ ولماذا ندفع ديناً تقنياً (Technical Debt) عندما نهمله؟
+
+الكود النظيف (Clean Code) ليس كوداً خالياً من الأخطاء فحسب، بل هو كود:
+1. **سهل القراءة والفهم:** للمطورين الآخرين ولنفسك بعد 6 أشهر.
+2. **سهل التعديل والتطوير:** إضافة ميزة جديدة لا تكسر ميزات قديمة.
+3. **سهل الاختبار الآلي:** معزول ومغطى باختبارات وحدة موثوقة.
+
+الإهمال في كتابة الكود النظيف يراكم **الدين التقني (Technical Debt)**؛ ومع الوقت يصبح كل تعديل بسيط يستغرق أياماً بدلاً من ساعات.
+
+---
+
+## مبادئ SOLID الخمسة مع أمثلة TypeScript عملية
+
+### 1. Single Responsibility Principle (SRP)
+> «يجب أن يكون لكل وحدة برمجية أو كلاس سبب واحد فقط للتغيير.»
+فصل مسؤولية التحقق من البيانات، عن الحفظ في قاعدة البيانات، عن إرسال الإشعارات.
+
+### 2. Open/Closed Principle (OCP)
+> «البرمجيات يجب أن تكون مفتوحة للتوسع (Open for extension)، مغلقة أمام التعديل المباشر (Closed for modification).»
+إضافة طرق جديدة للدفع أو التقارير عبر إنشاء كلاسات جديدة دون تعديل الكلاس الرئيسي.
+
+### 3. Liskov Substitution Principle (LSP)
+> «الفئات المشتقة يجب أن تكون قابلة للاستبدال بالفئات الأساسية دون الإخلال بصحة وسلوك البرنامج.»
+
+### 4. Interface Segregation Principle (ISP)
+> «لا تجبر العميل على الاعتماد على واجهات تحتوي على دوال لا يستخدمها.»
+تقسيم الواجهات الكبيرة إلى واجهات صغيرة مركزة ومحددة.
+
+### 5. Dependency Inversion Principle (DIP)
+> «الوحدات عالية المستوى يجب ألا تعتمد على وحدات منخفضة المستوى مباشرة، بل يجب أن يعتمد كلاهما على تجريدات (Interfaces).»
+
+---
+
+## تطبيق عملي: نمط Strategy Pattern لمعالجة بوابات الدفع
+
+\`\`\`typescript
+// 1. التجريد (Interface)
+export interface PaymentStrategy {
+  processPayment(amount: number): Promise<{ success: boolean; transactionId: string }>;
+}
+
+// 2. استراتيجيات الدفع المختلفة
+export class StripePaymentStrategy implements PaymentStrategy {
+  async processPayment(amount: number) {
+    console.log(\`معالجة الدفع عبر Stripe لمبلغ \${amount} دولار...\`);
+    return { success: true, transactionId: \`str_\${Date.now()}\` };
+  }
+}
+
+export class PayPalPaymentStrategy implements PaymentStrategy {
+  async processPayment(amount: number) {
+    console.log(\`معالجة الدفع عبر PayPal لمبلغ \${amount} دولار...\`);
+    return { success: true, transactionId: \`pal_\${Date.now()}\` };
+  }
+}
+
+// 3. السياق (Context) المستقل عن نوع البوابة
+export class CheckoutService {
+  constructor(private strategy: PaymentStrategy) {}
+
+  setStrategy(newStrategy: PaymentStrategy) {
+    this.strategy = newStrategy;
+  }
+
+  async checkout(orderTotal: number) {
+    return this.strategy.processPayment(orderTotal);
+  }
+}
+\`\`\`
+
+---
+
+## نمط Factory Method Pattern لإنشاء الإشعارات
+
+\`\`\`typescript
+export interface INotificationService {
+  send(recipient: string, message: string): Promise<void>;
+}
+
+export class EmailNotification implements INotificationService {
+  async send(recipient: string, message: string) {
+    console.log(\`إرسال بريد إلكتروني إلى \${recipient}: \${message}\`);
+  }
+}
+
+export class SMSNotification implements INotificationService {
+  async send(recipient: string, message: string) {
+    console.log(\`إرسال رسالة نصية SMS إلى \${recipient}: \${message}\`);
+  }
+}
+
+export class NotificationFactory {
+  static create(channel: 'EMAIL' | 'SMS'): INotificationService {
+    switch (channel) {
+      case 'EMAIL':
+        return new EmailNotification();
+      case 'SMS':
+        return new SMSNotification();
+      default:
+        throw new Error('قناة إشعارات غير مدعومة');
+    }
+  }
+}
+\`\`\`
+
+---
+
+## الخلاصة وميثاق مهندس البرمجيات
+
+كتابة الكود النظيف ليست عبئاً إضافياً، بل هي العلامة الفارقة بين المبرمج الهاوي ومهندس البرمجيات المحترف الذي يبني أنظمة تعيش وتنمو لسنوات.",`,
 };
