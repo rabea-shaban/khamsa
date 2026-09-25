@@ -1,0 +1,88 @@
+:root {
+  /* Default: Light Mode tokens (used when .dark is absent) */
+  --background: #ffffff;
+  --surface: #f8f8f8;
+  --surface-elevated: #ffffff;
+  --surface-hover: #f3f4f6;
+
+  --primary: #e5a900;
+  --primary-hover: #f2b705;
+  --primary-active: #c99100;
+  --primary-foreground: #111111;
+
+  --foreground: #111111;
+  --foreground-secondary: #374151;
+  --foreground-muted: #6b7280;
+
+  --card: #ffffff;
+  --card-foreground: #111111;
+
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111111;
+
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+
+  --accent: #fef3c7;
+  --accent-foreground: #92400e;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e7eb;
+  --border-light: #d1d5db;
+  --input: #e5e7eb;
+  --ring: #e5a900;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius: 12px;
+
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  /* Dark Mode: Default Brand Experience */
+  --background: #050507;
+  --surface: #0d0f12;
+  --surface-elevated: #14161a;
+  --surface-hover: #1a1c21;
+
+  --primary: #ffc107;
+  --primary-hover: #ffd54f;
+  --primary-active: #e5a900;
+  --primary-foreground: #050507;
+
+  --foreground: #ffffff;
+  --foreground-secondary: #d1d5db;
+  --foreground-muted: #9ca3af;
+
+  --card: #0d0f12;
+  --card-foreground: #ffffff;
+
+  --secondary: #14161a;
+  --secondary-foreground: #ffffff;
+
+  --muted: #14161a;
+  --muted-foreground: #9ca3af;
+
+  --accent: #26200a;
+  --accent-foreground: #ffd54f;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #27272a;
+  --border-light: #3f3f46;
+  --input: #27272a;
+  --ring: #ffc107;
+
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --shadow-dropdown: 0 12px 30px -4px rgba(0, 0, 0, 0.7);
+}

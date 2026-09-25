@@ -1,0 +1,288 @@
+{
+  "info": {
+    "name": "Khamsa CMS API (خمسة برمجة بالبلدي)",
+    "description": "Postman Collection for Khamsa CMS Modular Monolith RESTful API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5000/health"
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Login (Admin/Editor)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@khamsa.dev\",\n  \"password\": \"AdminPassword123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "3. Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/refresh",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ]
+          }
+        },
+        {
+          "name": "4. Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Endpoints",
+      "item": [
+        {
+          "name": "Get Public Articles (Filtered & Paginated)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/public/articles?page=1&limit=10&category=JavaScript&sort=latest",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "articles"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "category", "value": "JavaScript" },
+                { "key": "sort", "value": "latest" },
+                { "key": "search", "value": "react", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Public Article by Slug",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/public/articles/introduction-to-javascript"
+          }
+        },
+        {
+          "name": "Get Public Videos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/public/videos?platform=YOUTUBE&sort=latest"
+          }
+        },
+        {
+          "name": "Get Public Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/public/settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Articles",
+      "item": [
+        {
+          "name": "List Articles (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/articles?page=1&limit=10",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Article (Tiptap Rich Content)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/articles",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"دليلك لفهم الـ Event Loop في جافاسكريبت\",\n  \"excerpt\": \"شرح عملي ومبسط لكيفية معالجة المهام غير المتزامنة في Node.js والمتصفح.\",\n  \"content\": {\n    \"type\": \"doc\",\n    \"content\": [\n      {\n        \"type\": \"heading\",\n        \"attrs\": { \"level\": 2 },\n        \"content\": [{ \"type\": \"text\", \"text\": \"يعني إيه Event Loop؟\" }]\n      },\n      {\n        \"type\": \"paragraph\",\n        \"content\": [{ \"type\": \"text\", \"text\": \"ببساطة شديدة هو المحرك اللي بينظم طابور العمليات في الذاكرة...\" }]\n      }\n    ]\n  },\n  \"coverImage\": \"https://media.khamsa.dev/general/event-loop-cover.webp\",\n  \"category\": \"JavaScript\",\n  \"tags\": [\"javascript\", \"nodejs\", \"eventloop\"],\n  \"status\": \"PUBLISHED\",\n  \"isFeatured\": true,\n  \"seo\": {\n    \"title\": \"شرح الـ Event Loop بالبلدي\",\n    \"description\": \"تعلم كيف يعمل الـ Event Loop بالتفصيل\",\n    \"keywords\": [\"javascript\", \"event loop\"]\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Publish Article",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/articles/:articleId/publish",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Unpublish Article",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/articles/:articleId/unpublish",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Videos",
+      "item": [
+        {
+          "name": "List Videos (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/videos",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Video",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/videos",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"تعلم React في 5 دقائق\",\n  \"description\": \"ملخص أهم مفاهيم React.js للمبتدئين\",\n  \"platform\": \"YOUTUBE\",\n  \"url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"thumbnail\": \"https://media.khamsa.dev/general/react-thumb.webp\",\n  \"status\": \"PUBLISHED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Media",
+      "item": [
+        {
+          "name": "List Media",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/media",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Generate Presigned Upload URL",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/media/presigned-url",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filename\": \"cover.png\",\n  \"contentType\": \"image/png\",\n  \"folder\": \"articles\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/users",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Editor User",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/users",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Editor Ahmed\",\n  \"email\": \"ahmed@khamsa.dev\",\n  \"password\": \"EditorPass123!\",\n  \"role\": \"EDITOR\",\n  \"isActive\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Settings",
+      "item": [
+        {
+          "name": "Get Admin Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/settings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/settings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"siteName\": \"خمسة برمجة بالبلدي\",\n  \"siteDescription\": \"منصة لشرح وتبسيط البرمجة باللغة العربية البسيطة\",\n  \"socialLinks\": {\n    \"tiktok\": \"https://www.tiktok.com/@5barmaga\",\n    \"youtube\": \"https://www.youtube.com/@5barmaga\",\n    \"facebook\": \"https://www.facebook.com/5barmaga\",\n    \"github\": \"https://github.com/5barmaga\"\n  }\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

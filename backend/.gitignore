@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Production Build
+dist/
+
+# Environment Files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test Coverage
+coverage/
+
+# Backups
+backups/
+*.json.gz
+
+# OS / Editor Files
+.DS_Store
+.env.local
+Thumbs.db
+
