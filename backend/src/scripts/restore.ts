@@ -35,11 +35,11 @@ async function runRestore() {
       throw new Error('No backup files found in backups directory.');
     }
 
-    targetFilePath = path.join(backupsDir, files[0]);
+    targetFilePath = path.join(backupsDir, files[0] as string);
     console.log(`ℹ️ No file specified. Auto-selected latest backup: ${files[0]}`);
   }
 
-  if (!fs.existsSync(targetFilePath)) {
+  if (!targetFilePath || !fs.existsSync(targetFilePath)) {
     throw new Error(`Backup file not found at: ${targetFilePath}`);
   }
 
@@ -78,7 +78,7 @@ async function runRestore() {
     await collection.deleteMany({});
 
     // Convert string ObjectIds back if needed (or MongoDB driver will accept standard JSON documents)
-    await collection.insertMany(docs);
+    await collection.insertMany(docs as Record<string, unknown>[]);
     console.log(`  ✅ Restored ${colName} successfully.`);
   }
 

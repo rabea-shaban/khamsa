@@ -8,7 +8,7 @@ const router = Router();
 
 // Only ADMIN can access or trigger backups
 router.use(authenticate);
-router.use(authorize([UserRole.ADMIN]));
+router.use(authorize(UserRole.ADMIN));
 
 router.get('/', BackupController.getBackups);
 router.post('/', BackupController.createBackup);

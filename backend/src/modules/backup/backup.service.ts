@@ -3,7 +3,6 @@ import path from 'path';
 import zlib from 'zlib';
 import mongoose from 'mongoose';
 import { PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
-import { env } from '../../config/env.config';
 import { r2Client, R2_CONFIG } from '../../config/r2.config';
 
 export interface BackupMetadata {
