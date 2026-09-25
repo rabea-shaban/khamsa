@@ -25,8 +25,7 @@ export class AuthService {
     }
 
     // Update lastLoginAt
-    user.lastLoginAt = new Date();
-    await user.save();
+    await User.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } }).exec();
 
     const jwtPayload: JwtPayload = {
       userId: user._id.toString(),
