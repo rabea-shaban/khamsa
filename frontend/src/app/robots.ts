@@ -1,14 +1,22 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://khamsa.dev';
+  const baseUrl = getSiteUrl();
 
   return {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/about', '/articles', '/articles/*', '/videos', '/videos/*'],
-        disallow: ['/dashboard', '/dashboard/*', '/api/*', '/login'],
+        allow: ['/', '/about', '/articles', '/articles/*', '/videos'],
+        disallow: [
+          '/dashboard',
+          '/dashboard/*',
+          '/admin',
+          '/admin/*',
+          '/login',
+          '/api/*',
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

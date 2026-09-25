@@ -3,6 +3,7 @@ import { Cairo } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/providers';
 import { Settings } from '@/types/api';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -10,7 +11,7 @@ const cairo = Cairo({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://khamsa.dev';
+const siteUrl = getSiteUrl();
 
 async function fetchPublicSettings(): Promise<Settings | null> {
   try {
