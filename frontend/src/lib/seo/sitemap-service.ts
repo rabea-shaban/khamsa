@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next';
-import { articlesApi } from '@/lib/api/articles.api';
 import { ContentStatus, Article } from '@/types/api';
 import { getSiteUrl } from './site-url';
 
