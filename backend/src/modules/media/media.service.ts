@@ -46,8 +46,9 @@ export class MediaService {
     try {
       await r2Client.send(command);
     } catch (error) {
-      console.error('Cloudflare R2 Upload Error:', error);
-      throw ApiError.internal('Failed to upload file to Cloudflare R2');
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error('Cloudflare R2 Upload Error:', errorMsg);
+      throw ApiError.internal(`Failed to upload file to Cloudflare R2: ${errorMsg}`);
     }
 
     const publicUrl = `${R2_CONFIG.publicUrl}/${key}`;

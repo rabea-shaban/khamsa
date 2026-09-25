@@ -11,6 +11,6 @@ export const r2Client = new S3Client({
 });
 
 export const R2_CONFIG = {
-  bucketName: env.R2_BUCKET_NAME || 'khamsa',
-  publicUrl: (env.R2_PUBLIC_URL || 'https://pub-2d88a10e7b7e4bc8939c366ff407fcf8.r2.dev').replace(/\/$/, ''),
+  bucketName: env.R2_BUCKET_NAME || 'khamsa-cms',
+  publicUrl: (env.R2_PUBLIC_URL || 'https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev').replace(/\/$/, ''),
 };
