@@ -117,6 +117,12 @@ export async function generateMetadata(): Promise<Metadata> {
         'max-snippet': -1,
       },
     },
+    verification: {
+      google: 'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y',
+    },
+    other: {
+      'google-site-verification': 'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y',
+    },
   };
 }
 
@@ -159,6 +165,7 @@ export default async function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
