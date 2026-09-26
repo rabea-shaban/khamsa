@@ -147,6 +147,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     other: {
       'google-site-verification': googleVerification,
+      'google-adsense-account': 'ca-pub-9549884730788063',
     },
   };
 }
@@ -203,6 +204,7 @@ export default async function RootLayout({
     <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content={googleVerification} />
+        <meta name="google-adsense-account" content="ca-pub-9549884730788063" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
