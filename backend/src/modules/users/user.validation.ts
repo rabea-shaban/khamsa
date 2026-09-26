@@ -1,6 +1,19 @@
 import { z } from 'zod';
 import { UserRole } from '../../types/common.types';
 
+export const userSocialsSchema = z
+  .object({
+    github: z.string().trim().url('Invalid GitHub URL').or(z.literal('')).optional().nullable(),
+    linkedin: z.string().trim().url('Invalid LinkedIn URL').or(z.literal('')).optional().nullable(),
+    youtube: z.string().trim().url('Invalid YouTube URL').or(z.literal('')).optional().nullable(),
+    facebook: z.string().trim().url('Invalid Facebook URL').or(z.literal('')).optional().nullable(),
+    twitter: z.string().trim().url('Invalid Twitter/X URL').or(z.literal('')).optional().nullable(),
+    tiktok: z.string().trim().url('Invalid TikTok URL').or(z.literal('')).optional().nullable(),
+    website: z.string().trim().url('Invalid Website URL').or(z.literal('')).optional().nullable(),
+  })
+  .optional()
+  .nullable();
+
 export const createUserSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().trim().email('Invalid email address').toLowerCase(),
@@ -11,8 +24,9 @@ export const createUserSchema = z.object({
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
   role: z.nativeEnum(UserRole).default(UserRole.EDITOR),
-  avatar: z.string().url('Avatar must be a valid URL').optional().nullable(),
+  avatar: z.string().url('Avatar must be a valid URL').or(z.literal('')).optional().nullable(),
   bio: z.string().trim().max(1000, 'Bio cannot exceed 1000 characters').optional().nullable(),
+  socials: userSocialsSchema,
   isActive: z.boolean().default(true),
 });
 
@@ -27,8 +41,9 @@ export const updateUserSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number')
     .optional(),
   role: z.nativeEnum(UserRole).optional(),
-  avatar: z.string().url('Avatar must be a valid URL').optional().nullable(),
+  avatar: z.string().url('Avatar must be a valid URL').or(z.literal('')).optional().nullable(),
   bio: z.string().trim().max(1000, 'Bio cannot exceed 1000 characters').optional().nullable(),
+  socials: userSocialsSchema,
   isActive: z.boolean().optional(),
 });
 

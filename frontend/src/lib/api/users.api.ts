@@ -1,5 +1,5 @@
 import { apiClient } from '../axios/client';
-import { ApiResponse, PaginatedResult, User, UserRole } from '@/types/api';
+import { ApiResponse, PaginatedResult, User, UserRole, UserSocials } from '@/types/api';
 
 export interface UserQueryParams {
   page?: number;
@@ -26,6 +26,7 @@ export interface CreateUserPayload {
   isActive?: boolean;
   avatar?: string | null;
   bio?: string | null;
+  socials?: UserSocials | null;
 }
 
 export interface UpdateUserPayload {
@@ -35,6 +36,7 @@ export interface UpdateUserPayload {
   isActive?: boolean;
   avatar?: string | null;
   bio?: string | null;
+  socials?: UserSocials | null;
   password?: string;
 }
 

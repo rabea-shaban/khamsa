@@ -1,6 +1,16 @@
 import { Document, Types } from 'mongoose';
 import { UserRole } from '../../types/common.types';
 
+export interface UserSocials {
+  github?: string;
+  linkedin?: string;
+  youtube?: string;
+  facebook?: string;
+  twitter?: string;
+  tiktok?: string;
+  website?: string;
+}
+
 export interface IUser {
   name: string;
   email: string;
@@ -8,6 +18,7 @@ export interface IUser {
   role: UserRole;
   avatar?: string;
   bio?: string | null;
+  socials?: UserSocials;
   isActive: boolean;
   lastLoginAt?: Date;
   createdAt: Date;
@@ -26,6 +37,7 @@ export interface CreateUserInput {
   role: UserRole;
   avatar?: string;
   bio?: string | null;
+  socials?: UserSocials;
   isActive?: boolean;
 }
 
@@ -36,6 +48,7 @@ export interface UpdateUserInput {
   role?: UserRole;
   avatar?: string;
   bio?: string | null;
+  socials?: UserSocials;
   isActive?: boolean;
 }
 
@@ -46,6 +59,7 @@ export interface UserResponse {
   role: UserRole;
   avatar?: string;
   bio?: string | null;
+  socials?: UserSocials;
   isActive: boolean;
   lastLoginAt?: Date;
   createdAt: Date;

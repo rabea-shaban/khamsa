@@ -18,6 +18,13 @@ import {
   Calendar,
   Clock,
   Github,
+  Linkedin,
+  Youtube,
+  Facebook,
+  Twitter,
+  Globe,
+  Music2,
+  Share2,
   Save,
   KeyRound,
   EyeIcon,
@@ -34,11 +41,24 @@ import { cn } from '@/lib/utils/cn';
 // Form Validation Schemas
 // ============================================
 
+const urlOrEmpty = z.string().trim().url('رابط غير صحيح').or(z.literal('')).optional().nullable();
+
 const profileInfoSchema = z.object({
   name: z.string().trim().min(2, 'الاسم يجب أن يكون حرفين على الأقل').max(100, 'الاسم لا يجب أن يتجاوز 100 حرف'),
   email: z.string().trim().email('صيغة البريد الإلكتروني غير صحيحة').toLowerCase(),
   avatar: z.string().trim().url('رابط الصورة غير صحيح').or(z.literal('')).optional().nullable(),
   bio: z.string().trim().max(1000, 'الوصف التعريفي يجب ألا يتجاوز 1000 حرف').optional().nullable(),
+  socials: z
+    .object({
+      github: urlOrEmpty,
+      linkedin: urlOrEmpty,
+      youtube: urlOrEmpty,
+      facebook: urlOrEmpty,
+      twitter: urlOrEmpty,
+      tiktok: urlOrEmpty,
+      website: urlOrEmpty,
+    })
+    .optional(),
 });
 
 const passwordChangeSchema = z
@@ -88,6 +108,15 @@ export default function ProfileDashboardPage() {
       email: '',
       avatar: '',
       bio: '',
+      socials: {
+        github: '',
+        linkedin: '',
+        youtube: '',
+        facebook: '',
+        twitter: '',
+        tiktok: '',
+        website: '',
+      },
     },
   });
 
@@ -111,6 +140,7 @@ export default function ProfileDashboardPage() {
   const watchedBio = watchProfile('bio');
   const watchedAvatar = watchProfile('avatar');
   const watchedEmail = watchProfile('email');
+  const watchedSocials = watchProfile('socials');
   const newPasswordValue = watchPassword('password') || '';
 
   // Password requirements checker
@@ -127,6 +157,15 @@ export default function ProfileDashboardPage() {
         email: user.email || '',
         avatar: user.avatar || '',
         bio: user.bio || '',
+        socials: {
+          github: user.socials?.github || '',
+          linkedin: user.socials?.linkedin || '',
+          youtube: user.socials?.youtube || '',
+          facebook: user.socials?.facebook || '',
+          twitter: user.socials?.twitter || '',
+          tiktok: user.socials?.tiktok || '',
+          website: user.socials?.website || '',
+        },
       });
     }
   }, [user, resetProfile]);
@@ -144,6 +183,7 @@ export default function ProfileDashboardPage() {
         email: data.email,
         avatar: data.avatar || null,
         bio: data.bio || null,
+        socials: data.socials,
       });
 
       if (res.success) {
@@ -433,6 +473,170 @@ export default function ProfileDashboardPage() {
                   )}
                 </div>
 
+                {/* Social Media Links Section */}
+                <div className="pt-4 border-t border-border space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                      <Share2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-foreground">روابط وحسابات التواصل الاجتماعي</h3>
+                      <p className="text-[11px] text-foreground-muted">
+                        أضف روابط حساباتك التي ترغب في إظهارها داخل بطاقة الكاتب أسفل المقالات (اترك الحقل فارغاً لإخفاء الأيقونة)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* GitHub */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Github className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>رابط GitHub</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.github')}
+                        placeholder="https://github.com/username"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.github ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.github && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.github.message}</p>
+                      )}
+                    </div>
+
+                    {/* LinkedIn */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Linkedin className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>رابط LinkedIn</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.linkedin')}
+                        placeholder="https://linkedin.com/in/username"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.linkedin ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.linkedin && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.linkedin.message}</p>
+                      )}
+                    </div>
+
+                    {/* YouTube */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Youtube className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>قناة YouTube</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.youtube')}
+                        placeholder="https://youtube.com/@channel"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.youtube ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.youtube && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.youtube.message}</p>
+                      )}
+                    </div>
+
+                    {/* Facebook */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Facebook className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>صفحة Facebook</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.facebook')}
+                        placeholder="https://facebook.com/username"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.facebook ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.facebook && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.facebook.message}</p>
+                      )}
+                    </div>
+
+                    {/* Twitter / X */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Twitter className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>حساب Twitter / X</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.twitter')}
+                        placeholder="https://x.com/username"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.twitter ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.twitter && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.twitter.message}</p>
+                      )}
+                    </div>
+
+                    {/* TikTok */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Music2 className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>حساب TikTok</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.tiktok')}
+                        placeholder="https://tiktok.com/@username"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.tiktok ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.tiktok && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.tiktok.message}</p>
+                      )}
+                    </div>
+
+                    {/* Website / Portfolio */}
+                    <div className="space-y-1 sm:col-span-2">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Globe className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>الموقع الشخصي / معرض الأعمال (Portfolio)</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.website')}
+                        placeholder="https://yourwebsite.com"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.website ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.website && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.website.message}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
                   <Button
@@ -597,17 +801,23 @@ export default function ProfileDashboardPage() {
 
               <AuthorBox
                 author={{
-                  name: watchedName || 'ربيع شعبان',
-                  email: watchedEmail || 'r.shaban.2016@gmail.com',
+                  name: watchedName || user?.name || 'ربيع شعبان',
+                  email: watchedEmail || user?.email || 'r.shaban.2016@gmail.com',
                   role: 'Full-Stack Software Engineer & Tech Educator',
-                  bio: watchedBio || 'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
-                  avatar: watchedAvatar || 'https://github.com/rabea-shaban.png',
+                  bio:
+                    watchedBio ||
+                    user?.bio ||
+                    'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
+                  avatar: watchedAvatar || user?.avatar || 'https://github.com/rabea-shaban.png',
                   aboutUrl: '/about',
                   socials: {
-                    github: 'https://github.com/rabea-shaban',
-                    linkedin: 'https://linkedin.com/in/rabea-shaban',
-                    youtube: 'https://youtube.com/@5prog_bldy',
-                    facebook: 'https://facebook.com/5prog.bldy',
+                    github: watchedSocials?.github || user?.socials?.github || undefined,
+                    linkedin: watchedSocials?.linkedin || user?.socials?.linkedin || undefined,
+                    youtube: watchedSocials?.youtube || user?.socials?.youtube || undefined,
+                    facebook: watchedSocials?.facebook || user?.socials?.facebook || undefined,
+                    twitter: watchedSocials?.twitter || user?.socials?.twitter || undefined,
+                    tiktok: watchedSocials?.tiktok || user?.socials?.tiktok || undefined,
+                    website: watchedSocials?.website || user?.socials?.website || undefined,
                   },
                 }}
               />
@@ -650,6 +860,56 @@ export default function ProfileDashboardPage() {
                 </Badge>
               </div>
             </div>
+
+            {/* Configured Social Icons in Overview Card */}
+            {(watchedSocials?.github ||
+              watchedSocials?.linkedin ||
+              watchedSocials?.youtube ||
+              watchedSocials?.facebook ||
+              watchedSocials?.twitter ||
+              watchedSocials?.tiktok ||
+              watchedSocials?.website ||
+              user?.socials?.github ||
+              user?.socials?.linkedin ||
+              user?.socials?.youtube) && (
+              <div className="pt-3 border-t border-border flex items-center justify-center flex-wrap gap-1.5">
+                {(watchedSocials?.github || user?.socials?.github) && (
+                  <span title="GitHub" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Github className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.linkedin || user?.socials?.linkedin) && (
+                  <span title="LinkedIn" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Linkedin className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.youtube || user?.socials?.youtube) && (
+                  <span title="YouTube" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Youtube className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.facebook || user?.socials?.facebook) && (
+                  <span title="Facebook" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Facebook className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.twitter || user?.socials?.twitter) && (
+                  <span title="Twitter / X" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Twitter className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.tiktok || user?.socials?.tiktok) && (
+                  <span title="TikTok" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Music2 className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.website || user?.socials?.website) && (
+                  <span title="Portfolio / Website" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Globe className="h-3.5 w-3.5" />
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Quick Meta List */}
             <div className="pt-4 border-t border-border space-y-3 text-xs text-right">

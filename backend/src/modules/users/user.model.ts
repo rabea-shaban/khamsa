@@ -43,6 +43,15 @@ const userSchema = new Schema<IUserDocument>(
       trim: true,
       default: null,
     },
+    socials: {
+      github: { type: String, trim: true, default: '' },
+      linkedin: { type: String, trim: true, default: '' },
+      youtube: { type: String, trim: true, default: '' },
+      facebook: { type: String, trim: true, default: '' },
+      twitter: { type: String, trim: true, default: '' },
+      tiktok: { type: String, trim: true, default: '' },
+      website: { type: String, trim: true, default: '' },
+    },
     isActive: {
       type: Boolean,
       default: true,

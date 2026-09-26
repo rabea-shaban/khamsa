@@ -3,7 +3,18 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArticleAuthor } from '@/data/static-articles/types';
-import { Github, Linkedin, Youtube, Facebook, Mail, ShieldCheck, ArrowLeft } from 'lucide-react';
+import {
+  Github,
+  Linkedin,
+  Youtube,
+  Facebook,
+  Twitter,
+  Globe,
+  Music2,
+  Mail,
+  ShieldCheck,
+  ArrowLeft,
+} from 'lucide-react';
 
 interface AuthorBoxProps {
   author: ArticleAuthor;
@@ -11,6 +22,7 @@ interface AuthorBoxProps {
 
 export function AuthorBox({ author }: AuthorBoxProps) {
   const authorEmail = author.email || 'r.shaban.2016@gmail.com';
+  const socials = author.socials;
 
   return (
     <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-6 shadow-card transition-all hover:border-primary/30">
@@ -58,20 +70,21 @@ export function AuthorBox({ author }: AuthorBoxProps) {
 
       {/* Social Links & About Page Link */}
       <div className="pt-4 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
-        <div className="flex items-center gap-3">
-          <span className="text-foreground-muted font-bold">تواصل مع الكاتب:</span>
+        <div className="flex items-center flex-wrap gap-2 sm:gap-2.5">
+          <span className="text-foreground-muted font-bold ml-1">تواصل مع الكاتب:</span>
           {authorEmail && (
             <a
               href={`mailto:${authorEmail}`}
-              title={`إرسال بريد إلكتروني إلى: ${authorEmail}`}
+              title={`إرسال بريد إلكتروني: ${authorEmail}`}
+              aria-label="البريد الإلكتروني"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Mail className="h-4 w-4" />
             </a>
           )}
-          {author.socials?.github && (
+          {socials?.github && (
             <a
-              href={author.socials.github}
+              href={socials.github}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Profile"
@@ -81,9 +94,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               <Github className="h-4 w-4" />
             </a>
           )}
-          {author.socials?.linkedin && (
+          {socials?.linkedin && (
             <a
-              href={author.socials.linkedin}
+              href={socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn Profile"
@@ -93,9 +106,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               <Linkedin className="h-4 w-4" />
             </a>
           )}
-          {author.socials?.youtube && (
+          {socials?.youtube && (
             <a
-              href={author.socials.youtube}
+              href={socials.youtube}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube Channel"
@@ -105,9 +118,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               <Youtube className="h-4 w-4" />
             </a>
           )}
-          {author.socials?.facebook && (
+          {socials?.facebook && (
             <a
-              href={author.socials.facebook}
+              href={socials.facebook}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook Page"
@@ -115,6 +128,42 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Facebook className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.twitter && (
+            <a
+              href={socials.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter / X Profile"
+              title="Twitter / X"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Twitter className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.tiktok && (
+            <a
+              href={socials.tiktok}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok Profile"
+              title="TikTok"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Music2 className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.website && (
+            <a
+              href={socials.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="الموقع الشخصي / معرض الأعمال"
+              title="الموقع الشخصي"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Globe className="h-4 w-4" />
             </a>
           )}
         </div>

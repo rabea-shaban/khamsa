@@ -47,9 +47,16 @@ export interface PaginatedResult<T> {
   pagination: Pagination;
 }
 
-// ============================================
-// Domain Entities
-// ============================================
+export interface UserSocials {
+  github?: string | null;
+  linkedin?: string | null;
+  youtube?: string | null;
+  facebook?: string | null;
+  twitter?: string | null;
+  tiktok?: string | null;
+  website?: string | null;
+}
+
 export interface User {
   _id: string;
   name: string;
@@ -57,6 +64,7 @@ export interface User {
   role: UserRole;
   avatar?: string | null;
   bio?: string | null;
+  socials?: UserSocials | null;
   isActive: boolean;
   lastLoginAt?: string | null;
   createdAt: string;
@@ -88,6 +96,7 @@ export interface Article {
     email?: string;
     avatar?: string | null;
     bio?: string | null;
+    socials?: UserSocials | null;
   };
   status: ContentStatus;
   isFeatured?: boolean;

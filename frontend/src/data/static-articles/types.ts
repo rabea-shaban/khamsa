@@ -12,10 +12,13 @@ export interface ArticleAuthor {
   avatar?: string | null;
   aboutUrl: string;
   socials?: {
-    github?: string;
-    linkedin?: string;
-    youtube?: string;
-    facebook?: string;
+    github?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+    facebook?: string | null;
+    twitter?: string | null;
+    tiktok?: string | null;
+    website?: string | null;
   };
 }
 
