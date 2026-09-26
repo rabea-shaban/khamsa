@@ -229,7 +229,7 @@ export default async function RootLayout({
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClient}`}
           />
         )}
-        {/* Conditional Google Analytics 4: Loaded ONLY if real ID is configured */}
+        {/* Google Analytics 4 (gtag.js) */}
         {gaId && (
           <>
             <Script
@@ -244,9 +244,7 @@ export default async function RootLayout({
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${gaId}', {
-                    page_path: window.location.pathname,
-                  });
+                  gtag('config', '${gaId}');
                 `,
               }}
             />
