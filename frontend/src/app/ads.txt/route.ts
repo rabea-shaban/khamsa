@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim();
+  const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim() || 'pub-9549884730788063';
 
   // If no valid publisher ID is provided, return a safe comment without fake IDs
   if (!publisherId || publisherId.includes('XXXXX') || !publisherId.startsWith('pub-')) {

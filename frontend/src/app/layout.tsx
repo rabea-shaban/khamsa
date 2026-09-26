@@ -19,7 +19,7 @@ const googleVerification =
   'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y';
 const gaId = process.env.NEXT_PUBLIC_GA_ID || 'G-0NV2KE0NGC';
 const gtmId = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-MT8QVP4H';
-const adSenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+const adSenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-9549884730788063';
 
 async function fetchPublicSettings(): Promise<Settings | null> {
   try {
