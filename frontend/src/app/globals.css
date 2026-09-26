@@ -145,15 +145,33 @@
   pointer-events: none;
 }
 
+/* Global Code Block Direction & Bidi Isolation */
+pre,
+code[dir='ltr'],
+.dir-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate !important;
+}
+
+pre {
+  white-space: pre !important;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  tab-size: 2;
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace !important;
+}
+
 .tiptap pre {
   background: #0d0f12;
   border: 1px solid var(--border);
   border-radius: 0.875rem;
   color: #e2e8f0;
-  direction: ltr;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   padding: 1.25rem;
-  text-align: left;
+  text-align: left !important;
   margin: 1.5rem 0;
   overflow-x: auto;
 }
@@ -174,6 +192,9 @@
   color: inherit;
   font-size: inherit;
   padding: 0;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: left !important;
 }
 
 .tiptap blockquote {

@@ -46,16 +46,24 @@ function CodeBlockRenderer({
   };
 
   return (
-    <div className="relative my-6 rounded-2xl border border-border bg-[#080b11] overflow-hidden group shadow-card">
+    <div
+      dir="ltr"
+      className="relative my-6 rounded-2xl border border-border bg-[#080b11] overflow-hidden group shadow-card text-left"
+      style={{ direction: 'ltr', textAlign: 'left' }}
+    >
       {/* Code Header Bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-surface border-b border-border/80 text-xs font-mono text-foreground-muted select-none">
+      <div
+        dir="ltr"
+        className="flex items-center justify-between px-4 py-2.5 bg-surface border-b border-border/80 text-xs font-mono text-foreground-muted select-none"
+        style={{ direction: 'ltr', textAlign: 'left' }}
+      >
         <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-            <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+          <div className="flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-full bg-[#ff5f56] border border-[#e0443e]" />
+            <span className="h-3 w-3 rounded-full bg-[#ffbd2e] border border-[#dea123]" />
+            <span className="h-3 w-3 rounded-full bg-[#27c93f] border border-[#1aab29]" />
           </div>
-          <span className="mr-2 text-[11px] font-bold text-primary uppercase tracking-wider">
+          <span className="ml-2 px-2 py-0.5 rounded bg-surface-elevated text-[11px] font-bold text-primary uppercase tracking-wider border border-border">
             {language || 'code'}
           </span>
         </div>
@@ -81,8 +89,30 @@ function CodeBlockRenderer({
       </div>
 
       {/* Code Content */}
-      <pre className="p-4 sm:p-5 text-xs sm:text-sm font-mono leading-relaxed text-slate-100 overflow-x-auto text-left dir-ltr selection:bg-primary/30">
-        <code>{code}</code>
+      <pre
+        dir="ltr"
+        className="p-4 sm:p-5 text-xs sm:text-sm font-mono leading-relaxed text-slate-100 overflow-x-auto selection:bg-primary/30"
+        style={{
+          direction: 'ltr',
+          textAlign: 'left',
+          unicodeBidi: 'isolate',
+          whiteSpace: 'pre',
+          wordBreak: 'normal',
+          wordWrap: 'normal',
+        }}
+      >
+        <code
+          dir="ltr"
+          style={{
+            direction: 'ltr',
+            textAlign: 'left',
+            unicodeBidi: 'isolate',
+            display: 'block',
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          }}
+        >
+          {code}
+        </code>
       </pre>
     </div>
   );
