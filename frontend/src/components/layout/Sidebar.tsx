@@ -14,6 +14,7 @@ import {
   LogOut,
   X,
   ShieldCheck,
+  UserCircle,
 } from 'lucide-react';
 import { Logo } from '../shared/Logo';
 import { cn } from '@/lib/utils/cn';
@@ -30,8 +31,9 @@ const navItems = [
   { label: 'المقالات', href: '/dashboard/articles', icon: FileText },
   { label: 'الفيديوهات', href: '/dashboard/videos', icon: Video },
   { label: 'الوسائط', href: '/dashboard/media', icon: ImageIcon },
-  { label: 'الإعدادات', href: '/dashboard/settings', icon: Settings },
   { label: 'المستخدمون', href: '/dashboard/users', icon: Users, adminOnly: true },
+  { label: 'الملف الشخصي', href: '/dashboard/profile', icon: UserCircle },
+  { label: 'إعدادات المنصة', href: '/dashboard/settings', icon: Settings, adminOnly: true },
 ];
 
 export function Sidebar({ className, isOpenMobile, onCloseMobile }: SidebarProps) {
@@ -110,18 +112,36 @@ export function Sidebar({ className, isOpenMobile, onCloseMobile }: SidebarProps
       <div className="space-y-3 pt-4 border-t border-border">
         {/* User Card */}
         {user && (
-          <div className="p-3 rounded-xl bg-surface border border-border flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-extrabold text-sm shrink-0 border border-primary/20">
-              {user.name ? user.name.slice(0, 1).toUpperCase() : 'A'}
+          <Link
+            href="/dashboard/profile"
+            onClick={handleNavClick}
+            className="p-3 rounded-2xl bg-surface border border-border/80 hover:border-primary/40 hover:bg-surface-hover flex items-center gap-3 transition-all group"
+          >
+            <div className="relative h-10 w-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-extrabold text-sm shrink-0 border border-primary/25 overflow-hidden shadow-subtle">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+              ) : null}
+              <span className="absolute inset-0 flex items-center justify-center font-bold">
+                {user.name ? user.name.slice(0, 1).toUpperCase() : 'A'}
+              </span>
             </div>
             <div className="flex-1 min-w-0 text-right">
-              <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
+              <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                {user.name}
+              </p>
               <div className="flex items-center gap-1 text-[11px] text-primary font-mono font-semibold">
                 <ShieldCheck className="h-3 w-3" />
                 <span>{user.role}</span>
               </div>
             </div>
-          </div>
+          </Link>
         )}
 
         <div className="flex flex-col gap-1">

@@ -38,6 +38,11 @@ const userSchema = new Schema<IUserDocument>(
       trim: true,
       default: null,
     },
+    bio: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     isActive: {
       type: Boolean,
       default: true,

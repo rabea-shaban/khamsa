@@ -7,6 +7,7 @@ export interface IUser {
   password?: string;
   role: UserRole;
   avatar?: string;
+  bio?: string | null;
   isActive: boolean;
   lastLoginAt?: Date;
   createdAt: Date;
@@ -24,6 +25,7 @@ export interface CreateUserInput {
   password: string;
   role: UserRole;
   avatar?: string;
+  bio?: string | null;
   isActive?: boolean;
 }
 
@@ -33,6 +35,7 @@ export interface UpdateUserInput {
   password?: string;
   role?: UserRole;
   avatar?: string;
+  bio?: string | null;
   isActive?: boolean;
 }
 
@@ -42,6 +45,7 @@ export interface UserResponse {
   email: string;
   role: UserRole;
   avatar?: string;
+  bio?: string | null;
   isActive: boolean;
   lastLoginAt?: Date;
   createdAt: Date;

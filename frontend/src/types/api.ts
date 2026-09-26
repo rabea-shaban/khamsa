@@ -56,6 +56,7 @@ export interface User {
   email: string;
   role: UserRole;
   avatar?: string | null;
+  bio?: string | null;
   isActive: boolean;
   lastLoginAt?: string | null;
   createdAt: string;

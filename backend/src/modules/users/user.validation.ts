@@ -12,6 +12,7 @@ export const createUserSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
   role: z.nativeEnum(UserRole).default(UserRole.EDITOR),
   avatar: z.string().url('Avatar must be a valid URL').optional().nullable(),
+  bio: z.string().trim().max(1000, 'Bio cannot exceed 1000 characters').optional().nullable(),
   isActive: z.boolean().default(true),
 });
 
@@ -27,6 +28,7 @@ export const updateUserSchema = z.object({
     .optional(),
   role: z.nativeEnum(UserRole).optional(),
   avatar: z.string().url('Avatar must be a valid URL').optional().nullable(),
+  bio: z.string().trim().max(1000, 'Bio cannot exceed 1000 characters').optional().nullable(),
   isActive: z.boolean().optional(),
 });
 

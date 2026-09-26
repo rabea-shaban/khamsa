@@ -25,6 +25,7 @@ export interface CreateUserPayload {
   role: UserRole;
   isActive?: boolean;
   avatar?: string | null;
+  bio?: string | null;
 }
 
 export interface UpdateUserPayload {
@@ -33,6 +34,7 @@ export interface UpdateUserPayload {
   role?: UserRole;
   isActive?: boolean;
   avatar?: string | null;
+  bio?: string | null;
   password?: string;
 }
 
