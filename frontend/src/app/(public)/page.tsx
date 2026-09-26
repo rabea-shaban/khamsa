@@ -22,13 +22,51 @@ import {
   SocialCtaSection,
   FinalCtaSection,
 } from '@/components/sections';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 export const revalidate = 60; // ISR 60 seconds
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: 'خمسة برمجة بالبلدي | افهمها بالبلدي.. اكتبها بالكود',
   description:
     'خمسة برمجة بالبلدي منصة عربية لتبسيط البرمجة والتكنولوجيا من خلال المقالات والفيديوهات والمحتوى العملي.',
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    title: 'خمسة برمجة بالبلدي | افهمها بالبلدي.. اكتبها بالكود',
+    description:
+      'خمسة برمجة بالبلدي منصة عربية لتبسيط البرمجة والتكنولوجيا من خلال المقالات والفيديوهات والمحتوى العملي.',
+    url: siteUrl,
+    siteName: 'خمسة برمجة بالبلدي',
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'خمسة برمجة بالبلدي - افهمها بالبلدي.. اكتبها بالكود',
+        type: 'image/png',
+      },
+      {
+        url: `${siteUrl}/logo.png`,
+        width: 800,
+        height: 800,
+        alt: 'شعار خمسة برمجة بالبلدي',
+        type: 'image/png',
+      },
+    ],
+    locale: 'ar_EG',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'خمسة برمجة بالبلدي | افهمها بالبلدي.. اكتبها بالكود',
+    description:
+      'خمسة برمجة بالبلدي منصة عربية لتبسيط البرمجة والتكنولوجيا من خلال المقالات والفيديوهات والمحتوى العملي.',
+    images: [`${siteUrl}/og-image.png`],
+  },
 };
 
 export default async function HomePage() {

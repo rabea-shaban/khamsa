@@ -50,7 +50,8 @@ export async function generateMetadata(): Promise<Metadata> {
     settings?.siteDescription ||
     settings?.defaultSeo?.description ||
     'معلومة صغيرة... تفرق معاك في البرمجة. منصة عربية لتبسيط علوم الحاسب، البرمجة، وهندسة البرمجيات باللغة العربية بأسلوب عملي وشروحات مفهومة.';
-  const ogImage = settings?.defaultSeo?.ogImage || settings?.logo || undefined;
+  const ogImage = settings?.defaultSeo?.ogImage || settings?.logo || `${siteUrl}/og-image.png`;
+  const logoImage = `${siteUrl}/logo.png`;
   const favicon = settings?.favicon || '/favicon.ico';
   const keywords = settings?.defaultSeo?.keywords?.length
     ? settings.defaultSeo.keywords
@@ -83,9 +84,16 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: ownerName,
     publisher: siteName,
     icons: {
-      icon: favicon,
-      shortcut: favicon,
-      apple: favicon,
+      icon: [
+        { url: '/favicon.ico' },
+        { url: '/icon.png', type: 'image/png' },
+        { url: '/logo.png', type: 'image/png' },
+      ],
+      shortcut: ['/favicon.ico'],
+      apple: [
+        { url: '/apple-icon.png' },
+        { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+      ],
     },
     formatDetection: {
       email: false,
@@ -99,22 +107,28 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName,
       title: siteTitle,
       description: siteDescription,
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-              width: 1200,
-              height: 630,
-              alt: siteName,
-            },
-          ]
-        : [],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${siteName} - ${tagline}`,
+          type: 'image/png',
+        },
+        {
+          url: logoImage,
+          width: 800,
+          height: 800,
+          alt: siteName,
+          type: 'image/png',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: siteTitle,
       description: siteDescription,
-      images: ogImage ? [ogImage] : [],
+      images: [ogImage],
     },
     robots: {
       index: true,
@@ -188,6 +202,16 @@ export default async function RootLayout({
     <html lang="ar" dir="rtl" className={cairo.variable} suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content={googleVerification} />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+        <meta property="og:image:secure_url" content={`${siteUrl}/og-image.png`} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="خمسة برمجة بالبلدي" />
+        <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
