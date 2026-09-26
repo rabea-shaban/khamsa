@@ -230,7 +230,7 @@ export function Header() {
               {/* Social Channels */}
               <div className="flex items-center justify-center gap-2 pt-1 border-t border-border/40">
                 <a
-                  href="https://wa.me/201156807072"
+                  href="https://wa.me/201554087543"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="WhatsApp"

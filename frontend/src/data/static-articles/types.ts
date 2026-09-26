@@ -73,7 +73,7 @@ export const DEFAULT_AUTHOR: ArticleAuthor = {
     website: 'https://rabea-shaban.com/',
     linkedin: 'https://www.linkedin.com/in/rabea-sh-elzayat',
     mostaql: 'https://mostaql.com/u/rabea_elzayat',
-    whatsapp: 'https://wa.me/201156807072',
+    whatsapp: 'https://wa.me/201554087543',
     facebook: 'https://www.facebook.com/Rabea.Sh.ELZayat/',
     tiktok: 'https://www.tiktok.com/@rabea.sh.elzayat',
     github: 'https://github.com/rabea-shaban',
