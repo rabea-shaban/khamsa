@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Home, BookOpen, Video, Info, Mail, Sparkles, Layers } from 'lucide-react';
@@ -18,7 +19,12 @@ import { cn } from '@/lib/utils/cn';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close sidebar automatically on navigation
   useEffect(() => {
@@ -66,70 +72,74 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-xl transition-colors duration-normal">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Logo />
+    <>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-xl transition-colors duration-normal">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Logo />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-2xl bg-surface border border-border/80">
-          {navLinks.map(link => {
-            const isActive =
-              link.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(link.href);
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-2xl bg-surface border border-border/80">
+            {navLinks.map(link => {
+              const isActive =
+                link.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(link.href);
 
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-normal',
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-subtle'
-                    : 'text-foreground-secondary hover:text-foreground hover:bg-surface-hover',
-                )}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    'px-4 py-1.5 rounded-xl text-xs font-bold transition-all duration-normal',
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-subtle'
+                      : 'text-foreground-secondary hover:text-foreground hover:bg-surface-hover',
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-2.5">
-          <ThemeToggle />
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-2.5">
+            <ThemeToggle />
+          </div>
+
+          {/* Mobile Actions: ThemeToggle + Hamburger Button */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle variant="compact" />
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 rounded-xl border border-border bg-surface text-foreground hover:bg-surface-hover hover:border-primary/40 focus:outline-none transition-colors"
+              aria-label="فتح القائمة الجانبية"
+              aria-expanded={mobileMenuOpen}
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </div>
         </div>
+      </header>
 
-        {/* Mobile Actions: ThemeToggle + Hamburger Button */}
-        <div className="flex md:hidden items-center gap-2">
-          <ThemeToggle variant="compact" />
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-2 rounded-xl border border-border bg-surface text-foreground hover:bg-surface-hover hover:border-primary/40 focus:outline-none transition-colors"
-            aria-label="فتح القائمة الجانبية"
-            aria-expanded={mobileMenuOpen}
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Slide-Over Sidebar Drawer & Backdrop */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex justify-end">
+      {/* Mobile Slide-Over Sidebar Drawer mounted on body via Portal */}
+      {mounted && mobileMenuOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] md:hidden" dir="rtl">
           {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
 
-          {/* Sidebar Drawer Panel */}
-          <div className="relative z-50 w-[310px] max-w-[85vw] h-full bg-card border-s border-border shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+          {/* Sidebar Drawer Panel - Full height viewport docking to right side */}
+          <aside
+            className="fixed top-0 bottom-0 right-0 z-50 w-[310px] max-w-[85vw] h-screen h-[100dvh] bg-card border-s border-border shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300"
+          >
             {/* Top Bar: Brand Logo & Close Button */}
             <div>
-              <div className="flex items-center justify-between p-5 border-b border-border/70 bg-surface/50">
+              <div className="flex items-center justify-between p-4 border-b border-border/70 bg-surface/60 sticky top-0 z-10 backdrop-blur">
                 <Logo />
                 <button
                   type="button"
@@ -163,7 +173,7 @@ export function Header() {
                       className={cn(
                         'flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold transition-all duration-200',
                         isActive
-                          ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm font-extrabold'
+                          ? 'bg-primary/10 text-primary border border-primary/25 shadow-sm font-extrabold'
                           : 'text-foreground-secondary hover:bg-surface-hover hover:text-foreground',
                       )}
                     >
@@ -206,13 +216,13 @@ export function Header() {
             </div>
 
             {/* Bottom Footer Section */}
-            <div className="p-5 border-t border-border/70 bg-surface/30 space-y-4">
+            <div className="p-4 border-t border-border/70 bg-surface/40 space-y-3">
               {/* Slogan */}
               <div className="text-center">
                 <p className="text-xs font-black text-foreground">
                   خمسة برمجة بالبلدي
                 </p>
-                <p className="text-[11px] text-foreground-muted mt-0.5">
+                <p className="text-[11px] text-foreground-muted mt-0.5 font-mono">
                   افهمها بالبلدي .. اكتبها بالكود
                 </p>
               </div>
@@ -259,16 +269,17 @@ export function Header() {
                   href="https://rabea-shaban.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="GitHub"
+                  aria-label="Portfolio"
                   className="p-2 rounded-xl bg-surface border border-border text-foreground hover:scale-110 transition-transform"
                 >
                   <GitHubIcon size={14} />
                 </a>
               </div>
             </div>
-          </div>
-        </div>
+          </aside>
+        </div>,
+        document.body
       )}
-    </header>
+    </>
   );
 }
