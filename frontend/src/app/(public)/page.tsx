@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { ArticleCard } from '@/components/articles/ArticleCard';
 import { VideoCard } from '@/components/videos/VideoCard';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Article, Video, Settings } from '@/types/api';
+import { Article, Video, Settings, ContentStatus } from '@/types/api';
+import { STATIC_ARTICLES } from '@/data/static-articles';
 import {
   HeroSection,
   WhyKhamsaSection,
@@ -42,15 +43,61 @@ export default async function HomePage() {
       settingsApi.getPublicSettings(),
     ]);
 
-    if (articlesRes.status === 'fulfilled' && articlesRes.value?.data?.items) {
-      articles = articlesRes.value.data.items;
-    }
+    const dynamicArticles: Article[] =
+      articlesRes.status === 'fulfilled' && articlesRes.value?.data?.items
+        ? articlesRes.value.data.items
+        : [];
+
     if (videosRes.status === 'fulfilled' && videosRes.value?.data?.items) {
       videos = videosRes.value.data.items;
     }
     if (settingsRes.status === 'fulfilled' && settingsRes.value?.data) {
       settings = settingsRes.value.data;
     }
+
+    // Map static articles
+    const staticMapped: Article[] = STATIC_ARTICLES.map(s => ({
+      _id: s.id,
+      title: s.title,
+      slug: s.slug,
+      excerpt: s.excerpt,
+      content: s.content,
+      coverImage: s.coverImage,
+      category: s.category,
+      tags: s.tags,
+      isFeatured: s.isFeatured,
+      author: {
+        _id: 'author-rabie',
+        name: s.author.name,
+        email: 'contact@khamsa.dev',
+        avatar: s.author.avatar,
+      },
+      status: ContentStatus.PUBLISHED,
+      publishedAt: s.publishedAt,
+      createdAt: s.publishedAt,
+      updatedAt: s.updatedAt,
+      seo: s.seo,
+    }));
+
+    // Merge: Dynamic articles created by admin ALWAYS come FIRST
+    const seenSlugs = new Set<string>();
+    const merged: Article[] = [];
+
+    for (const art of dynamicArticles) {
+      if (art.slug && !seenSlugs.has(art.slug.toLowerCase())) {
+        seenSlugs.add(art.slug.toLowerCase());
+        merged.push(art);
+      }
+    }
+
+    for (const art of staticMapped) {
+      if (!seenSlugs.has(art.slug.toLowerCase())) {
+        seenSlugs.add(art.slug.toLowerCase());
+        merged.push(art);
+      }
+    }
+
+    articles = merged.slice(0, 6);
   } catch (err) {
     console.error('Error fetching homepage data:', err);
   }

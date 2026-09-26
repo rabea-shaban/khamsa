@@ -36,7 +36,45 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const { slug } = await params;
   const siteUrl = getSiteUrl();
 
-  // 1. Check if it is a high-quality static article
+  // 1. Check dynamic DB first
+  try {
+    const res = await articlesApi.getArticleBySlug(slug);
+    const article = res.data;
+
+    if (article) {
+      const title = article.seo?.title || article.title;
+      const description = article.seo?.description || article.excerpt;
+      const ogImage = article.seo?.ogImage || article.coverImage || '';
+      const canonical = article.seo?.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
+
+      return {
+        title: `${title} | خمسة برمجة بالبلدي`,
+        description,
+        keywords: article.seo?.keywords || article.tags,
+        alternates: {
+          canonical,
+        },
+        openGraph: {
+          title: article.seo?.ogTitle || title,
+          description: article.seo?.ogDescription || description,
+          type: 'article',
+          publishedTime: article.publishedAt || article.createdAt,
+          authors: [article.author?.name || 'ربيع شعبان'],
+          images: ogImage ? [{ url: ogImage }] : [],
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: article.seo?.ogTitle || title,
+          description: article.seo?.ogDescription || description,
+          images: ogImage ? [ogImage] : [],
+        },
+      };
+    }
+  } catch {
+    // fallback to static
+  }
+
+  // 2. Check if it is a high-quality static article
   const staticArt = getStaticArticleBySlug(slug);
   if (staticArt) {
     const canonical = staticArt.seo.canonicalUrl || `${siteUrl}/articles/${staticArt.slug}`;
@@ -75,91 +113,60 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     };
   }
 
-  // 2. Otherwise check dynamic API
-  try {
-    const res = await articlesApi.getArticleBySlug(slug);
-    const article = res.data;
-
-    if (!article) {
-      return {
-        title: 'المقال غير موجود | خمسة برمجة بالبلدي',
-      };
-    }
-
-    const title = article.seo?.title || article.title;
-    const description = article.seo?.description || article.excerpt;
-    const ogImage = article.seo?.ogImage || article.coverImage || '';
-    const canonical = article.seo?.canonicalUrl || `${siteUrl}/articles/${article.slug}`;
-
-    return {
-      title: `${title} | خمسة برمجة بالبلدي`,
-      description,
-      keywords: article.seo?.keywords || article.tags,
-      alternates: {
-        canonical,
-      },
-      openGraph: {
-        title: article.seo?.ogTitle || title,
-        description: article.seo?.ogDescription || description,
-        type: 'article',
-        publishedTime: article.publishedAt || article.createdAt,
-        authors: [article.author?.name || 'ربيع شعبان'],
-        images: ogImage ? [{ url: ogImage }] : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: article.seo?.ogTitle || title,
-        description: article.seo?.ogDescription || description,
-        images: ogImage ? [ogImage] : [],
-      },
-    };
-  } catch {
-    return {
-      title: 'خمسة برمجة بالبلدي',
-    };
-  }
+  return {
+    title: 'المقال غير موجود | خمسة برمجة بالبلدي',
+  };
 }
 
 export default async function ArticleDetailsPage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const siteUrl = getSiteUrl();
 
-  const staticArt = getStaticArticleBySlug(slug);
+  // 1. Try fetching from dynamic DB first
   let article: Article | null = null;
+  try {
+    const res = await articlesApi.getArticleBySlug(slug);
+    if (res?.data) {
+      article = res.data;
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Fallback to static article
+  const staticArt = !article ? getStaticArticleBySlug(slug) : null;
+
+  if (!article && !staticArt) {
+    notFound();
+  }
+
+  const currentCategory = staticArt?.category || article?.category || '';
   let staticRelated: StaticArticle[] = [];
   let dynamicRelated: Article[] = [];
 
+  // Fetch dynamic related articles from DB
+  try {
+    const relatedRes = await articlesApi.getArticles({
+      limit: 3,
+      category: currentCategory,
+      sort: 'latest',
+    });
+
+    if (relatedRes?.data?.items) {
+      dynamicRelated = relatedRes.data.items.filter(
+        (item: Article) => item.slug !== slug && item._id !== article?._id
+      );
+    }
+  } catch {
+    // ignore
+  }
+
   if (staticArt) {
     staticRelated = getRelatedStaticArticles(staticArt, 3);
-  } else {
-    try {
-      const res = await articlesApi.getArticleBySlug(slug);
-      article = res.data;
-
-      if (!article) {
-        notFound();
-      }
-
-      // Fetch related articles from same category
-      const relatedRes = await articlesApi.getArticles({
-        limit: 3,
-        category: article.category,
-        sort: 'latest',
-      });
-
-      if (relatedRes?.data?.items) {
-        dynamicRelated = relatedRes.data.items.filter(
-          (item: Article) => item._id !== article!._id
-        );
-      }
-    } catch {
-      notFound();
-    }
   }
 
   const currentTitle = staticArt?.title || article?.title || '';
   const currentExcerpt = staticArt?.excerpt || article?.excerpt || '';
-  const currentCategory = staticArt?.category || article?.category || '';
   const currentTags = staticArt?.tags || article?.tags || [];
   const currentCover = staticArt?.coverImage || article?.coverImage;
   const currentCoverAlt = staticArt?.coverAlt || currentTitle;

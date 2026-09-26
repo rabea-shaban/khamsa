@@ -94,17 +94,17 @@ export default function ArticlesPage() {
     const seenSlugs = new Set<string>();
     const merged: Article[] = [];
 
-    // Prioritize static high-quality educational articles first
-    for (const art of staticMapped) {
-      if (!seenSlugs.has(art.slug.toLowerCase())) {
+    // 1. Prioritize dynamic DB articles created in dashboard FIRST
+    for (const art of dynamicItems) {
+      if (art.slug && !seenSlugs.has(art.slug.toLowerCase())) {
         seenSlugs.add(art.slug.toLowerCase());
         merged.push(art);
       }
     }
 
-    // Add dynamic DB articles if they are not already in static
-    for (const art of dynamicItems) {
-      if (art.slug && !seenSlugs.has(art.slug.toLowerCase())) {
+    // 2. Append static articles for any remaining slots
+    for (const art of staticMapped) {
+      if (!seenSlugs.has(art.slug.toLowerCase())) {
         seenSlugs.add(art.slug.toLowerCase());
         merged.push(art);
       }
