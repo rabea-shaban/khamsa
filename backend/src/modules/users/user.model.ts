@@ -51,6 +51,8 @@ const userSchema = new Schema<IUserDocument>(
       twitter: { type: String, trim: true, default: '' },
       tiktok: { type: String, trim: true, default: '' },
       website: { type: String, trim: true, default: '' },
+      whatsapp: { type: String, trim: true, default: '' },
+      mostaql: { type: String, trim: true, default: '' },
     },
     isActive: {
       type: Boolean,

@@ -12,6 +12,8 @@ import {
   Globe,
   Music2,
   Mail,
+  MessageCircle,
+  Briefcase,
   ShieldCheck,
   ArrowLeft,
 } from 'lucide-react';
@@ -21,7 +23,7 @@ interface AuthorBoxProps {
 }
 
 export function AuthorBox({ author }: AuthorBoxProps) {
-  const authorEmail = author.email || 'r.shaban.2016@gmail.com';
+  const authorEmail = author.email || 'rabea.elzayate@gmail.com';
   const socials = author.socials;
 
   return (
@@ -82,16 +84,28 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               <Mail className="h-4 w-4" />
             </a>
           )}
-          {socials?.github && (
+          {socials?.whatsapp && (
             <a
-              href={socials.github}
+              href={socials.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub Profile"
-              title="GitHub Profile"
+              aria-label="تواصل عبر واتساب (WhatsApp)"
+              title="واتساب (WhatsApp)"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.website && (
+            <a
+              href={socials.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="الموقع الشخصي / Portfolio"
+              title="الموقع الشخصي (Portfolio)"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
-              <Github className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
             </a>
           )}
           {socials?.linkedin && (
@@ -101,21 +115,21 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="LinkedIn Profile"
               title="LinkedIn Profile"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-blue-500 hover:bg-blue-500/10 transition-colors"
             >
               <Linkedin className="h-4 w-4" />
             </a>
           )}
-          {socials?.youtube && (
+          {socials?.mostaql && (
             <a
-              href={socials.youtube}
+              href={socials.mostaql}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="YouTube Channel"
-              title="YouTube Channel"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              aria-label="حساب مستقل (Mostaql Profile)"
+              title="حساب مستقل (Mostaql)"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors font-bold text-xs"
             >
-              <Youtube className="h-4 w-4" />
+              <Briefcase className="h-4 w-4" />
             </a>
           )}
           {socials?.facebook && (
@@ -124,22 +138,10 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook Page"
-              title="Facebook Page"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              title="Facebook"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-blue-600 hover:bg-blue-600/10 transition-colors"
             >
               <Facebook className="h-4 w-4" />
-            </a>
-          )}
-          {socials?.twitter && (
-            <a
-              href={socials.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter / X Profile"
-              title="Twitter / X"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
-            >
-              <Twitter className="h-4 w-4" />
             </a>
           )}
           {socials?.tiktok && (
@@ -154,16 +156,40 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               <Music2 className="h-4 w-4" />
             </a>
           )}
-          {socials?.website && (
+          {socials?.github && (
             <a
-              href={socials.website}
+              href={socials.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="الموقع الشخصي / معرض الأعمال"
-              title="الموقع الشخصي"
+              aria-label="GitHub Profile"
+              title="GitHub Profile"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
-              <Globe className="h-4 w-4" />
+              <Github className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.youtube && (
+            <a
+              href={socials.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube Channel"
+              title="YouTube Channel"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+              <Youtube className="h-4 w-4" />
+            </a>
+          )}
+          {socials?.twitter && (
+            <a
+              href={socials.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter / X Profile"
+              title="Twitter / X"
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Twitter className="h-4 w-4" />
             </a>
           )}
         </div>

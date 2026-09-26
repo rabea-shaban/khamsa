@@ -55,6 +55,8 @@ export interface UserSocials {
   twitter?: string | null;
   tiktok?: string | null;
   website?: string | null;
+  whatsapp?: string | null;
+  mostaql?: string | null;
 }
 
 export interface User {

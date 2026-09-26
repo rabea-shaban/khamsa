@@ -9,6 +9,8 @@ export interface UserSocials {
   twitter?: string;
   tiktok?: string;
   website?: string;
+  whatsapp?: string;
+  mostaql?: string;
 }
 
 export interface IUser {

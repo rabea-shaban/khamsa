@@ -10,6 +10,8 @@ export const userSocialsSchema = z
     twitter: z.string().trim().url('Invalid Twitter/X URL').or(z.literal('')).optional().nullable(),
     tiktok: z.string().trim().url('Invalid TikTok URL').or(z.literal('')).optional().nullable(),
     website: z.string().trim().url('Invalid Website URL').or(z.literal('')).optional().nullable(),
+    whatsapp: z.string().trim().url('Invalid WhatsApp URL').or(z.literal('')).optional().nullable(),
+    mostaql: z.string().trim().url('Invalid Mostaql URL').or(z.literal('')).optional().nullable(),
   })
   .optional()
   .nullable();

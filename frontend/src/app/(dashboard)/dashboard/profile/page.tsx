@@ -24,6 +24,8 @@ import {
   Twitter,
   Globe,
   Music2,
+  MessageCircle,
+  Briefcase,
   Share2,
   Save,
   KeyRound,
@@ -57,6 +59,8 @@ const profileInfoSchema = z.object({
       twitter: urlOrEmpty,
       tiktok: urlOrEmpty,
       website: urlOrEmpty,
+      whatsapp: urlOrEmpty,
+      mostaql: urlOrEmpty,
     })
     .optional(),
 });
@@ -116,6 +120,8 @@ export default function ProfileDashboardPage() {
         twitter: '',
         tiktok: '',
         website: '',
+        whatsapp: '',
+        mostaql: '',
       },
     },
   });
@@ -165,6 +171,8 @@ export default function ProfileDashboardPage() {
           twitter: user.socials?.twitter || '',
           tiktok: user.socials?.tiktok || '',
           website: user.socials?.website || '',
+          whatsapp: user.socials?.whatsapp || '',
+          mostaql: user.socials?.mostaql || '',
         },
       });
     }
@@ -614,6 +622,48 @@ export default function ProfileDashboardPage() {
                       )}
                     </div>
 
+                    {/* WhatsApp */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
+                        <span>رابط واتساب (WhatsApp)</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.whatsapp')}
+                        placeholder="https://wa.me/201156807072"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.whatsapp ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.whatsapp && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.whatsapp.message}</p>
+                      )}
+                    </div>
+
+                    {/* Mostaql / Freelance */}
+                    <div className="space-y-1">
+                      <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <Briefcase className="h-3.5 w-3.5 text-foreground-muted" />
+                        <span>حساب مستقل (Mostaql)</span>
+                      </label>
+                      <input
+                        type="url"
+                        dir="ltr"
+                        {...registerProfile('socials.mostaql')}
+                        placeholder="https://mostaql.com/u/rabea_elzayat"
+                        className={cn(
+                          'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
+                          profileErrors.socials?.mostaql ? 'border-destructive' : 'border-border',
+                        )}
+                      />
+                      {profileErrors.socials?.mostaql && (
+                        <p className="text-[11px] text-destructive">{profileErrors.socials.mostaql.message}</p>
+                      )}
+                    </div>
+
                     {/* Website / Portfolio */}
                     <div className="space-y-1 sm:col-span-2">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
@@ -624,7 +674,7 @@ export default function ProfileDashboardPage() {
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.website')}
-                        placeholder="https://yourwebsite.com"
+                        placeholder="https://rabea-shaban.com"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.website ? 'border-destructive' : 'border-border',
@@ -802,13 +852,13 @@ export default function ProfileDashboardPage() {
               <AuthorBox
                 author={{
                   name: watchedName || user?.name || 'ربيع شعبان',
-                  email: watchedEmail || user?.email || 'r.shaban.2016@gmail.com',
+                  email: watchedEmail || user?.email || 'rabea.elzayate@gmail.com',
                   role: 'Full-Stack Software Engineer & Tech Educator',
                   bio:
                     watchedBio ||
                     user?.bio ||
                     'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
-                  avatar: watchedAvatar || user?.avatar || 'https://github.com/rabea-shaban.png',
+                  avatar: watchedAvatar || user?.avatar || 'https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev/settings/1790342553596-c3b0b3ad4e5a7544e8cfdb149652b335.png',
                   aboutUrl: '/about',
                   socials: {
                     github: watchedSocials?.github || user?.socials?.github || undefined,
@@ -818,6 +868,8 @@ export default function ProfileDashboardPage() {
                     twitter: watchedSocials?.twitter || user?.socials?.twitter || undefined,
                     tiktok: watchedSocials?.tiktok || user?.socials?.tiktok || undefined,
                     website: watchedSocials?.website || user?.socials?.website || undefined,
+                    whatsapp: watchedSocials?.whatsapp || user?.socials?.whatsapp || undefined,
+                    mostaql: watchedSocials?.mostaql || user?.socials?.mostaql || undefined,
                   },
                 }}
               />
@@ -862,40 +914,42 @@ export default function ProfileDashboardPage() {
             </div>
 
             {/* Configured Social Icons in Overview Card */}
-            {(watchedSocials?.github ||
-              watchedSocials?.linkedin ||
-              watchedSocials?.youtube ||
-              watchedSocials?.facebook ||
-              watchedSocials?.twitter ||
-              watchedSocials?.tiktok ||
+            {(watchedSocials?.whatsapp ||
               watchedSocials?.website ||
-              user?.socials?.github ||
-              user?.socials?.linkedin ||
-              user?.socials?.youtube) && (
+              watchedSocials?.linkedin ||
+              watchedSocials?.mostaql ||
+              watchedSocials?.facebook ||
+              watchedSocials?.tiktok ||
+              watchedSocials?.github ||
+              watchedSocials?.youtube ||
+              watchedSocials?.twitter ||
+              user?.socials?.whatsapp ||
+              user?.socials?.website ||
+              user?.socials?.linkedin) && (
               <div className="pt-3 border-t border-border flex items-center justify-center flex-wrap gap-1.5">
-                {(watchedSocials?.github || user?.socials?.github) && (
-                  <span title="GitHub" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Github className="h-3.5 w-3.5" />
+                {(watchedSocials?.whatsapp || user?.socials?.whatsapp) && (
+                  <span title="WhatsApp" className="p-1.5 rounded-lg bg-secondary text-emerald-500">
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.website || user?.socials?.website) && (
+                  <span title="Portfolio / Website" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Globe className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.linkedin || user?.socials?.linkedin) && (
-                  <span title="LinkedIn" className="p-1.5 rounded-lg bg-secondary text-primary">
+                  <span title="LinkedIn" className="p-1.5 rounded-lg bg-secondary text-blue-500">
                     <Linkedin className="h-3.5 w-3.5" />
                   </span>
                 )}
-                {(watchedSocials?.youtube || user?.socials?.youtube) && (
-                  <span title="YouTube" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Youtube className="h-3.5 w-3.5" />
+                {(watchedSocials?.mostaql || user?.socials?.mostaql) && (
+                  <span title="Mostaql" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Briefcase className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.facebook || user?.socials?.facebook) && (
-                  <span title="Facebook" className="p-1.5 rounded-lg bg-secondary text-primary">
+                  <span title="Facebook" className="p-1.5 rounded-lg bg-secondary text-blue-600">
                     <Facebook className="h-3.5 w-3.5" />
-                  </span>
-                )}
-                {(watchedSocials?.twitter || user?.socials?.twitter) && (
-                  <span title="Twitter / X" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Twitter className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.tiktok || user?.socials?.tiktok) && (
@@ -903,9 +957,19 @@ export default function ProfileDashboardPage() {
                     <Music2 className="h-3.5 w-3.5" />
                   </span>
                 )}
-                {(watchedSocials?.website || user?.socials?.website) && (
-                  <span title="Portfolio / Website" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Globe className="h-3.5 w-3.5" />
+                {(watchedSocials?.github || user?.socials?.github) && (
+                  <span title="GitHub" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Github className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.youtube || user?.socials?.youtube) && (
+                  <span title="YouTube" className="p-1.5 rounded-lg bg-secondary text-red-500">
+                    <Youtube className="h-3.5 w-3.5" />
+                  </span>
+                )}
+                {(watchedSocials?.twitter || user?.socials?.twitter) && (
+                  <span title="Twitter / X" className="p-1.5 rounded-lg bg-secondary text-primary">
+                    <Twitter className="h-3.5 w-3.5" />
                   </span>
                 )}
               </div>

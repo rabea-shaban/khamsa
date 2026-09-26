@@ -19,6 +19,8 @@ export interface ArticleAuthor {
     twitter?: string | null;
     tiktok?: string | null;
     website?: string | null;
+    whatsapp?: string | null;
+    mostaql?: string | null;
   };
 }
 
@@ -62,18 +64,19 @@ export interface StaticArticle {
 export const DEFAULT_AUTHOR: ArticleAuthor = {
   id: '6ab676b7db2a3194c7928d08',
   name: 'ربيع شعبان',
-  email: 'r.shaban.2016@gmail.com',
+  email: 'rabea.elzayate@gmail.com',
   role: 'Full-Stack Software Engineer & Tech Educator',
   bio: 'مهندس برمجيات متخصص في بناء وتطوير تطبيقات الويب الحديثة والأنظمة السحابية، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات وتقديم المحتوى التقني للمطور العربي بأسلوب عملي وبسيط.',
   avatar: 'https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev/settings/1790342553596-c3b0b3ad4e5a7544e8cfdb149652b335.png',
   aboutUrl: '/about',
   socials: {
+    website: 'https://rabea-shaban.com/',
+    linkedin: 'https://www.linkedin.com/in/rabea-sh-elzayat',
+    mostaql: 'https://mostaql.com/u/rabea_elzayat',
+    whatsapp: 'https://wa.me/201156807072',
+    facebook: 'https://www.facebook.com/Rabea.Sh.ELZayat/',
+    tiktok: 'https://www.tiktok.com/@rabea.sh.elzayat',
     github: 'https://github.com/rabea-shaban',
-    linkedin: 'https://linkedin.com/in/rabea-shaban',
     youtube: 'https://youtube.com/@5prog_bldy',
-    facebook: 'https://facebook.com/5prog.bldy',
-    twitter: 'https://x.com/rabea_shaban',
-    tiktok: 'https://tiktok.com/@5prog_bldy',
-    website: 'https://khamsa-web.vercel.app',
   },
 };
