@@ -17,7 +17,7 @@ const siteUrl = getSiteUrl();
 const googleVerification =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
   'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y';
-const gaId = process.env.NEXT_PUBLIC_GA_ID;
+const gaId = process.env.NEXT_PUBLIC_GA_ID || 'G-0NV2KE0NGC';
 const adSenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
 async function fetchPublicSettings(): Promise<Settings | null> {
