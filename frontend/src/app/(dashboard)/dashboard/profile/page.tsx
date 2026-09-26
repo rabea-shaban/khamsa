@@ -17,20 +17,23 @@ import {
   Sparkles,
   Calendar,
   Clock,
-  Github,
-  Linkedin,
-  Youtube,
-  Facebook,
-  Twitter,
-  Globe,
-  Music2,
-  MessageCircle,
-  Briefcase,
   Share2,
   Save,
   KeyRound,
   EyeIcon,
 } from 'lucide-react';
+import {
+  WhatsAppIcon,
+  LinkedInIcon,
+  FacebookIcon,
+  TikTokIcon,
+  GitHubIcon,
+  YouTubeIcon,
+  XTwitterIcon,
+  WebsiteIcon,
+  MostaqlIcon,
+  EmailIcon,
+} from '@/components/shared/BrandIcons';
 import { useAuth } from '@/features/auth';
 import { usersApi } from '@/lib/api/users.api';
 import { Button } from '@/components/ui/Button';
@@ -442,7 +445,7 @@ export default function ProfileDashboardPage() {
                       onClick={() => setProfileValue('avatar', 'https://github.com/rabea-shaban.png', { shouldDirty: true })}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary text-xs font-bold text-foreground-secondary hover:text-primary hover:bg-primary/10 transition-colors"
                     >
-                      <Github className="h-3.5 w-3.5" />
+                      <GitHubIcon className="h-3.5 w-3.5" />
                       <span>استخدام صورة GitHub الخاصة بك</span>
                     </button>
                     <button
@@ -499,14 +502,14 @@ export default function ProfileDashboardPage() {
                     {/* GitHub */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Github className="h-3.5 w-3.5 text-foreground-muted" />
+                        <GitHubIcon className="h-3.5 w-3.5 text-foreground-muted" />
                         <span>رابط GitHub</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.github')}
-                        placeholder="https://github.com/username"
+                        placeholder="https://github.com/rabea-shaban"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.github ? 'border-destructive' : 'border-border',
@@ -520,14 +523,14 @@ export default function ProfileDashboardPage() {
                     {/* LinkedIn */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Linkedin className="h-3.5 w-3.5 text-foreground-muted" />
+                        <LinkedInIcon className="h-3.5 w-3.5 text-[#0A66C2]" />
                         <span>رابط LinkedIn</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.linkedin')}
-                        placeholder="https://linkedin.com/in/username"
+                        placeholder="https://www.linkedin.com/in/rabea-sh-elzayat"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.linkedin ? 'border-destructive' : 'border-border',
@@ -541,14 +544,14 @@ export default function ProfileDashboardPage() {
                     {/* YouTube */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Youtube className="h-3.5 w-3.5 text-foreground-muted" />
+                        <YouTubeIcon className="h-3.5 w-3.5 text-[#FF0000]" />
                         <span>قناة YouTube</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.youtube')}
-                        placeholder="https://youtube.com/@channel"
+                        placeholder="https://youtube.com/@5prog_bldy"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.youtube ? 'border-destructive' : 'border-border',
@@ -562,14 +565,14 @@ export default function ProfileDashboardPage() {
                     {/* Facebook */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Facebook className="h-3.5 w-3.5 text-foreground-muted" />
+                        <FacebookIcon className="h-3.5 w-3.5 text-[#1877F2]" />
                         <span>صفحة Facebook</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.facebook')}
-                        placeholder="https://facebook.com/username"
+                        placeholder="https://www.facebook.com/Rabea.Sh.ELZayat/"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.facebook ? 'border-destructive' : 'border-border',
@@ -583,14 +586,14 @@ export default function ProfileDashboardPage() {
                     {/* Twitter / X */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Twitter className="h-3.5 w-3.5 text-foreground-muted" />
+                        <XTwitterIcon className="h-3.5 w-3.5 text-foreground" />
                         <span>حساب Twitter / X</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.twitter')}
-                        placeholder="https://x.com/username"
+                        placeholder="https://x.com/rabea_shaban"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.twitter ? 'border-destructive' : 'border-border',
@@ -604,14 +607,14 @@ export default function ProfileDashboardPage() {
                     {/* TikTok */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Music2 className="h-3.5 w-3.5 text-foreground-muted" />
+                        <TikTokIcon className="h-3.5 w-3.5 text-[#EE1D52]" />
                         <span>حساب TikTok</span>
                       </label>
                       <input
                         type="url"
                         dir="ltr"
                         {...registerProfile('socials.tiktok')}
-                        placeholder="https://tiktok.com/@username"
+                        placeholder="https://www.tiktok.com/@rabea.sh.elzayat"
                         className={cn(
                           'w-full px-3.5 py-2.5 rounded-xl border bg-background text-xs text-foreground text-left placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-mono',
                           profileErrors.socials?.tiktok ? 'border-destructive' : 'border-border',
@@ -625,7 +628,7 @@ export default function ProfileDashboardPage() {
                     {/* WhatsApp */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
+                        <WhatsAppIcon className="h-3.5 w-3.5 text-[#25D366]" />
                         <span>رابط واتساب (WhatsApp)</span>
                       </label>
                       <input
@@ -646,7 +649,7 @@ export default function ProfileDashboardPage() {
                     {/* Mostaql / Freelance */}
                     <div className="space-y-1">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Briefcase className="h-3.5 w-3.5 text-foreground-muted" />
+                        <MostaqlIcon className="h-3.5 w-3.5 text-[#2292D8]" />
                         <span>حساب مستقل (Mostaql)</span>
                       </label>
                       <input
@@ -667,7 +670,7 @@ export default function ProfileDashboardPage() {
                     {/* Website / Portfolio */}
                     <div className="space-y-1 sm:col-span-2">
                       <label className="block text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Globe className="h-3.5 w-3.5 text-foreground-muted" />
+                        <WebsiteIcon className="h-3.5 w-3.5 text-primary" />
                         <span>الموقع الشخصي / معرض الأعمال (Portfolio)</span>
                       </label>
                       <input
@@ -928,48 +931,48 @@ export default function ProfileDashboardPage() {
               user?.socials?.linkedin) && (
               <div className="pt-3 border-t border-border flex items-center justify-center flex-wrap gap-1.5">
                 {(watchedSocials?.whatsapp || user?.socials?.whatsapp) && (
-                  <span title="WhatsApp" className="p-1.5 rounded-lg bg-secondary text-emerald-500">
-                    <MessageCircle className="h-3.5 w-3.5" />
+                  <span title="WhatsApp" className="p-1.5 rounded-lg bg-secondary text-[#25D366]">
+                    <WhatsAppIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.website || user?.socials?.website) && (
                   <span title="Portfolio / Website" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Globe className="h-3.5 w-3.5" />
+                    <WebsiteIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.linkedin || user?.socials?.linkedin) && (
-                  <span title="LinkedIn" className="p-1.5 rounded-lg bg-secondary text-blue-500">
-                    <Linkedin className="h-3.5 w-3.5" />
+                  <span title="LinkedIn" className="p-1.5 rounded-lg bg-secondary text-[#0A66C2]">
+                    <LinkedInIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.mostaql || user?.socials?.mostaql) && (
-                  <span title="Mostaql" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Briefcase className="h-3.5 w-3.5" />
+                  <span title="Mostaql" className="p-1.5 rounded-lg bg-secondary text-[#2292D8]">
+                    <MostaqlIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.facebook || user?.socials?.facebook) && (
-                  <span title="Facebook" className="p-1.5 rounded-lg bg-secondary text-blue-600">
-                    <Facebook className="h-3.5 w-3.5" />
+                  <span title="Facebook" className="p-1.5 rounded-lg bg-secondary text-[#1877F2]">
+                    <FacebookIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.tiktok || user?.socials?.tiktok) && (
-                  <span title="TikTok" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Music2 className="h-3.5 w-3.5" />
+                  <span title="TikTok" className="p-1.5 rounded-lg bg-secondary text-[#EE1D52]">
+                    <TikTokIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.github || user?.socials?.github) && (
-                  <span title="GitHub" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Github className="h-3.5 w-3.5" />
+                  <span title="GitHub" className="p-1.5 rounded-lg bg-secondary text-foreground">
+                    <GitHubIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.youtube || user?.socials?.youtube) && (
-                  <span title="YouTube" className="p-1.5 rounded-lg bg-secondary text-red-500">
-                    <Youtube className="h-3.5 w-3.5" />
+                  <span title="YouTube" className="p-1.5 rounded-lg bg-secondary text-[#FF0000]">
+                    <YouTubeIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
                 {(watchedSocials?.twitter || user?.socials?.twitter) && (
-                  <span title="Twitter / X" className="p-1.5 rounded-lg bg-secondary text-primary">
-                    <Twitter className="h-3.5 w-3.5" />
+                  <span title="Twitter / X" className="p-1.5 rounded-lg bg-secondary text-foreground">
+                    <XTwitterIcon className="h-3.5 w-3.5" />
                   </span>
                 )}
               </div>

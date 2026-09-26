@@ -3,20 +3,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArticleAuthor } from '@/data/static-articles/types';
+import { ShieldCheck, ArrowLeft } from 'lucide-react';
 import {
-  Github,
-  Linkedin,
-  Youtube,
-  Facebook,
-  Twitter,
-  Globe,
-  Music2,
-  Mail,
-  MessageCircle,
-  Briefcase,
-  ShieldCheck,
-  ArrowLeft,
-} from 'lucide-react';
+  WhatsAppIcon,
+  LinkedInIcon,
+  FacebookIcon,
+  TikTokIcon,
+  GitHubIcon,
+  YouTubeIcon,
+  XTwitterIcon,
+  WebsiteIcon,
+  MostaqlIcon,
+  EmailIcon,
+} from '@/components/shared/BrandIcons';
 
 interface AuthorBoxProps {
   author: ArticleAuthor;
@@ -79,9 +78,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               href={`mailto:${authorEmail}`}
               title={`إرسال بريد إلكتروني: ${authorEmail}`}
               aria-label="البريد الإلكتروني"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Mail className="h-4 w-4" />
+              <EmailIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.whatsapp && (
@@ -91,9 +90,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="تواصل عبر واتساب (WhatsApp)"
               title="واتساب (WhatsApp)"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#25D366] hover:bg-[#25D366]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <MessageCircle className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.website && (
@@ -103,9 +102,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="الموقع الشخصي / Portfolio"
               title="الموقع الشخصي (Portfolio)"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Globe className="h-4 w-4" />
+              <WebsiteIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.linkedin && (
@@ -114,10 +113,10 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn Profile"
-              title="LinkedIn Profile"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-blue-500 hover:bg-blue-500/10 transition-colors"
+              title="LinkedIn"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Linkedin className="h-4 w-4" />
+              <LinkedInIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.mostaql && (
@@ -127,9 +126,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="حساب مستقل (Mostaql Profile)"
               title="حساب مستقل (Mostaql)"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors font-bold text-xs"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#2292D8] hover:bg-[#2292D8]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Briefcase className="h-4 w-4" />
+              <MostaqlIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.facebook && (
@@ -139,9 +138,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="Facebook Page"
               title="Facebook"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-blue-600 hover:bg-blue-600/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#1877F2] hover:bg-[#1877F2]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Facebook className="h-4 w-4" />
+              <FacebookIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.tiktok && (
@@ -151,9 +150,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="TikTok Profile"
               title="TikTok"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#EE1D52] hover:bg-[#EE1D52]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Music2 className="h-4 w-4" />
+              <TikTokIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.github && (
@@ -162,10 +161,10 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Profile"
-              title="GitHub Profile"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              title="GitHub"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-foreground hover:bg-foreground/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Github className="h-4 w-4" />
+              <GitHubIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.youtube && (
@@ -174,10 +173,10 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube Channel"
-              title="YouTube Channel"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
+              title="YouTube"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-[#FF0000] hover:bg-[#FF0000]/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Youtube className="h-4 w-4" />
+              <YouTubeIcon className="h-4 w-4" />
             </a>
           )}
           {socials?.twitter && (
@@ -187,9 +186,9 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               rel="noopener noreferrer"
               aria-label="Twitter / X Profile"
               title="Twitter / X"
-              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2.5 rounded-xl bg-secondary text-foreground-muted hover:text-foreground hover:bg-foreground/10 transition-all shadow-2xs hover:scale-105"
             >
-              <Twitter className="h-4 w-4" />
+              <XTwitterIcon className="h-4 w-4" />
             </a>
           )}
         </div>
@@ -205,3 +204,4 @@ export function AuthorBox({ author }: AuthorBoxProps) {
     </div>
   );
 }
+
