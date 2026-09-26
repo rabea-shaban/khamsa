@@ -35,6 +35,12 @@ const envSchema = z.object({
   ADMIN_NAME: z.string().default('ربيع شعبان'),
   ADMIN_EMAIL: z.string().email().default('r.shaban.2016@gmail.com'),
   ADMIN_PASSWORD: z.string().min(8).default('AdminPassword123!'),
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z.coerce.number().default(465),
+  SMTP_SECURE: z.coerce.boolean().default(true),
+  SMTP_USER: z.string().default('r.shaban.2016@gmail.com'),
+  SMTP_PASS: z.string().default('yjxohpareqigfsga'),
+  CONTACT_RECEIVER_EMAIL: z.string().email().default('r.shaban.2016@gmail.com'),
 });
 
 const parseEnv = () => {

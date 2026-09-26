@@ -30,6 +30,7 @@ import {
   MostaqlIcon,
   WebsiteIcon,
 } from '@/components/shared/BrandIcons';
+import { contactApi } from '@/lib/api/contact.api';
 import { cn } from '@/lib/utils/cn';
 
 const FAQ_ITEMS = [
@@ -50,6 +51,7 @@ const FAQ_ITEMS = [
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -59,16 +61,31 @@ export default function ContactPage() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
 
-    // Simulate verified form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await contactApi.sendMessage({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || undefined,
+        subject: formData.subject,
+        message: formData.message.trim(),
+      });
       setIsSuccess(true);
       setFormData({ name: '', email: '', phone: '', subject: 'استفسار تقني', message: '' });
-    }, 900);
+    } catch (err: unknown) {
+      console.error('Contact submit error:', err);
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      const msg =
+        axiosErr?.response?.data?.message ||
+        'تعذر إرسال الرسالة عبر الخادم حالياً. يرجى التأكد من البيانات أو مراسلتنا مباشرة عبر الواتساب.';
+      setErrorMessage(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const directWhatsAppUrl = `https://wa.me/201554087543?text=${encodeURIComponent(
@@ -371,6 +388,18 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {errorMessage && (
+                  <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/30 text-xs font-semibold text-destructive flex items-center justify-between gap-2 animate-in fade-in">
+                    <span>{errorMessage}</span>
+                    <button
+                      type="button"
+                      onClick={() => setErrorMessage(null)}
+                      className="text-foreground-muted hover:text-foreground text-xs"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-foreground">الاسم الكامل *</label>

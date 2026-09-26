@@ -15,7 +15,7 @@ import {
   adminSettingsRoutes,
 } from '../modules/settings/settings.routes';
 import { backupRoutes } from '../modules/backup/backup.routes';
-
+import contactRoutes from '../modules/contact/contact.routes';
 import mongoose from 'mongoose';
 import { ApiResponse } from '../utils/api-response';
 
@@ -53,6 +53,7 @@ const publicRouter = Router();
 publicRouter.use('/articles', publicArticleRoutes);
 publicRouter.use('/videos', publicVideoRoutes);
 publicRouter.use('/settings', publicSettingsRoutes);
+publicRouter.use('/contact', contactRoutes);
 router.use('/public', publicRouter);
 
 // ============================================
