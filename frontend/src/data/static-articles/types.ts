@@ -61,8 +61,8 @@ export const DEFAULT_AUTHOR: ArticleAuthor = {
   name: 'ربيع شعبان',
   email: 'r.shaban.2016@gmail.com',
   role: 'Full-Stack Software Engineer & Tech Educator',
-  bio: 'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
-  avatar: 'https://github.com/rabea-shaban.png',
+  bio: 'مهندس برمجيات متخصص في بناء وتطوير تطبيقات الويب الحديثة والأنظمة السحابية، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات وتقديم المحتوى التقني للمطور العربي بأسلوب عملي وبسيط.',
+  avatar: 'https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev/settings/1790342553596-c3b0b3ad4e5a7544e8cfdb149652b335.png',
   aboutUrl: '/about',
   socials: {
     github: 'https://github.com/rabea-shaban',

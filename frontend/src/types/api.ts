@@ -87,6 +87,7 @@ export interface Article {
     name: string;
     email?: string;
     avatar?: string | null;
+    bio?: string | null;
   };
   status: ContentStatus;
   isFeatured?: boolean;
@@ -109,6 +110,7 @@ export interface Video {
     name: string;
     email?: string;
     avatar?: string | null;
+    bio?: string | null;
   };
   publishedAt?: string | null;
   createdAt: string;
