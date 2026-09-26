@@ -18,6 +18,7 @@ const googleVerification =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
   'nNlwGk53zi-tWlVHmfwrF4yAgkzMN9n_lZji1_cAk9Y';
 const gaId = process.env.NEXT_PUBLIC_GA_ID || 'G-0NV2KE0NGC';
+const gtmId = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-MT8QVP4H';
 const adSenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
 async function fetchPublicSettings(): Promise<Settings | null> {
@@ -229,6 +230,22 @@ export default async function RootLayout({
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClient}`}
           />
         )}
+        {/* Google Tag Manager */}
+        {gtmId && (
+          <Script
+            id="google-tag-manager"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','${gtmId}');
+              `,
+            }}
+          />
+        )}
         {/* Google Analytics 4 (gtag.js) */}
         {gaId && (
           <>
@@ -252,6 +269,17 @@ export default async function RootLayout({
         )}
       </head>
       <body className="bg-background text-foreground font-sans antialiased min-h-screen" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) */}
+        {gtmId && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+            />
+          </noscript>
+        )}
         <Providers>
           {children}
           <CookieConsent />
