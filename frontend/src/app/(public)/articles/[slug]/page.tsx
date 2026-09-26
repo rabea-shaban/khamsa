@@ -20,7 +20,7 @@ import {
   getRelatedStaticArticles,
   StaticArticle,
 } from '@/data/static-articles';
-import { DEFAULT_AUTHOR } from '@/data/static-articles/types';
+import { DEFAULT_AUTHOR, ArticleAuthor } from '@/data/static-articles/types';
 import { getSiteUrl } from '@/lib/seo/site-url';
 
 interface ArticlePageProps {
@@ -164,15 +164,19 @@ export default async function ArticleDetailsPage({ params }: ArticlePageProps) {
   const currentCover = staticArt?.coverImage || article?.coverImage;
   const currentCoverAlt = staticArt?.coverAlt || currentTitle;
   const currentContent = staticArt?.content || article?.content || '';
-  const currentAuthor = staticArt?.author || {
-    id: article?.author?._id || DEFAULT_AUTHOR.id,
-    name: article?.author?.name || DEFAULT_AUTHOR.name,
-    email: article?.author?.email || DEFAULT_AUTHOR.email,
-    role: DEFAULT_AUTHOR.role,
-    bio: article?.author?.bio || DEFAULT_AUTHOR.bio,
-    avatar: article?.author?.avatar || DEFAULT_AUTHOR.avatar,
-    aboutUrl: DEFAULT_AUTHOR.aboutUrl,
-    socials: article?.author?.socials || DEFAULT_AUTHOR.socials,
+  const currentAuthor: ArticleAuthor = {
+    id: article?.author?._id || staticArt?.author?.id || DEFAULT_AUTHOR.id,
+    name: article?.author?.name || staticArt?.author?.name || DEFAULT_AUTHOR.name,
+    email: article?.author?.email || staticArt?.author?.email || DEFAULT_AUTHOR.email,
+    role: staticArt?.author?.role || DEFAULT_AUTHOR.role,
+    bio: article?.author?.bio || staticArt?.author?.bio || DEFAULT_AUTHOR.bio,
+    avatar: article?.author?.avatar || staticArt?.author?.avatar || DEFAULT_AUTHOR.avatar,
+    aboutUrl: staticArt?.author?.aboutUrl || DEFAULT_AUTHOR.aboutUrl,
+    socials: {
+      ...DEFAULT_AUTHOR.socials,
+      ...(staticArt?.author?.socials || {}),
+      ...(article?.author?.socials || {}),
+    },
   };
 
   const rawPublishedDate = staticArt?.publishedAt || article?.publishedAt || article?.createdAt;

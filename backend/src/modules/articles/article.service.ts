@@ -12,6 +12,8 @@ import { ApiError } from '../../utils/api-error';
 import { getPaginationOptions, createPaginatedResult } from '../../utils/pagination';
 import { getUniqueSlug } from '../../utils/slug.util';
 
+const AUTHOR_POPULATE_FIELDS = 'name email avatar bio socials role';
+
 export class ArticleService {
   static async createArticle(
     data: CreateArticleDto,
@@ -30,7 +32,7 @@ export class ArticleService {
     });
     await article.save();
 
-    return (await article.populate('author', 'name avatar email')) as IArticleDocument;
+    return (await article.populate('author', AUTHOR_POPULATE_FIELDS)) as IArticleDocument;
   }
 
   static async getPublicArticles(
@@ -68,7 +70,7 @@ export class ArticleService {
 
     const [items, total] = await Promise.all([
       Article.find(filter)
-        .populate('author', 'name avatar')
+        .populate('author', AUTHOR_POPULATE_FIELDS)
         .sort(sortOrder)
         .skip(skip)
         .limit(limit)
@@ -84,7 +86,7 @@ export class ArticleService {
       slug: slug.toLowerCase(),
       status: ContentStatus.PUBLISHED,
     })
-      .populate('author', 'name avatar')
+      .populate('author', AUTHOR_POPULATE_FIELDS)
       .exec();
 
     if (!article) {
@@ -131,7 +133,7 @@ export class ArticleService {
 
     const [items, total] = await Promise.all([
       Article.find(filter)
-        .populate('author', 'name email avatar')
+        .populate('author', AUTHOR_POPULATE_FIELDS)
         .sort(sortOrder)
         .skip(skip)
         .limit(limit)
@@ -144,7 +146,7 @@ export class ArticleService {
 
   static async getArticleById(id: string): Promise<IArticleDocument> {
     const article = await Article.findById(id)
-      .populate('author', 'name email avatar')
+      .populate('author', AUTHOR_POPULATE_FIELDS)
       .exec();
 
     if (!article) {
@@ -184,7 +186,7 @@ export class ArticleService {
     Object.assign(article, data);
     await article.save();
 
-    return (await article.populate('author', 'name email avatar')) as IArticleDocument;
+    return (await article.populate('author', AUTHOR_POPULATE_FIELDS)) as IArticleDocument;
   }
 
   static async publishArticle(id: string): Promise<IArticleDocument> {
@@ -199,7 +201,7 @@ export class ArticleService {
     }
 
     await article.save();
-    return (await article.populate('author', 'name email avatar')) as IArticleDocument;
+    return (await article.populate('author', AUTHOR_POPULATE_FIELDS)) as IArticleDocument;
   }
 
   static async unpublishArticle(id: string): Promise<IArticleDocument> {
@@ -210,7 +212,7 @@ export class ArticleService {
 
     article.status = ContentStatus.DRAFT;
     await article.save();
-    return (await article.populate('author', 'name email avatar')) as IArticleDocument;
+    return (await article.populate('author', AUTHOR_POPULATE_FIELDS)) as IArticleDocument;
   }
 
   static async deleteArticle(id: string): Promise<void> {

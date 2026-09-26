@@ -72,5 +72,8 @@ export const DEFAULT_AUTHOR: ArticleAuthor = {
     linkedin: 'https://linkedin.com/in/rabea-shaban',
     youtube: 'https://youtube.com/@5prog_bldy',
     facebook: 'https://facebook.com/5prog.bldy',
+    twitter: 'https://x.com/rabea_shaban',
+    tiktok: 'https://tiktok.com/@5prog_bldy',
+    website: 'https://khamsa-web.vercel.app',
   },
 };
