@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0d13" />
+      <stop offset="50%" stop-color="#11151f" />
+      <stop offset="100%" stop-color="#08090d" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glowing background orbs -->
+  <circle cx="200" cy="150" r="280" fill="url(#primaryGlow)"/>
+  <circle cx="1000" cy="450" r="300" fill="url(#primaryGlow)"/>
+
+  <!-- Left Header Branding -->
+  <g transform="translate(60, 50)">
+    <!-- Brand Icon -->
+    <g transform="translate(0, 0)">
+      <path d="M24 4L6 12V22C6 33 14 43 24 46C34 43 42 33 42 22V12L24 4Z" fill="#ef4444"/><path d="M20 24L24 28L32 18" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    
+    <!-- Category Pill -->
+    <rect x="65" y="8" width="150" height="32" rx="16" fill="#1e293b" stroke="#ef4444" stroke-opacity="0.5"/>
+    <text x="140" y="29" fill="#ef4444" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Security</text>
+
+    <!-- Title Ar -->
+    <text x="0" y="100" fill="#f8fafc" font-family="'Cairo', 'Segoe UI', Tahoma, sans-serif" font-size="28" font-weight="900" direction="rtl">
+      أمان الويب الشامل وحماية تطبيقات الويب (OWASP)
+    </text>
+
+    <!-- Subtitle En -->
+    <text x="0" y="135" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="15" font-weight="600">
+      XSS • CSRF • SQLi • Rate Limiting • Security Headers
+    </text>
+  </g>
+
+  <!-- Code Snippet Box (Left Bottom) -->
+  <g transform="translate(60, 240)" filter="url(#shadow)">
+    <rect width="480" height="290" rx="16" fill="#0c0e14" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Window Controls -->
+    <circle cx="25" cy="22" r="6" fill="#ef4444"/>
+    <circle cx="45" cy="22" r="6" fill="#f59e0b"/>
+    <circle cx="65" cy="22" r="6" fill="#10b981"/>
+    
+    <!-- File Tab -->
+    <rect x="90" y="10" width="160" height="24" rx="4" fill="#1e293b"/>
+    <text x="170" y="26" fill="#94a3b8" font-family="monospace" font-size="11" text-anchor="middle">source-code.ts</text>
+
+    <!-- Code Content -->
+    <text x="45" y="70" font-family="'Fira Code', Consolas, monospace" font-size="13" fill="#e2e8f0" xml:space="preserve">
+      <tspan x="45" dy="0"><span style="color:#94a3b8">// Express Security Hardening Stack</span></tspan><tspan x="45" dy="22"><span style="color:#60a5fa">app</span>.<span style="color:#60a5fa">use</span>(helmet({</tspan><tspan x="45" dy="22">  <span style="color:#38bdf8">contentSecurityPolicy</span>: {</tspan><tspan x="45" dy="22">    <span style="color:#38bdf8">directives</span>: {</tspan><tspan x="45" dy="22">      <span style="color:#38bdf8">defaultSrc</span>: [<span style="color:#10b981">"'self'"</span>],</tspan><tspan x="45" dy="22">      <span style="color:#38bdf8">scriptSrc</span>: [(<span style="color:#e2e8f0">req</span>, <span style="color:#e2e8f0">res</span>) =&gt; <span style="color:#10b981">`'nonce-${res.locals.nonce}'</span>]</span></tspan><tspan x="45" dy="22">    }</tspan><tspan x="45" dy="22">  }</tspan><tspan x="45" dy="22">}));</tspan>
+    </text>
+  </g>
+
+  <!-- Right Side Interactive Diagram -->
+  
+      <g transform="translate(600, 110)">
+        <rect width="530" height="420" rx="16" fill="#141820" stroke="#ef4444" stroke-opacity="0.4" stroke-width="2"/>
+        <text x="25" y="38" fill="#f87171" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">OWASP TOP 10 DEFENSE ARCHITECTURE</text>
+        
+        <rect x="25" y="60" width="480" height="95" rx="10" fill="#1b202c" stroke="#dc2626"/>
+        <text x="40" y="85" fill="#f87171" font-family="monospace" font-size="12" font-weight="bold">🛡️ Defense in Depth Strategy</text>
+        <text x="40" y="110" fill="#e2e8f0" font-family="monospace" font-size="11">• Content Security Policy (CSP) with Nonce</text>
+        <text x="40" y="132" fill="#e2e8f0" font-family="monospace" font-size="11">• SameSite=Strict Cookies • CORS Whitelist</text>
+
+        <!-- Security Matrix -->
+        <rect x="25" y="170" width="230" height="220" rx="10" fill="#1b202c" stroke="#f59e0b"/>
+        <text x="40" y="195" fill="#fbbf24" font-family="monospace" font-size="12" font-weight="bold">🚫 Attack Vectors</text>
+        <text x="40" y="225" fill="#fca5a5" font-family="monospace" font-size="11">❌ Stored &amp; Reflected XSS</text>
+        <text x="40" y="255" fill="#fca5a5" font-family="monospace" font-size="11">❌ CSRF Request Hijack</text>
+        <text x="40" y="285" fill="#fca5a5" font-family="monospace" font-size="11">❌ SQL &amp; NoSQL Injection</text>
+        <text x="40" y="315" fill="#fca5a5" font-family="monospace" font-size="11">❌ Broken Object Auth (BOLA)</text>
+        <text x="40" y="345" fill="#fca5a5" font-family="monospace" font-size="11">❌ SSRF &amp; Prototype Pollution</text>
+
+        <rect x="275" y="170" width="230" height="220" rx="10" fill="#1b202c" stroke="#10b981"/>
+        <text x="290" y="195" fill="#34d399" font-family="monospace" font-size="12" font-weight="bold">✅ Applied Mitigations</text>
+        <text x="290" y="225" fill="#86efac" font-family="monospace" font-size="11">✔ DOMPurify &amp; Escaping</text>
+        <text x="290" y="255" fill="#86efac" font-family="monospace" font-size="11">✔ CSRF Double-Submit Tokens</text>
+        <text x="290" y="285" fill="#86efac" font-family="monospace" font-size="11">✔ Parameterized Prepared Queries</text>
+        <text x="290" y="315" fill="#86efac" font-family="monospace" font-size="11">✔ Token Claims Scope Auth</text>
+        <text x="290" y="345" fill="#86efac" font-family="monospace" font-size="11">✔ Object.freeze &amp; Input Schemas</text>
+      </g>
+    
+
+  <!-- Footer Watermark & Platform Logo -->
+  <g transform="translate(60, 580)">
+    <text x="0" y="0" fill="#64748b" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">
+      خمسة برمجة بالبلدي • منصة علوم الحاسب وهندسة البرمجيات
+    </text>
+  </g>
+  <g transform="translate(1000, 560)">
+    <rect width="140" height="32" rx="8" fill="#1e293b" stroke="#eab308" stroke-opacity="0.4"/>
+    <text x="70" y="21" fill="#eab308" font-family="system-ui, sans-serif" font-size="12" font-weight="900" text-anchor="middle">
+      5 بالبلدي • PRO
+    </text>
+  </g>
+</svg>

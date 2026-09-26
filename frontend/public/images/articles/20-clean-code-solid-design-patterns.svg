@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0d13" />
+      <stop offset="50%" stop-color="#11151f" />
+      <stop offset="100%" stop-color="#08090d" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eab308" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#eab308" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glowing background orbs -->
+  <circle cx="200" cy="150" r="280" fill="url(#primaryGlow)"/>
+  <circle cx="1000" cy="450" r="300" fill="url(#primaryGlow)"/>
+
+  <!-- Left Header Branding -->
+  <g transform="translate(60, 50)">
+    <!-- Brand Icon -->
+    <g transform="translate(0, 0)">
+      <rect width="48" height="48" rx="8" fill="#eab308"/><text x="24" y="32" font-size="12" font-weight="900" fill="#000" text-anchor="middle" font-family="monospace">SOLID</text>
+    </g>
+    
+    <!-- Category Pill -->
+    <rect x="65" y="8" width="150" height="32" rx="16" fill="#1e293b" stroke="#eab308" stroke-opacity="0.5"/>
+    <text x="140" y="29" fill="#eab308" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Clean Code</text>
+
+    <!-- Title Ar -->
+    <text x="0" y="100" fill="#f8fafc" font-family="'Cairo', 'Segoe UI', Tahoma, sans-serif" font-size="28" font-weight="900" direction="rtl">
+      مبادئ Clean Code وأنماط التصميم SOLID
+    </text>
+
+    <!-- Subtitle En -->
+    <text x="0" y="135" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="15" font-weight="600">
+      Single Responsibility • Open/Closed • Liskov • Factory • DI
+    </text>
+  </g>
+
+  <!-- Code Snippet Box (Left Bottom) -->
+  <g transform="translate(60, 240)" filter="url(#shadow)">
+    <rect width="480" height="290" rx="16" fill="#0c0e14" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Window Controls -->
+    <circle cx="25" cy="22" r="6" fill="#ef4444"/>
+    <circle cx="45" cy="22" r="6" fill="#f59e0b"/>
+    <circle cx="65" cy="22" r="6" fill="#10b981"/>
+    
+    <!-- File Tab -->
+    <rect x="90" y="10" width="160" height="24" rx="4" fill="#1e293b"/>
+    <text x="170" y="26" fill="#94a3b8" font-family="monospace" font-size="11" text-anchor="middle">source-code.ts</text>
+
+    <!-- Code Content -->
+    <text x="45" y="70" font-family="'Fira Code', Consolas, monospace" font-size="13" fill="#e2e8f0" xml:space="preserve">
+      <tspan x="45" dy="0"><span style="color:#94a3b8">// Dependency Inversion &amp; Open-Closed in Action</span></tspan><tspan x="45" dy="22"><span style="color:#f59e0b">interface</span> <span style="color:#38bdf8">PaymentGateway</span> {</tspan><tspan x="45" dy="22">  <span style="color:#60a5fa">charge</span>(<span style="color:#e2e8f0">amount</span>: number): Promise&lt;PaymentResult&gt;;</tspan><tspan x="45" dy="22">}</tspan><tspan x="45" dy="22"><span style="color:#f59e0b">class</span> <span style="color:#38bdf8">CheckoutService</span> {</tspan><tspan x="45" dy="22">  <span style="color:#f59e0b">constructor</span>(<span style="color:#f59e0b">private</span> <span style="color:#e2e8f0">gateway</span>: PaymentGateway) {}</tspan><tspan x="45" dy="22">}</tspan>
+    </text>
+  </g>
+
+  <!-- Right Side Interactive Diagram -->
+  
+      <g transform="translate(600, 110)">
+        <rect width="530" height="420" rx="16" fill="#141820" stroke="#eab308" stroke-opacity="0.4" stroke-width="2"/>
+        <text x="25" y="38" fill="#facc15" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">S.O.L.I.D DESIGN PRINCIPLES</text>
+        
+        <!-- 5 Principle Boxes -->
+        <rect x="25" y="60" width="480" height="55" rx="8" fill="#1b202c" stroke="#334155"/>
+        <text x="40" y="85" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold">[S] Single Responsibility Principle</text>
+        <text x="40" y="103" fill="#94a3b8" font-family="monospace" font-size="10">A class should have one, and only one, reason to change.</text>
+
+        <rect x="25" y="125" width="480" height="55" rx="8" fill="#1b202c" stroke="#334155"/>
+        <text x="40" y="150" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold">[O] Open/Closed Principle</text>
+        <text x="40" y="168" fill="#94a3b8" font-family="monospace" font-size="10">Open for extension, but closed for modification via Polymorphism.</text>
+
+        <rect x="25" y="190" width="480" height="55" rx="8" fill="#1b202c" stroke="#334155"/>
+        <text x="40" y="215" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold">[L] Liskov Substitution Principle</text>
+        <text x="40" y="233" fill="#94a3b8" font-family="monospace" font-size="10">Subtypes must be substitutable for their base types without errors.</text>
+
+        <rect x="25" y="255" width="480" height="55" rx="8" fill="#1b202c" stroke="#334155"/>
+        <text x="40" y="280" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold">[I] Interface Segregation Principle</text>
+        <text x="40" y="298" fill="#94a3b8" font-family="monospace" font-size="10">Clients should not be forced to depend upon interfaces they don't use.</text>
+
+        <rect x="25" y="320" width="480" height="55" rx="8" fill="#1b202c" stroke="#334155"/>
+        <text x="40" y="345" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold">[D] Dependency Inversion Principle</text>
+        <text x="40" y="363" fill="#34d399" font-family="monospace" font-size="10">Depend upon abstractions (interfaces), not concretions.</text>
+      </g>
+    
+
+  <!-- Footer Watermark & Platform Logo -->
+  <g transform="translate(60, 580)">
+    <text x="0" y="0" fill="#64748b" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">
+      خمسة برمجة بالبلدي • منصة علوم الحاسب وهندسة البرمجيات
+    </text>
+  </g>
+  <g transform="translate(1000, 560)">
+    <rect width="140" height="32" rx="8" fill="#1e293b" stroke="#eab308" stroke-opacity="0.4"/>
+    <text x="70" y="21" fill="#eab308" font-family="system-ui, sans-serif" font-size="12" font-weight="900" text-anchor="middle">
+      5 بالبلدي • PRO
+    </text>
+  </g>
+</svg>

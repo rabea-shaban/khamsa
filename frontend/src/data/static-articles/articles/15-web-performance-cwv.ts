@@ -13,7 +13,7 @@ export const article15: StaticArticle = {
   publishedAt: '2026-05-05T10:00:00.000Z',
   updatedAt: '2026-09-20T23:00:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/15-web-performance-cwv.svg',
   coverAlt: 'تحسين أداء الويب ومؤشرات Core Web Vitals للسرعة القصوى',
   isFeatured: true,
   tableOfContents: [

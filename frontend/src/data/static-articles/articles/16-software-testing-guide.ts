@@ -13,7 +13,7 @@ export const article16: StaticArticle = {
   publishedAt: '2026-05-15T11:00:00.000Z',
   updatedAt: '2026-09-20T23:30:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/16-software-testing-guide.svg',
   coverAlt: 'دليل اختبار البرمجيات الشامل Unit و Integration و E2E',
   isFeatured: false,
   tableOfContents: [

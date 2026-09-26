@@ -13,7 +13,7 @@ export const article05: StaticArticle = {
   publishedAt: '2026-02-18T10:00:00.000Z',
   updatedAt: '2026-09-20T17:30:00.000Z',
   readTimeMinutes: 27,
-  coverImage: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/05-advanced-nodejs.svg',
   coverAlt: 'هندسة Node.js والـ Event Loop والـ Streams',
   isFeatured: true,
   tableOfContents: [

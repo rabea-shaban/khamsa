@@ -13,7 +13,7 @@ export const article20: StaticArticle = {
   publishedAt: '2026-06-25T11:00:00.000Z',
   updatedAt: '2026-09-21T01:30:00.000Z',
   readTimeMinutes: 30,
-  coverImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/20-clean-code-solid-design-patterns.svg',
   coverAlt: 'هندسة البرمجيات النظيفة ومبادئ SOLID وأنماط التصميم',
   isFeatured: true,
   tableOfContents: [

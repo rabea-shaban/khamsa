@@ -13,7 +13,7 @@ export const article17: StaticArticle = {
   publishedAt: '2026-05-25T10:00:00.000Z',
   updatedAt: '2026-09-21T00:00:00.000Z',
   readTimeMinutes: 27,
-  coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/17-graphql-vs-rest.svg',
   coverAlt: 'مقارنة معمارية بين GraphQL و REST APIs',
   isFeatured: false,
   tableOfContents: [

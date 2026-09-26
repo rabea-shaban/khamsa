@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0d13" />
+      <stop offset="50%" stop-color="#11151f" />
+      <stop offset="100%" stop-color="#08090d" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glowing background orbs -->
+  <circle cx="200" cy="150" r="280" fill="url(#primaryGlow)"/>
+  <circle cx="1000" cy="450" r="300" fill="url(#primaryGlow)"/>
+
+  <!-- Left Header Branding -->
+  <g transform="translate(60, 50)">
+    <!-- Brand Icon -->
+    <g transform="translate(0, 0)">
+      <path d="M12 24C14 18 18 16 24 16C30 16 32 20 36 20C39 20 41 18 42 16C40 22 36 24 30 24C24 24 22 20 18 20C15 20 13 22 12 24Z" fill="#06B6D4"/><path d="M6 32C8 26 12 24 18 24C24 24 26 28 30 28C33 28 35 26 36 24C34 30 30 32 24 32C18 32 16 28 12 28C9 28 7 30 6 32Z" fill="#06B6D4"/>
+    </g>
+    
+    <!-- Category Pill -->
+    <rect x="65" y="8" width="150" height="32" rx="16" fill="#1e293b" stroke="#06B6D4" stroke-opacity="0.5"/>
+    <text x="140" y="29" fill="#06B6D4" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">CSS & Design</text>
+
+    <!-- Title Ar -->
+    <text x="0" y="100" fill="#f8fafc" font-family="'Cairo', 'Segoe UI', Tahoma, sans-serif" font-size="28" font-weight="900" direction="rtl">
+      الدليل العملي لـ Modern CSS و Tailwind CSS
+    </text>
+
+    <!-- Subtitle En -->
+    <text x="0" y="135" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="15" font-weight="600">
+      Subgrid • Container Queries • :has() • JIT Utility Engine
+    </text>
+  </g>
+
+  <!-- Code Snippet Box (Left Bottom) -->
+  <g transform="translate(60, 240)" filter="url(#shadow)">
+    <rect width="480" height="290" rx="16" fill="#0c0e14" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Window Controls -->
+    <circle cx="25" cy="22" r="6" fill="#ef4444"/>
+    <circle cx="45" cy="22" r="6" fill="#f59e0b"/>
+    <circle cx="65" cy="22" r="6" fill="#10b981"/>
+    
+    <!-- File Tab -->
+    <rect x="90" y="10" width="160" height="24" rx="4" fill="#1e293b"/>
+    <text x="170" y="26" fill="#94a3b8" font-family="monospace" font-size="11" text-anchor="middle">source-code.ts</text>
+
+    <!-- Code Content -->
+    <text x="45" y="70" font-family="'Fira Code', Consolas, monospace" font-size="13" fill="#e2e8f0" xml:space="preserve">
+      <tspan x="45" dy="0"><span style="color:#94a3b8">/* Modern CSS Container Queries &amp; :has() */</span></tspan><tspan x="45" dy="22"><span style="color:#60a5fa">.card-container</span> {</tspan><tspan x="45" dy="22">  <span style="color:#38bdf8">container-type</span>: inline-size;</tspan><tspan x="45" dy="22">}</tspan><tspan x="45" dy="22"><span style="color:#f59e0b">@container</span> (min-width: <span style="color:#f7df1e">500px</span>) {</tspan><tspan x="45" dy="22">  <span style="color:#60a5fa">.card</span> { <span style="color:#38bdf8">display</span>: flex; <span style="color:#38bdf8">gap</span>: <span style="color:#f7df1e">1.5rem</span>; }</tspan><tspan x="45" dy="22">}</tspan>
+    </text>
+  </g>
+
+  <!-- Right Side Interactive Diagram -->
+  
+      <g transform="translate(600, 110)">
+        <rect width="530" height="420" rx="16" fill="#141820" stroke="#06B6D4" stroke-opacity="0.4" stroke-width="2"/>
+        <text x="25" y="38" fill="#22d3ee" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">CSS GRID &amp; MODERN SELECTOR ENGINE</text>
+        
+        <!-- Grid Layout Visualizer -->
+        <rect x="25" y="60" width="480" height="150" rx="10" fill="#1b202c" stroke="#2d3748"/>
+        <text x="40" y="85" fill="#22d3ee" font-family="monospace" font-size="12" font-weight="bold">📐 12-Column Responsive CSS Grid</text>
+
+        <rect x="40" y="100" width="140" height="40" rx="6" fill="#083344" stroke="#06b6d4"/>
+        <text x="110" y="125" fill="#67e8f9" font-family="monospace" font-size="10" text-anchor="middle">col-span-4</text>
+
+        <rect x="190" y="100" width="310" height="40" rx="6" fill="#083344" stroke="#06b6d4"/>
+        <text x="345" y="125" fill="#67e8f9" font-family="monospace" font-size="10" text-anchor="middle">col-span-8 (Main Content)</text>
+
+        <rect x="40" y="150" width="460" height="40" rx="6" fill="#1e293b" stroke="#64748b"/>
+        <text x="270" y="175" fill="#e2e8f0" font-family="monospace" font-size="10" text-anchor="middle">col-span-12 (Full Width Footer)</text>
+
+        <!-- Modern CSS Features -->
+        <rect x="25" y="230" width="480" height="160" rx="10" fill="#1b202c" stroke="#06B6D4"/>
+        <text x="40" y="255" fill="#22d3ee" font-family="monospace" font-size="12" font-weight="bold">🎨 Modern CSS 2026 Features</text>
+        <text x="40" y="280" fill="#e2e8f0" font-family="monospace" font-size="11">• Parent Selector: article:has(&gt; .badge-pro)</text>
+        <text x="40" y="305" fill="#e2e8f0" font-family="monospace" font-size="11">• Container Queries: @container (min-width: 400px)</text>
+        <text x="40" y="330" fill="#e2e8f0" font-family="monospace" font-size="11">• CSS Nesting Native &amp; Light-Dark() Color Functions</text>
+        <text x="40" y="355" fill="#34d399" font-family="monospace" font-size="11">• Tailwind JIT: arbitrary values (bg-[#0a0d14]/80)</text>
+      </g>
+    
+
+  <!-- Footer Watermark & Platform Logo -->
+  <g transform="translate(60, 580)">
+    <text x="0" y="0" fill="#64748b" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">
+      خمسة برمجة بالبلدي • منصة علوم الحاسب وهندسة البرمجيات
+    </text>
+  </g>
+  <g transform="translate(1000, 560)">
+    <rect width="140" height="32" rx="8" fill="#1e293b" stroke="#eab308" stroke-opacity="0.4"/>
+    <text x="70" y="21" fill="#eab308" font-family="system-ui, sans-serif" font-size="12" font-weight="900" text-anchor="middle">
+      5 بالبلدي • PRO
+    </text>
+  </g>
+</svg>

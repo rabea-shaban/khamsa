@@ -13,7 +13,7 @@ export const article19: StaticArticle = {
   publishedAt: '2026-06-15T10:00:00.000Z',
   updatedAt: '2026-09-21T01:00:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/19-modern-css-tailwind.svg',
   coverAlt: 'إتقان CSS الحديث و Tailwind CSS والأنظمة التصميمية',
   isFeatured: false,
   tableOfContents: [

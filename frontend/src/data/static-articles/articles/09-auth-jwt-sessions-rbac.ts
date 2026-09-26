@@ -13,7 +13,7 @@ export const article09: StaticArticle = {
   publishedAt: '2026-03-20T10:00:00.000Z',
   updatedAt: '2026-09-20T20:00:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1618060932014-4deda4932554?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/09-auth-jwt-sessions-rbac.svg',
   coverAlt: 'هندسة نظم المصادقة والتفويض و JWT و RBAC',
   isFeatured: true,
   tableOfContents: [

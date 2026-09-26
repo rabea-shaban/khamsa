@@ -13,7 +13,7 @@ export const article11: StaticArticle = {
   publishedAt: '2026-04-05T10:00:00.000Z',
   updatedAt: '2026-09-20T21:00:00.000Z',
   readTimeMinutes: 26,
-  coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/11-advanced-caching-redis.svg',
   coverAlt: 'استراتيجيات التخزين المؤقت والـ Caching باستخدام Redis',
   isFeatured: false,
   tableOfContents: [

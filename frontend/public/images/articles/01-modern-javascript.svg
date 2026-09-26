@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0d13" />
+      <stop offset="50%" stop-color="#11151f" />
+      <stop offset="100%" stop-color="#08090d" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F7DF1E" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#F7DF1E" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glowing background orbs -->
+  <circle cx="200" cy="150" r="280" fill="url(#primaryGlow)"/>
+  <circle cx="1000" cy="450" r="300" fill="url(#primaryGlow)"/>
+
+  <!-- Left Header Branding -->
+  <g transform="translate(60, 50)">
+    <!-- Brand Icon -->
+    <g transform="translate(0, 0)">
+      <rect width="48" height="48" rx="8" fill="#F7DF1E"/><text x="24" y="34" font-size="28" font-weight="900" fill="#000" text-anchor="middle" font-family="monospace">JS</text>
+    </g>
+    
+    <!-- Category Pill -->
+    <rect x="65" y="8" width="150" height="32" rx="16" fill="#1e293b" stroke="#F7DF1E" stroke-opacity="0.5"/>
+    <text x="140" y="29" fill="#F7DF1E" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">JavaScript</text>
+
+    <!-- Title Ar -->
+    <text x="0" y="100" fill="#f8fafc" font-family="'Cairo', 'Segoe UI', Tahoma, sans-serif" font-size="28" font-weight="900" direction="rtl">
+      الدليل الهندسي الشامل لـ JavaScript الحديثة
+    </text>
+
+    <!-- Subtitle En -->
+    <text x="0" y="135" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="15" font-weight="600">
+      V8 Engine • Event Loop • Memory Heap • Async Internals
+    </text>
+  </g>
+
+  <!-- Code Snippet Box (Left Bottom) -->
+  <g transform="translate(60, 240)" filter="url(#shadow)">
+    <rect width="480" height="290" rx="16" fill="#0c0e14" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Window Controls -->
+    <circle cx="25" cy="22" r="6" fill="#ef4444"/>
+    <circle cx="45" cy="22" r="6" fill="#f59e0b"/>
+    <circle cx="65" cy="22" r="6" fill="#10b981"/>
+    
+    <!-- File Tab -->
+    <rect x="90" y="10" width="160" height="24" rx="4" fill="#1e293b"/>
+    <text x="170" y="26" fill="#94a3b8" font-family="monospace" font-size="11" text-anchor="middle">source-code.ts</text>
+
+    <!-- Code Content -->
+    <text x="45" y="70" font-family="'Fira Code', Consolas, monospace" font-size="13" fill="#e2e8f0" xml:space="preserve">
+      <tspan x="45" dy="0"><span style="color:#f59e0b">async function</span> <span style="color:#60a5fa">processPipeline</span>() {</tspan><tspan x="45" dy="22">  <span style="color:#94a3b8">// Microtask runs before Macrotask</span></tspan><tspan x="45" dy="22">  <span style="color:#f59e0b">const</span> data = <span style="color:#f59e0b">await</span> <span style="color:#60a5fa">fetchUser</span>(id);</tspan><tspan x="45" dy="22">  queueMicrotask(() =&gt; <span style="color:#60a5fa">syncHeap</span>(data));</tspan><tspan x="45" dy="22">  setTimeout(() =&gt; <span style="color:#60a5fa">logMetrics</span>(), <span style="color:#f7df1e">0</span>);</tspan><tspan x="45" dy="22">}</tspan>
+    </text>
+  </g>
+
+  <!-- Right Side Interactive Diagram -->
+  
+      <g transform="translate(600, 110)">
+        <rect width="530" height="420" rx="16" fill="#141820" stroke="#F7DF1E" stroke-opacity="0.3" stroke-width="2"/>
+        <text x="25" y="38" fill="#F7DF1E" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">V8 ENGINE &amp; EVENT LOOP INTERNALS</text>
+        
+        <!-- Memory Heap & Call Stack -->
+        <rect x="25" y="60" width="230" height="150" rx="10" fill="#1b202c" stroke="#2d3748"/>
+        <text x="40" y="88" fill="#e2e8f0" font-family="monospace" font-size="13" font-weight="bold">🧠 Memory Heap</text>
+        <text x="40" y="115" fill="#94a3b8" font-family="monospace" font-size="11">• Object Allocation</text>
+        <text x="40" y="135" fill="#94a3b8" font-family="monospace" font-size="11">• Closures &amp; Lexical Env</text>
+        <text x="40" y="155" fill="#ef4444" font-family="monospace" font-size="11">• GC (Mark &amp; Sweep)</text>
+
+        <rect x="275" y="60" width="230" height="150" rx="10" fill="#1b202c" stroke="#2d3748"/>
+        <text x="290" y="88" fill="#e2e8f0" font-family="monospace" font-size="13" font-weight="bold">🥞 Call Stack (LIFO)</text>
+        <rect x="290" y="105" width="200" height="24" rx="4" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6"/>
+        <text x="390" y="121" fill="#60a5fa" font-family="monospace" font-size="10" text-anchor="middle">executeAsyncTask()</text>
+        <rect x="290" y="135" width="200" height="24" rx="4" fill="#F7DF1E" fill-opacity="0.1" stroke="#F7DF1E"/>
+        <text x="390" y="151" fill="#F7DF1E" font-family="monospace" font-size="10" text-anchor="middle">main() Global Context</text>
+
+        <!-- Event Loop Center -->
+        <circle cx="265" cy="275" r="45" fill="#1e293b" stroke="#F7DF1E" stroke-width="3" stroke-dasharray="8 4"/>
+        <text x="265" y="272" fill="#F7DF1E" font-family="system-ui" font-size="12" font-weight="bold" text-anchor="middle">EVENT</text>
+        <text x="265" y="288" fill="#F7DF1E" font-family="system-ui" font-size="12" font-weight="bold" text-anchor="middle">LOOP</text>
+
+        <!-- Microtasks vs Macrotasks -->
+        <rect x="25" y="240" width="180" height="150" rx="10" fill="#1b202c" stroke="#10b981"/>
+        <text x="35" y="265" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">⚡ Microtask Queue</text>
+        <text x="35" y="290" fill="#a7f3d0" font-family="monospace" font-size="10">1. Promise.then()</text>
+        <text x="35" y="310" fill="#a7f3d0" font-family="monospace" font-size="10">2. queueMicrotask()</text>
+        <text x="35" y="330" fill="#a7f3d0" font-family="monospace" font-size="10">3. MutationObserver</text>
+        <text x="35" y="355" fill="#34d399" font-family="monospace" font-size="9" font-weight="bold">[ Priority: Immediate ]</text>
+
+        <rect x="325" y="240" width="180" height="150" rx="10" fill="#1b202c" stroke="#f59e0b"/>
+        <text x="335" y="265" fill="#f59e0b" font-family="monospace" font-size="12" font-weight="bold">⏱️ Macrotask Queue</text>
+        <text x="335" y="290" fill="#fde68a" font-family="monospace" font-size="10">1. setTimeout / Interval</text>
+        <text x="335" y="310" fill="#fde68a" font-family="monospace" font-size="10">2. setImmediate (Node)</text>
+        <text x="335" y="330" fill="#fde68a" font-family="monospace" font-size="10">3. I/O &amp; UI Events</text>
+        <text x="335" y="355" fill="#fbbf24" font-family="monospace" font-size="9" font-weight="bold">[ Priority: Next Cycle ]</text>
+      </g>
+    
+
+  <!-- Footer Watermark & Platform Logo -->
+  <g transform="translate(60, 580)">
+    <text x="0" y="0" fill="#64748b" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">
+      خمسة برمجة بالبلدي • منصة علوم الحاسب وهندسة البرمجيات
+    </text>
+  </g>
+  <g transform="translate(1000, 560)">
+    <rect width="140" height="32" rx="8" fill="#1e293b" stroke="#eab308" stroke-opacity="0.4"/>
+    <text x="70" y="21" fill="#eab308" font-family="system-ui, sans-serif" font-size="12" font-weight="900" text-anchor="middle">
+      5 بالبلدي • PRO
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0d13" />
+      <stop offset="50%" stop-color="#11151f" />
+      <stop offset="100%" stop-color="#08090d" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glowing background orbs -->
+  <circle cx="200" cy="150" r="280" fill="url(#primaryGlow)"/>
+  <circle cx="1000" cy="450" r="300" fill="url(#primaryGlow)"/>
+
+  <!-- Left Header Branding -->
+  <g transform="translate(60, 50)">
+    <!-- Brand Icon -->
+    <g transform="translate(0, 0)">
+      <rect width="48" height="48" rx="8" fill="#22c55e"/><path d="M14 24L20 30L34 16" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    
+    <!-- Category Pill -->
+    <rect x="65" y="8" width="150" height="32" rx="16" fill="#1e293b" stroke="#22c55e" stroke-opacity="0.5"/>
+    <text x="140" y="29" fill="#22c55e" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Testing</text>
+
+    <!-- Title Ar -->
+    <text x="0" y="100" fill="#f8fafc" font-family="'Cairo', 'Segoe UI', Tahoma, sans-serif" font-size="28" font-weight="900" direction="rtl">
+      دليل اختبار البرمجيات الشامل: Unit و Integration و E2E
+    </text>
+
+    <!-- Subtitle En -->
+    <text x="0" y="135" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="15" font-weight="600">
+      Vitest • Jest • Playwright • Testing Trophy • Mocking
+    </text>
+  </g>
+
+  <!-- Code Snippet Box (Left Bottom) -->
+  <g transform="translate(60, 240)" filter="url(#shadow)">
+    <rect width="480" height="290" rx="16" fill="#0c0e14" stroke="#1e293b" stroke-width="2"/>
+    
+    <!-- Window Controls -->
+    <circle cx="25" cy="22" r="6" fill="#ef4444"/>
+    <circle cx="45" cy="22" r="6" fill="#f59e0b"/>
+    <circle cx="65" cy="22" r="6" fill="#10b981"/>
+    
+    <!-- File Tab -->
+    <rect x="90" y="10" width="160" height="24" rx="4" fill="#1e293b"/>
+    <text x="170" y="26" fill="#94a3b8" font-family="monospace" font-size="11" text-anchor="middle">source-code.ts</text>
+
+    <!-- Code Content -->
+    <text x="45" y="70" font-family="'Fira Code', Consolas, monospace" font-size="13" fill="#e2e8f0" xml:space="preserve">
+      <tspan x="45" dy="0"><span style="color:#f59e0b">import</span> { describe, it, expect } <span style="color:#f59e0b">from</span> <span style="color:#10b981">"vitest"</span>;</tspan><tspan x="45" dy="22"></tspan><tspan x="45" dy="22"><span style="color:#60a5fa">describe</span>(<span style="color:#10b981">"OrderProcessor"</span>, () =&gt; {</tspan><tspan x="45" dy="22">  <span style="color:#60a5fa">it</span>(<span style="color:#10b981">"applies discount and charges successfully"</span>, <span style="color:#f59e0b">async</span> () =&gt; {</tspan><tspan x="45" dy="22">    <span style="color:#f59e0b">const</span> order = <span style="color:#f59e0b">await</span> processor.<span style="color:#60a5fa">execute</span>({ total: <span style="color:#f7df1e">200</span>, code: <span style="color:#10b981">"KHAMSA"</span> });</tspan><tspan x="45" dy="22">    <span style="color:#60a5fa">expect</span>(order.finalPrice).<span style="color:#60a5fa">toBe</span>(<span style="color:#f7df1e">160</span>);</tspan><tspan x="45" dy="22">    <span style="color:#60a5fa">expect</span>(order.status).<span style="color:#60a5fa">toBe</span>(<span style="color:#10b981">"CONFIRMED"</span>);</tspan><tspan x="45" dy="22">  });</tspan><tspan x="45" dy="22">});</tspan>
+    </text>
+  </g>
+
+  <!-- Right Side Interactive Diagram -->
+  
+      <g transform="translate(600, 110)">
+        <rect width="530" height="420" rx="16" fill="#141820" stroke="#22c55e" stroke-opacity="0.4" stroke-width="2"/>
+        <text x="25" y="38" fill="#4ade80" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">TESTING TROPHY &amp; RUNNER TERMINAL</text>
+        
+        <!-- Testing Pyramid / Trophy -->
+        <rect x="25" y="60" width="230" height="330" rx="10" fill="#1b202c" stroke="#2d3748"/>
+        <text x="40" y="85" fill="#4ade80" font-family="monospace" font-size="12" font-weight="bold">🏆 Testing Trophy Ratio</text>
+        
+        <!-- E2E Top -->
+        <polygon points="140,105 180,150 100,150" fill="#ef4444"/>
+        <text x="140" y="140" fill="#fff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">E2E (10%)</text>
+
+        <!-- Integration Middle -->
+        <polygon points="85,155 195,155 215,220 65,220" fill="#3b82f6"/>
+        <text x="140" y="195" fill="#fff" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Integration (60%)</text>
+
+        <!-- Unit Base -->
+        <polygon points="55,225 225,225 240,290 40,290" fill="#22c55e"/>
+        <text x="140" y="265" fill="#fff" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">Unit Tests (30%)</text>
+
+        <text x="140" y="335" fill="#94a3b8" font-family="monospace" font-size="10" text-anchor="middle">Playwright + Vitest + RTL</text>
+
+        <!-- Terminal Output -->
+        <rect x="275" y="60" width="230" height="330" rx="10" fill="#0f172a" stroke="#22c55e"/>
+        <text x="290" y="85" fill="#22c55e" font-family="monospace" font-size="12" font-weight="bold">⚡ Vitest Test Runner</text>
+        
+        <text x="290" y="120" fill="#4ade80" font-family="monospace" font-size="10">✓ auth.service.spec.ts</text>
+        <text x="290" y="145" fill="#4ade80" font-family="monospace" font-size="10">✓ payment.pipeline.spec.ts</text>
+        <text x="290" y="170" fill="#4ade80" font-family="monospace" font-size="10">✓ rbac.guard.spec.ts</text>
+        <text x="290" y="195" fill="#4ade80" font-family="monospace" font-size="10">✓ cart.reducer.spec.ts</text>
+        <text x="290" y="220" fill="#4ade80" font-family="monospace" font-size="10">✓ e2e/checkout.spec.ts</text>
+
+        <line x1="290" y1="245" x2="480" y2="245" stroke="#334155"/>
+        <text x="290" y="275" fill="#ffffff" font-family="monospace" font-size="11" font-weight="bold">Test Files: 18 passed (18)</text>
+        <text x="290" y="300" fill="#22c55e" font-family="monospace" font-size="11" font-weight="bold">Tests:      156 passed (156)</text>
+        <text x="290" y="325" fill="#38bdf8" font-family="monospace" font-size="11">Time:       1.42s</text>
+        <text x="290" y="350" fill="#a7f3d0" font-family="monospace" font-size="10">Coverage:   96.8% lines</text>
+      </g>
+    
+
+  <!-- Footer Watermark & Platform Logo -->
+  <g transform="translate(60, 580)">
+    <text x="0" y="0" fill="#64748b" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">
+      خمسة برمجة بالبلدي • منصة علوم الحاسب وهندسة البرمجيات
+    </text>
+  </g>
+  <g transform="translate(1000, 560)">
+    <rect width="140" height="32" rx="8" fill="#1e293b" stroke="#eab308" stroke-opacity="0.4"/>
+    <text x="70" y="21" fill="#eab308" font-family="system-ui, sans-serif" font-size="12" font-weight="900" text-anchor="middle">
+      5 بالبلدي • PRO
+    </text>
+  </g>
+</svg>

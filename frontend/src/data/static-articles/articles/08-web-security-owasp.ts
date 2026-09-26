@@ -13,7 +13,7 @@ export const article08: StaticArticle = {
   publishedAt: '2026-03-12T11:00:00.000Z',
   updatedAt: '2026-09-20T19:30:00.000Z',
   readTimeMinutes: 30,
-  coverImage: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/08-web-security-owasp.svg',
   coverAlt: 'أمان تطبيقات الويب والحماية من ثغرات OWASP',
   isFeatured: true,
   tableOfContents: [

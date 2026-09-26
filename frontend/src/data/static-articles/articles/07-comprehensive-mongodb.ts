@@ -13,7 +13,7 @@ export const article07: StaticArticle = {
   publishedAt: '2026-03-05T10:00:00.000Z',
   updatedAt: '2026-09-20T19:00:00.000Z',
   readTimeMinutes: 27,
-  coverImage: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/07-comprehensive-mongodb.svg',
   coverAlt: 'هندسة قواعد بيانات MongoDB والفهرسة والـ Aggregation',
   isFeatured: true,
   tableOfContents: [

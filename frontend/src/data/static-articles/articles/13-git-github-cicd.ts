@@ -13,7 +13,7 @@ export const article13: StaticArticle = {
   publishedAt: '2026-04-20T10:00:00.000Z',
   updatedAt: '2026-09-20T22:00:00.000Z',
   readTimeMinutes: 25,
-  coverImage: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/13-git-github-cicd.svg',
   coverAlt: 'دليل Git و GitHub الاحترافي واستراتيجيات الـ CI/CD',
   isFeatured: false,
   tableOfContents: [

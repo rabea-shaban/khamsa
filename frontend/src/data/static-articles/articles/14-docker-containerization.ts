@@ -13,7 +13,7 @@ export const article14: StaticArticle = {
   publishedAt: '2026-04-28T09:00:00.000Z',
   updatedAt: '2026-09-20T22:30:00.000Z',
   readTimeMinutes: 26,
-  coverImage: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/14-docker-containerization.svg',
   coverAlt: 'الدليل العملي لـ Docker و Containerization لمطوري الويب',
   isFeatured: false,
   tableOfContents: [

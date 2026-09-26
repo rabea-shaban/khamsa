@@ -13,7 +13,7 @@ export const article10: StaticArticle = {
   publishedAt: '2026-03-28T09:00:00.000Z',
   updatedAt: '2026-09-20T20:30:00.000Z',
   readTimeMinutes: 32,
-  coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/10-system-design-distributed.svg',
   coverAlt: 'تصميم أنظمة الويب الموزعة والتوسع للملايين System Design',
   isFeatured: true,
   tableOfContents: [
