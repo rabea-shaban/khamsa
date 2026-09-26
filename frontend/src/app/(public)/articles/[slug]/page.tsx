@@ -20,6 +20,7 @@ import {
   getRelatedStaticArticles,
   StaticArticle,
 } from '@/data/static-articles';
+import { DEFAULT_AUTHOR } from '@/data/static-articles/types';
 import { getSiteUrl } from '@/lib/seo/site-url';
 
 interface ArticlePageProps {
@@ -164,23 +165,14 @@ export default async function ArticleDetailsPage({ params }: ArticlePageProps) {
   const currentCoverAlt = staticArt?.coverAlt || currentTitle;
   const currentContent = staticArt?.content || article?.content || '';
   const currentAuthor = staticArt?.author || {
-    id: article?.author?._id || '6ab676b7db2a3194c7928d08',
-    name: article?.author?.name || 'ربيع شعبان',
-    email: article?.author?.email || 'r.shaban.2016@gmail.com',
-    role: 'Full-Stack Software Engineer & Tech Educator',
-    bio:
-      article?.author?.bio ||
-      'مهندس برمجيات متخصص في بناء وتطوير تطبيقات الويب الحديثة والأنظمة السحابية، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات وتقديم المحتوى التقني للمطور العربي بأسلوب عملي وبسيط.',
-    avatar:
-      article?.author?.avatar ||
-      'https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev/settings/1790342553596-c3b0b3ad4e5a7544e8cfdb149652b335.png',
-    aboutUrl: '/about',
-    socials: {
-      github: 'https://github.com/rabea-shaban',
-      linkedin: 'https://linkedin.com/in/rabea-shaban',
-      youtube: 'https://youtube.com/@5prog_bldy',
-      facebook: 'https://facebook.com/5prog.bldy',
-    },
+    id: article?.author?._id || DEFAULT_AUTHOR.id,
+    name: article?.author?.name || DEFAULT_AUTHOR.name,
+    email: article?.author?.email || DEFAULT_AUTHOR.email,
+    role: DEFAULT_AUTHOR.role,
+    bio: article?.author?.bio || DEFAULT_AUTHOR.bio,
+    avatar: article?.author?.avatar || DEFAULT_AUTHOR.avatar,
+    aboutUrl: DEFAULT_AUTHOR.aboutUrl,
+    socials: article?.author?.socials || DEFAULT_AUTHOR.socials,
   };
 
   const rawPublishedDate = staticArt?.publishedAt || article?.publishedAt || article?.createdAt;
