@@ -13,7 +13,7 @@ export const article02: StaticArticle = {
   publishedAt: '2026-01-22T10:00:00.000Z',
   updatedAt: '2026-09-20T15:00:00.000Z',
   readTimeMinutes: 30,
-  coverImage: 'https://images.unsplash.com/photo-1516116211227-bbc13f7efc6b?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/02-comprehensive-typescript.jpg',
   coverAlt: 'هندسة الأنواع والأنماط المتقدمة في TypeScript',
   isFeatured: true,
   tableOfContents: [

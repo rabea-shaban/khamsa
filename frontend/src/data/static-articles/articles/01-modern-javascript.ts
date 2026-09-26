@@ -13,7 +13,7 @@ export const article01: StaticArticle = {
   publishedAt: '2026-01-15T09:00:00.000Z',
   updatedAt: '2026-09-20T14:30:00.000Z',
   readTimeMinutes: 28,
-  coverImage: 'https://images.unsplash.com/photo-1579468118864-ddab3079f04e?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/01-modern-javascript.jpg',
   coverAlt: 'شرح هندسة لغة JavaScript الحديثة والـ Event Loop',
   isFeatured: true,
   tableOfContents: [

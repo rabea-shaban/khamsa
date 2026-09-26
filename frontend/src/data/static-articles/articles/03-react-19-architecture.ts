@@ -13,7 +13,7 @@ export const article03: StaticArticle = {
   publishedAt: '2026-02-01T11:00:00.000Z',
   updatedAt: '2026-09-20T16:00:00.000Z',
   readTimeMinutes: 30,
-  coverImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=1200&q=80',
+  coverImage: '/images/articles/03-react-19-architecture.jpg',
   coverAlt: 'معمارية React 19 والـ Server Components',
   isFeatured: true,
   tableOfContents: [
