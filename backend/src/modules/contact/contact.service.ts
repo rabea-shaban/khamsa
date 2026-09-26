@@ -81,10 +81,10 @@ export class ContactService {
 
     try {
       await this.transporter.sendMail({
-        from: `"خمسة برمجة بالبلدي" <${env.SMTP_USER}>`,
+        from: `"${dto.name} (خمسة برمجة)" <${env.SMTP_USER}>`,
         to: env.CONTACT_RECEIVER_EMAIL,
         replyTo: `"${dto.name}" <${dto.email}>`,
-        subject: `[تواصل جديد] ${dto.subject} - من: ${dto.name}`,
+        subject: `📬 رسالة جديدة من: ${dto.name} [${dto.subject}]`,
         text: `رسالة جديدة من: ${dto.name}\nالبريد: ${dto.email}\nالهاتف: ${dto.phone || 'غير محدد'}\nالموضوع: ${dto.subject}\n\nنص الرسالة:\n${dto.message}`,
         html: htmlContent,
       });
