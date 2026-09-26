@@ -4,10 +4,12 @@ export interface ArticleFAQ {
 }
 
 export interface ArticleAuthor {
+  id?: string;
   name: string;
+  email: string;
   role: string;
   bio: string;
-  avatar: string;
+  avatar?: string | null;
   aboutUrl: string;
   socials?: {
     github?: string;
@@ -55,10 +57,12 @@ export interface StaticArticle {
 }
 
 export const DEFAULT_AUTHOR: ArticleAuthor = {
+  id: '6ab676b7db2a3194c7928d08',
   name: 'ربيع شعبان',
+  email: 'r.shaban.2016@gmail.com',
   role: 'Full-Stack Software Engineer & Tech Educator',
   bio: 'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
-  avatar: '/images/author-rabie.png',
+  avatar: 'https://github.com/rabea-shaban.png',
   aboutUrl: '/about',
   socials: {
     github: 'https://github.com/rabea-shaban',

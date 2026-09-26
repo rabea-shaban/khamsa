@@ -3,13 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArticleAuthor } from '@/data/static-articles/types';
-import { Github, Linkedin, Youtube, Facebook, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Github, Linkedin, Youtube, Facebook, Mail, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 interface AuthorBoxProps {
   author: ArticleAuthor;
 }
 
 export function AuthorBox({ author }: AuthorBoxProps) {
+  const authorEmail = author.email || 'r.shaban.2016@gmail.com';
+
   return (
     <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-6 shadow-card transition-all hover:border-primary/30">
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
@@ -19,7 +21,7 @@ export function AuthorBox({ author }: AuthorBoxProps) {
             <img
               src={author.avatar}
               alt={author.name}
-              className="h-full w-full object-cover"
+              className="relative z-10 h-full w-full object-cover"
               onError={(e) => {
                 // Fallback to stylized monogram if image not present
                 (e.target as HTMLElement).style.display = 'none';
@@ -27,7 +29,7 @@ export function AuthorBox({ author }: AuthorBoxProps) {
             />
           ) : null}
           <div className="absolute inset-0 flex items-center justify-center bg-primary/10 text-primary font-black text-2xl">
-            {author.name.charAt(0)}
+            {author.name ? author.name.charAt(0) : 'ر'}
           </div>
         </div>
 
@@ -58,12 +60,22 @@ export function AuthorBox({ author }: AuthorBoxProps) {
       <div className="pt-4 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3">
           <span className="text-foreground-muted font-bold">تواصل مع الكاتب:</span>
+          {authorEmail && (
+            <a
+              href={`mailto:${authorEmail}`}
+              title={`إرسال بريد إلكتروني إلى: ${authorEmail}`}
+              className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <Mail className="h-4 w-4" />
+            </a>
+          )}
           {author.socials?.github && (
             <a
               href={author.socials.github}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Profile"
+              title="GitHub Profile"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Github className="h-4 w-4" />
@@ -75,6 +87,7 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn Profile"
+              title="LinkedIn Profile"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Linkedin className="h-4 w-4" />
@@ -86,6 +99,7 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube Channel"
+              title="YouTube Channel"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Youtube className="h-4 w-4" />
@@ -97,6 +111,7 @@ export function AuthorBox({ author }: AuthorBoxProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook Page"
+              title="Facebook Page"
               className="p-2 rounded-xl bg-secondary text-foreground-muted hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <Facebook className="h-4 w-4" />

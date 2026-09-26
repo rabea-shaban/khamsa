@@ -32,8 +32,8 @@ const envSchema = z.object({
     .default('cf44ba4df763d4fce9cbe824b2dd32796e5027f41fb0a5ce69d337b8284d5888'),
   R2_BUCKET_NAME: z.string().default('khamsa-cms'),
   R2_PUBLIC_URL: z.string().default('https://pub-f9f474a915314796ac71ef9e5b4b78a0.r2.dev'),
-  ADMIN_NAME: z.string().default('Khamsa Admin'),
-  ADMIN_EMAIL: z.string().email().default('admin@khamsa.dev'),
+  ADMIN_NAME: z.string().default('ربيع شعبان'),
+  ADMIN_EMAIL: z.string().email().default('r.shaban.2016@gmail.com'),
   ADMIN_PASSWORD: z.string().min(8).default('AdminPassword123!'),
 });
 

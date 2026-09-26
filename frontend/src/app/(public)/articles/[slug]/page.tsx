@@ -164,10 +164,12 @@ export default async function ArticleDetailsPage({ params }: ArticlePageProps) {
   const currentCoverAlt = staticArt?.coverAlt || currentTitle;
   const currentContent = staticArt?.content || article?.content || '';
   const currentAuthor = staticArt?.author || {
+    id: article?.author?._id || '6ab676b7db2a3194c7928d08',
     name: article?.author?.name || 'ربيع شعبان',
+    email: article?.author?.email || 'r.shaban.2016@gmail.com',
     role: 'Full-Stack Software Engineer & Tech Educator',
-    bio: 'مهندس برمجيات ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات.',
-    avatar: article?.author?.avatar || '/images/author-rabie.png',
+    bio: 'مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية وتطبيقات الويب الحديثة، ومؤسس منصة «خمسة برمجة بالبلدي» لتبسيط علوم الحاسب وهندسة البرمجيات للمطور العربي.',
+    avatar: article?.author?.avatar || 'https://github.com/rabea-shaban.png',
     aboutUrl: '/about',
     socials: {
       github: 'https://github.com/rabea-shaban',
