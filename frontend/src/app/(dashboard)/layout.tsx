@@ -16,7 +16,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { user, isLoading, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isLoading, isAuthenticated, isAdmin, isEditor, canAccessDashboard, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -60,8 +60,8 @@ export default function DashboardLayout({
     );
   }
 
-  // Non-admin guard (dashboard is strictly for ADMIN role)
-  if (!isAdmin) {
+  // Non-staff guard (dashboard is strictly for ADMIN and EDITOR roles)
+  if (!canAccessDashboard) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-background text-foreground" dir="rtl">
         <div className="w-full max-w-md p-6 rounded-2xl bg-card border border-destructive/30 text-center space-y-5 shadow-2xl">
@@ -71,7 +71,7 @@ export default function DashboardLayout({
           <div className="space-y-1">
             <h2 className="text-lg font-black text-foreground">غير مصرح بالدخول</h2>
             <p className="text-xs text-muted-foreground">
-              حسابك الحالي ({user?.email}) لا يمتلك صلاحيات مدير النظام (ADMIN) للوصول إلى لوحة التحكم.
+              حسابك الحالي ({user?.email}) لا يمتلك صلاحيات إدارة المحتوى للوصول إلى لوحة التحكم.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">

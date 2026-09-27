@@ -62,6 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAuthenticated = Boolean(user);
   const isAdmin = user?.role === UserRole.ADMIN;
+  const isEditor = user?.role === UserRole.EDITOR;
+  const canAccessDashboard = isAdmin || isEditor;
 
   return (
     <AuthContext.Provider
@@ -70,6 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated,
         isAdmin,
+        isEditor,
+        canAccessDashboard,
         login,
         logout,
         refetchUser,

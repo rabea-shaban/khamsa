@@ -10,6 +10,8 @@ export interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isEditor: boolean;
+  canAccessDashboard: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
