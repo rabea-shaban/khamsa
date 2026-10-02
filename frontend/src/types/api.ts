@@ -243,3 +243,43 @@ export interface Settings {
   createdAt?: string;
   updatedAt?: string;
 }
+
+// ============================================
+// Featured Links Types (Dynamic Promotion Links)
+// ============================================
+export interface FeaturedLink {
+  _id: string;
+  title: string;
+  image: string;
+  url: string;
+  badge?: string;
+  description?: string;
+  ctaText?: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFeaturedLinkInput {
+  title: string;
+  image: string;
+  url: string;
+  badge?: string;
+  description?: string;
+  ctaText?: string;
+  order?: number;
+  isActive?: boolean;
+}
+
+export interface UpdateFeaturedLinkInput {
+  title?: string;
+  image?: string;
+  url?: string;
+  badge?: string;
+  description?: string;
+  ctaText?: string;
+  order?: number;
+  isActive?: boolean;
+}
+

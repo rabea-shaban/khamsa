@@ -9,6 +9,7 @@ import {
   FaXTwitter,
   FaGlobe,
   FaEnvelope,
+  FaInstagram,
 } from 'react-icons/fa6';
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
@@ -74,4 +75,9 @@ export function MostaqlIcon({ className = 'h-4 w-4', ...props }: IconProps) {
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2V7h2v10z" />
     </svg>
   );
+}
+
+// 11. Instagram Official Icon
+export function InstagramIcon({ className = 'h-4 w-4', size, ...props }: IconProps) {
+  return <FaInstagram className={className} size={size} {...props} />;
 }

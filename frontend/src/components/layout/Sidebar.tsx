@@ -15,6 +15,7 @@ import {
   X,
   ShieldCheck,
   UserCircle,
+  Link2,
 } from 'lucide-react';
 import { Logo } from '../shared/Logo';
 import { cn } from '@/lib/utils/cn';
@@ -30,6 +31,7 @@ const navItems = [
   { label: 'لوحة التحكم', href: '/dashboard', icon: LayoutDashboard, exact: true },
   { label: 'المقالات', href: '/dashboard/articles', icon: FileText },
   { label: 'الفيديوهات', href: '/dashboard/videos', icon: Video },
+  { label: 'الروابط المميزة', href: '/dashboard/featured-links', icon: Link2 },
   { label: 'الوسائط', href: '/dashboard/media', icon: ImageIcon },
   { label: 'المستخدمون', href: '/dashboard/users', icon: Users, adminOnly: true },
   { label: 'الملف الشخصي', href: '/dashboard/profile', icon: UserCircle },

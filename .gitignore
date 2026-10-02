@@ -37,4 +37,5 @@ coverage/
 # Backups
 backups/
 *.json.gz
+*.tsbuildinfo
 

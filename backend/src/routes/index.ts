@@ -14,6 +14,10 @@ import {
   publicSettingsRoutes,
   adminSettingsRoutes,
 } from '../modules/settings/settings.routes';
+import {
+  publicFeaturedLinkRoutes,
+  adminFeaturedLinkRoutes,
+} from '../modules/featured-links/featured-link.routes';
 import { backupRoutes } from '../modules/backup/backup.routes';
 import contactRoutes from '../modules/contact/contact.routes';
 import mongoose from 'mongoose';
@@ -53,6 +57,7 @@ const publicRouter = Router();
 publicRouter.use('/articles', publicArticleRoutes);
 publicRouter.use('/videos', publicVideoRoutes);
 publicRouter.use('/settings', publicSettingsRoutes);
+publicRouter.use('/featured-links', publicFeaturedLinkRoutes);
 publicRouter.use('/contact', contactRoutes);
 router.use('/public', publicRouter);
 
@@ -63,6 +68,7 @@ const adminRouter = Router();
 adminRouter.use('/users', userRoutes);
 adminRouter.use('/articles', adminArticleRoutes);
 adminRouter.use('/videos', adminVideoRoutes);
+adminRouter.use('/featured-links', adminFeaturedLinkRoutes);
 adminRouter.use('/media', mediaRoutes);
 adminRouter.use('/settings', adminSettingsRoutes);
 adminRouter.use('/backups', backupRoutes);

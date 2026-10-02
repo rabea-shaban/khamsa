@@ -39,6 +39,7 @@ export function getStaticSitemapEntries(siteUrl: string): SitemapEntry[] {
     { path: '/cookie-policy', changeFrequency: 'monthly', priority: 0.6 },
     { path: '/terms', changeFrequency: 'monthly', priority: 0.6 },
     { path: '/disclaimer', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/links', changeFrequency: 'weekly', priority: 0.8 },
   ];
 
   return staticDefinitions.map(def => ({
